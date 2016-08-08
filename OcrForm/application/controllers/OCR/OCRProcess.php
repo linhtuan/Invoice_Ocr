@@ -308,9 +308,9 @@ class InvoiceInfo
        // $invoiceInfo->PONumber = $PO;
         
         //Get Subtotal
-        $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
-        $invoiceInfo->SubTotal = $subtotal;
-         echo $subtotal->value;
+        //$subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
+        //$invoiceInfo->SubTotal = $subtotal;
+        //echo $subtotal->value;
         //Gettotal
        // $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
       //  $invoiceInfo->Total = $Total;

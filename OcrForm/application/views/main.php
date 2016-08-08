@@ -83,8 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
        
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
         <div id="divLeft" class="ds-demo-left ds-demo-inline-block ds-demo-border-light-grey" style="width: 508px; height: 650px;">
-            <!-- dwtcontrolContainer is the default div id for Dynamic Web TWAIN control.
-             If you need to rename the id, you should also change the id in the dynamsoft.webtwain.config.js accordingly. -->
+            
             <div id="dwtcontrolContainer"></div>
         </div>
         <div class="ds-demo-left ds-demo-bright-grey ds-demo-inline-block ds-demo-padding-large ds-demo-center ds-demo-border-light-grey" style="width: 470px; height: 650px;">
@@ -173,11 +172,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tr>
                                 <td>
                                     <div class="form-group">
-                                        <?php
-                                        //Test
-                                        
-                                       echo $total;
-                                        ?>
                                         <input class="form-control">
                                     </div>
                                 </td>
@@ -407,6 +401,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
         </div>
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-primary" id="update">Default button</button>
+            <button type="button" class="btn btn-primary">Default button</button>
+        </div>
     </div>
     
 </div>
@@ -414,5 +412,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
 </body>
 </html>
