@@ -14,7 +14,7 @@ var ocrCtrl = function (){
     
     var getInvoiceData = function(){
         return $.ajax({
-            url: 'http://localhost:8080/OcrForm/index.php/Welcome/GetInvoiceData',
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/getinvoicedata',
             //dataType: 'json',
             type: 'POST',
             //contentType: 'application/json; charset=utf-8',
@@ -41,6 +41,9 @@ $(document).on('click', '.data-binding', function (event) {
 });
 
 $(document).on('click', '#update', function (event) {
-   ocrCtrl.getInvoiceData();
+   var invoiceData = ocrCtrl.getInvoiceData();
+   $.when(invoiceData).then(function (data) {
+       
+   });
 });
 

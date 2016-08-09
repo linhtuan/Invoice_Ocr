@@ -34,17 +34,4 @@ class Welcome extends CI_Controller {
                 //
 	}
         
-        public function GetInvoiceData(){
-            $query = $this->db->get('tbinvoiceinfo');
-            $data = array();
-            foreach ($query->result() as $row)
-            {
-                $data = $row;
-            }
-            echo json_encode($data);
-        }
-        
-        public function Demo(){
-            echo "test";
-        }
 }
