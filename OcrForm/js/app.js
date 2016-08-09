@@ -43,9 +43,10 @@ var obj;
 $(document).on('click', '#loadInvoice', function (event) {
    var invoiceData = ocrCtrl.getInvoiceData();
    $.when(invoiceData).then(function (reuslt) {
-       $('#invoiceInfoTemplate').tmpl(JSON.parse(reuslt)).appendTo('#hearder');
-       $('#invoiceListTemplate').tmpl(JSON.parse(reuslt)).appendTo('#bodyInvoice');
-       $('#invoiceFooterTemplate').tmpl(JSON.parse(reuslt)).appendTo('#footer');
+       var obj = JSON.parse(reuslt);
+       $('#invoiceInfoTemplate').tmpl(obj.InvoiceInfo).appendTo('#hearder');
+       $('#invoiceListTemplate').tmpl(obj.InvoiceInfo).appendTo('#bodyInvoice');
+       $('#invoiceFooterTemplate').tmpl(obj.InvoiceInfo).appendTo('#footer');
    });
 });
 

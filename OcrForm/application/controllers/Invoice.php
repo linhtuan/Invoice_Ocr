@@ -14,8 +14,11 @@ class Invoice extends CI_Controller {
             
             $queryInvoiceInfo = $this->db->get('tblistitem');
             $this->invoices_model->InvoiceListItem = $queryInvoiceInfo->result();
-            
-            echo json_encode($this->invoices_model);
+            $data = array(
+            'InvoiceInfo' => $this->invoices_model->InvoiceInfo,
+            'InvoiceListItem' => $this->invoices_model->InvoiceListItem
+            );
+            echo json_encode($data);
         }
 }
 
