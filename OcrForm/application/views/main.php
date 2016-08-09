@@ -339,30 +339,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
+                    <th>Invoice Date</th>
+                    <th>Invoice Number</th>
+                    <th>Account Number</th>
+                    <th>Terms</th>
+                    <th>PO Number</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <td>08-08-2016</td>
+                    <td>1234</td>
+                    <td>12243</td>
+                    <td>Net 123</td>
+                    <td>3456789</td>
                 </tr>
                 <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
+                     <td>08-08-2016</td>
+                    <td>1234</td>
+                    <td>12243</td>
+                    <td>Net 123</td>
+                    <td>3456789</td>
                 </tr>
                 <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
+                     <td>08-08-2016</td>
+                    <td>1234</td>
+                    <td>12243</td>
+                    <td>Net 123</td>
+                    <td>3456789</td>
                 </tr>
             </tbody>
         </table>   
@@ -379,9 +383,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="col-sm-12">INVOICE TOTAL</div>
 </div>
 <div class="col-sm-4">
-    <div class="col-sm-12 text-right">1</div>
+    <div class="col-sm-12 text-right">${Total}</div>
     <div class="col-sm-12 text-right">2</div>
-    <div class="col-sm-12 text-right">3</div>
+    <div class="col-sm-12 text-right">${Tax}</div>
     <div class="col-sm-12 text-right">1</div>
 </div>
 </script>

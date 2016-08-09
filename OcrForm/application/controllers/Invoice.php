@@ -7,13 +7,15 @@
  */
 class Invoice extends CI_Controller {
         public function GetInvoiceData(){
+            $this->load->model('invoices_model');
+            
             $query = $this->db->get('tbinvoiceinfo');
-            $data = array();
-            foreach ($query->result() as $row)
-            {
-                $data = $row;
-            }
-            echo json_encode($data);
+            $this->invoices_model->InvoiceInfo = $query->first_row();
+            
+            $queryInvoiceInfo = $this->db->get('tblistitem');
+            $this->invoices_model->InvoiceListItem = $queryInvoiceInfo->result();
+            
+            echo json_encode($this->invoices_model);
         }
 }
 
