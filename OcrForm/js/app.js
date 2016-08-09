@@ -45,7 +45,7 @@ $(document).on('click', '#loadInvoice', function (event) {
    $.when(invoiceData).then(function (reuslt) {
        var obj = JSON.parse(reuslt);
        $('#invoiceInfoTemplate').tmpl(obj.InvoiceInfo).appendTo('#hearder');
-       $('#invoiceListTemplate').tmpl(obj.InvoiceInfo).appendTo('#bodyInvoice');
+       $('#invoiceListTemplate').tmpl(obj).appendTo('#bodyInvoice');
        $('#invoiceFooterTemplate').tmpl(obj.InvoiceInfo).appendTo('#footer');
    });
 });
