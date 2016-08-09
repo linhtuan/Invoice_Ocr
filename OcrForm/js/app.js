@@ -39,11 +39,11 @@ $(document).on('click', '.data-binding', function (event) {
    
    ocrCtrl.bindingInput(dataObj, id);
 });
-
+var obj;
 $(document).on('click', '#update', function (event) {
    var invoiceData = ocrCtrl.getInvoiceData();
-   $.when(invoiceData).then(function (data) {
-       
+   $.when(invoiceData).then(function (reuslt) {
+       $('#invoiceInfoTemplate').tmpl(JSON.parse(reuslt)).appendTo('#hearder');
    });
 });
 

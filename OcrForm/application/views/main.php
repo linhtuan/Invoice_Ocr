@@ -270,43 +270,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="col-sm-12">
-                            Walton, Inc
-                        </div>
-                        <div class="col-sm-12">
-                            123 mains st
-                        </div>
-                        <div class="col-sm-12">
-                            Elk Grover. IL 66013
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="col-sm-12">
-                            <div class="row panel panel-default">
-                                 <div class="col-sm-12">
-                                    <div class="col-sm-6">Invoice No:</div>
-                                    <div class="col-sm-6 text-right">11996</div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="col-sm-6">Amount Due:</div>
-                                    <div class="col-sm-6 text-right">867.78</div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="col-sm-7">Account number:</div>
-                                    <div class="col-sm-5 text-right">21079</div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="col-sm-6">Telephone:</div>
-                                    <div class="col-sm-6 text-right">(716) 956-2155</div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="col-sm-6">Page 1 of 1</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row" id="hearder">
+                    
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
@@ -409,8 +374,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     
 </div>
 
+<script id="invoiceInfoTemplate" type="text/x-jquery-tmpl">
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+        ${VendorName}
+        </div>
+        <div class="col-sm-12">
+            ${VendorAddress}
+        </div> 
+    </div>
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <div class="row panel panel-default">
+                 <div class="col-sm-12">
+                    <div class="col-sm-6">Invoice No:</div>
+                    <div class="col-sm-6 text-right">${InvoiceNumber}</div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-6">Amount Due:</div>
+                    <div class="col-sm-6 text-right">${InvoiceNumber}</div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-7">Account number:</div>
+                    <div class="col-sm-5 text-right">21079</div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-6">Telephone:</div>
+                    <div class="col-sm-6 text-right">(716) 956-2155</div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-6">Page 1 of 1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="invoiceListTemplate" type="text/x-jquery-tmpl">
+
+</script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
 </body>

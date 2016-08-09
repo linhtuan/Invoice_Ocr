@@ -1,0 +1,20 @@
+
+insert into ocr.tbtemplate (
+TemplateName, CustomerID, InvoiceIDKey, InvoiceDirection,
+InvoiceDateKey, InvoiceDateDirection, PONumberKey, PONumberDirection,
+VendorName, TotalKey, TotalDirection, TaxKey, TaxDirection,
+ShippingKey, ShippingDirection, SubTotalKey, SubTotalDirection, TipKey, TipDirection, Address)
+values (
+1234567, 1, 'invoice id', 1234,
+'invoice date', 23445, 'Po number', 1234,
+'demov2', 'Total', 124, 'Tax', 1234,
+'Shipping', 124, 'Sub Total', 2456, 'Tip', 12456, 1243
+)
+
+
+
+insert into tbinvoiceinfo(CustomerID, TemplateID, FileInfoID, VendorName, Date, InvoiceNumber, VendorAddress, PONumber, Subtotal, Tax, Other, Shipping, Discount, Total, Tip)
+values(1,1,1, 'demov1', NOW(), '123456', 'hanoi', 'po-12554', 10, 11, 12, 13, 14, 15, 16)
+
+
+insert into tbfileinfo(PathName, CustomerID, TemplateID, Text) values ('E:\Temp\Image#2016-08-07_2235_003.png', 1, 1, 'demo')
