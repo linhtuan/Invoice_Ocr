@@ -40,10 +40,12 @@ $(document).on('click', '.data-binding', function (event) {
    ocrCtrl.bindingInput(dataObj, id);
 });
 var obj;
-$(document).on('click', '#update', function (event) {
+$(document).on('click', '#loadInvoice', function (event) {
    var invoiceData = ocrCtrl.getInvoiceData();
    $.when(invoiceData).then(function (reuslt) {
        $('#invoiceInfoTemplate').tmpl(JSON.parse(reuslt)).appendTo('#hearder');
+       $('#invoiceListTemplate').tmpl(JSON.parse(reuslt)).appendTo('#bodyInvoice');
+       $('#invoiceFooterTemplate').tmpl(JSON.parse(reuslt)).appendTo('#footer');
    });
 });
 

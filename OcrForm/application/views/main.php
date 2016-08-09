@@ -150,7 +150,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             
             <div class="col-sm-3">
                 <div class="form-group">
-
+                    <button type="button" class="btn btn-primary" id="loadInvoice">Load Invoice</button>
                 </div>
             </div>
 
@@ -281,88 +281,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Username</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>   
-                    </div>
+                <div class="row" id="bodyInvoice">
+                    
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Username</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td class="text-right">@mdo</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td class="text-right">@fat</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td class="text-right">@twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>   
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">5 Lines Total</div>
-                    <div class="col-sm-4">
-                        <div class="col-sm-12">TOTAL</div>
-                        <div class="col-sm-12">FREIGHT IN</div>
-                        <div class="col-sm-12">TAXED</div>
-                        <div class="col-sm-12">INVOICE TOTAL</div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="col-sm-12 text-right">1</div>
-                        <div class="col-sm-12 text-right">2</div>
-                        <div class="col-sm-12 text-right">3</div>
-                        <div class="col-sm-12 text-right">1</div>
-                    </div>
+                <div class="row" id="footer">
+                    
                 </div>
             </div>
         </div>
@@ -411,7 +334,56 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </script>
 
 <script id="invoiceListTemplate" type="text/x-jquery-tmpl">
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+            </tbody>
+        </table>   
+    </div>
+</div>
+</script>
 
+<script id="invoiceFooterTemplate" type="text/x-jquery-tmpl">
+<div class="col-sm-4">5 Lines Total</div>
+<div class="col-sm-4">
+    <div class="col-sm-12">TOTAL</div>
+    <div class="col-sm-12">FREIGHT IN</div>
+    <div class="col-sm-12">TAXED</div>
+    <div class="col-sm-12">INVOICE TOTAL</div>
+</div>
+<div class="col-sm-4">
+    <div class="col-sm-12 text-right">1</div>
+    <div class="col-sm-12 text-right">2</div>
+    <div class="col-sm-12 text-right">3</div>
+    <div class="col-sm-12 text-right">1</div>
+</div>
 </script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
