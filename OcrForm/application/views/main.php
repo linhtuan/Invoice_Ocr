@@ -294,6 +294,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     
                 </div>
             </div>
+            <div class="col-sm-12" id="invoiceImage">
+                <img id="images" src="http://localhost:8080/OcrForm/image/2-2.jpg" class="hidden">
+                <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
+            </div>
         </div>
         <div class="col-sm-12 text-center">
             <button type="button" class="btn btn-primary" id="update">Save Invoice</button>
@@ -386,5 +390,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>
+<script type = 'text/javascript'>
+    $(document).ready(function () {
+        canvas = document.getElementById("canvas");
+        var image = document.getElementById("images");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        init();
+    });
+</script>
 </body>
 </html>
