@@ -390,14 +390,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
+
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>
 <script type = 'text/javascript'>
     $(document).ready(function () {
-        canvas = document.getElementById("canvas");
-        var image = document.getElementById("images");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        init();
+//        canvas = document.getElementById("canvas");
+//        var image = document.getElementById("images");
+//        canvas.width = image.width;
+//        canvas.height = image.height;
+//        init();
     });
 </script>
 </body>
