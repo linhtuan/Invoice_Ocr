@@ -15,10 +15,10 @@ var ocrCtrl = function (){
     var getInvoiceData = function(){
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/getinvoicedata',
-            //dataType: 'json',
+            dataType: 'json',
             type: 'POST',
-            //contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify({ batchId: rtb.getQueryVariable('id') })
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ contactId: 1 })
         });
     };
     
@@ -39,14 +39,23 @@ $(document).on('click', '.data-binding', function (event) {
    
    ocrCtrl.bindingInput(dataObj, id);
 });
-var obj;
+
 $(document).on('click', '#loadInvoice', function (event) {
    var invoiceData = ocrCtrl.getInvoiceData();
    $.when(invoiceData).then(function (reuslt) {
-       var obj = JSON.parse(reuslt);
+       
+       var obj = reuslt;
+       console.log(obj);
        $('#invoiceInfoTemplate').tmpl(obj.InvoiceInfo).appendTo('#hearder');
        $('#invoiceListTemplate').tmpl(obj).appendTo('#bodyInvoice');
        $('#invoiceFooterTemplate').tmpl(obj.InvoiceInfo).appendTo('#footer');
    });
+});
+
+
+$(document).on('keydown', '.data-binding', function (event) {
+    if (event.which == 13) {
+        
+    }
 });
 

@@ -12,11 +12,14 @@ class Invoice extends CI_Controller {
             $query = $this->db->get('tbinvoiceinfo');
             $this->invoices_model->InvoiceInfo = $query->first_row();
             
+            $id = $this->input->post('contactId');
+            $array = array('InvoiceInfoID' => $this->invoices_model->InvoiceInfo->ID);
+            $this->db->where($array);
             $queryInvoiceInfo = $this->db->get('tblistitem');
             $this->invoices_model->InvoiceListItem = $queryInvoiceInfo->result();
             $data = array(
-            'InvoiceInfo' => $this->invoices_model->InvoiceInfo,
-            'InvoiceListItem' => $this->invoices_model->InvoiceListItem
+                'InvoiceInfo' => $this->invoices_model->InvoiceInfo,
+                'InvoiceListItem' => $this->invoices_model->InvoiceListItem
             );
             echo json_encode($data);
         }

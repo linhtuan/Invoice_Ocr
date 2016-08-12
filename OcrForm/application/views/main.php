@@ -164,25 +164,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <thead>
                             <tr>
                                 <th>Invoice Number</th>
-                                <th>Invoice Date</th>
-                                <th>PO Number</th>
+                                <th>Amount Due</th>
+                                <th>Account number</th>
+                                <th>Telephone</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding" id="InvoiceNumber">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control  data-binding" id="InvoiceNumber">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
+                                    </div>
+                                </td>
+                                 <td>
+                                    <div class="form-group">
+                                        <input class="form-control  data-binding">
                                     </div>
                                 </td>
                             </tr>
@@ -203,22 +209,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tr>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control  data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control  data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control  data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
                                     </div>
                                 </td>
                             </tr>
@@ -239,22 +245,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tr>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input class="form-control">
+                                        <input class="form-control data-binding">
                                     </div>
                                 </td>
                             </tr>
@@ -289,16 +295,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
         </div>
-        <div class="col-sm-12">
-            <button type="button" class="btn btn-primary" id="update">Default button</button>
-            <button type="button" class="btn btn-primary">Default button</button>
+        <div class="col-sm-12 text-center">
+            <button type="button" class="btn btn-primary" id="update">Save Invoice</button>
         </div>
     </div>
     
 </div>
 
 <script id="invoiceInfoTemplate" type="text/x-jquery-tmpl">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div class="col-sm-12">
         ${VendorName}
         </div>
@@ -306,7 +311,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             ${VendorAddress}
         </div> 
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <div class="col-sm-12">
             <div class="row panel panel-default">
                  <div class="col-sm-12">
@@ -339,35 +344,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th>Invoice Date</th>
-                    <th>Invoice Number</th>
-                    <th>Account Number</th>
-                    <th>Terms</th>
-                    <th>PO Number</th>
+                    <th>Description</th>
+                    <th>QTY</th>
+                    <th>UM</th>
+                    <th>Discount</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
+                {{each InvoiceListItem}}
                 <tr>
-                    <td>08-08-2016</td>
-                    <td>1234</td>
-                    <td>12243</td>
-                    <td>Net 123</td>
-                    <td>3456789</td>
+                    <td>${$value.Description}</td>
+                    <td>${$value.QTY}</td>
+                    <td>${$value.UM}</td>
+                    <td>${$value.Discount}</td>
+                    <td>${$value.Total}</td>
                 </tr>
-                <tr>
-                     <td>08-08-2016</td>
-                    <td>1234</td>
-                    <td>12243</td>
-                    <td>Net 123</td>
-                    <td>3456789</td>
-                </tr>
-                <tr>
-                     <td>08-08-2016</td>
-                    <td>1234</td>
-                    <td>12243</td>
-                    <td>Net 123</td>
-                    <td>3456789</td>
-                </tr>
+                {{/each}}
             </tbody>
         </table>   
     </div>
@@ -375,7 +368,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </script>
 
 <script id="invoiceFooterTemplate" type="text/x-jquery-tmpl">
-<div class="col-sm-4">5 Lines Total</div>
 <div class="col-sm-4">
     <div class="col-sm-12">TOTAL</div>
     <div class="col-sm-12">FREIGHT IN</div>
