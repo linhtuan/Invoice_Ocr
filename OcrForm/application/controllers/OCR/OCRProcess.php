@@ -32,19 +32,28 @@ class InvoiceInfo
     public  $SubTotal;
     public  $TotalTax;
     public  $Shipping;
+    public  $Terms;
 
 }
 
-
+//$OCRListArray = array();
  // class OCRProcess extends CI_Controller{
        
-   function CallGGAPI($pathFile)
+   function CallGGAPI($pathFile,$pageNum)
     {
         $type = 'TEXT_DETECTION';
-        $data = file_get_contents($pathFile);
-         $base64 = base64_encode($data);
+        //Check if file is pdf page
+        if($pageNum>=0)
+        {
+            $base64 = Pdf2Image($pathFile, $pageNum);
+        }
+        else {
+             $data = file_get_contents($pathFile);
+             $base64 = base64_encode($data);    
+        }
+             
             //Create this JSON
-            $request_json = '{
+         $request_json = '{
 			  	"requests": [
 					{
 					  "image": {
@@ -105,20 +114,46 @@ class InvoiceInfo
 			
 		}
                 
-              //  echo $returnArray[0]->description;
+            
 	return  $returnArray;
     }
     
-     function checkStringIsNumber($new_str)
+    function MergerAllWordToLine($OCRArray,$anglePopular)
     {
-      
+        for ($i = 1; $i < count($OCRArray) - 1; $i++)
+            {
+                $thress = ($OCRArray[$i]->X2 - $OCRArray[$i]->X1) / strlen($OCRArray[$i]->description);
+              
+                if (abs($OCRArray[$i]->X2 - $OCRArray[$i + 1]->X1) < (3 * $thress))
+                {
+                     if (Check2BillIsLine($OCRArray[$i], $OCRArray[$i + 1],TRUE,$anglePopular,TRUE ))
+                     {
+                            $OCRArray[$i]->description = $OCRArray[$i]->description ." ". $OCRArray[$i + 1]->description;
+                            
+                            $OCRArray[$i]->X2 = $OCRArray[$i+1]->X2;
+                            $OCRArray[$i]->Y2 = $OCRArray[$i+1]->Y2;
+                            $OCRArray[$i]->X3 = $OCRArray[$i+1]->X3;
+                            $OCRArray[$i]->Y3 = $OCRArray[$i+1]->Y3;
+                            array_splice($OCRArray,$i+1,1);
+                           
+                            $i--;
+                     }
+                
+                }
+            }
+         
+            return $OCRArray;
+    }
+    
+    function checkStringIsNumber($new_str)
+    {
         if(is_numeric($new_str) ) //Check string is Int
         {
            return TRUE;
         }
         else
         {
-            if(is_numeric($new_str) && strpos($new_str, ".") !== false) //Check string is double
+            if(is_numeric($new_str) && strpos($new_str, ".") != false) //Check string is double
             {
                 return TRUE;
             }
@@ -127,24 +162,9 @@ class InvoiceInfo
         return FALSE;
     }
 
-   function Check2BillIsLine($b1,$b2,$vertycal,$anglePopular)
+   function Check2BillIsLine($b1,$b2,$vertycal,$anglePopular,$isMerger)
     {      
-         if ($b1->X1 > $b2->X1)
-            {
-                return FALSE;
-            }
-            if($vertycal)
-            {
-                 if(abs($b1->Y4 - $b2->Y4)<abs(($b1->Y1-$b1->Y3)))//Case vetycal
-                    {
-                  //      return TRUE;
-                    }
-            }
-            else //Horyzoltal
-            {
-                
-            }
-            
+        
             //////////////////////////////////////////////////////////////////
             $angle1 = GetAngleOfLine($b1->X4, $b1->Y4, $b1->X3, $b1->Y3);
             $p1_4 = new Point();
@@ -175,17 +195,27 @@ class InvoiceInfo
             $dt1 = DistanceFromPoint2Line($A1, $B1, $C1, $p2_4);
             $dt2 = DistanceFromPoint2Line($A1, $B1, $C1, $newP2_3);
              
-            if ($dt1 < abs($b1->Y4 - $b1->Y1) && $dt2 < abs($b1->Y4 - $b1->Y1))
+            if($isMerger)
             {
-                echo "    ";
-            echo $dt1;
-            echo "    ";
-            echo $dt2;
-                return TRUE;
+                if($dt1<15 && $dt2<15)
+                {
+                    if ($dt1 < abs($b1->Y4 - $b1->Y1) && $dt2 < abs($b1->Y4 - $b1->Y1))
+                    {    
+                        return TRUE;
+                    }
+                }
+            }
+            else
+            {  
+             //   echo "<br> dt1: ".$dt1 ." dt2: ".$dt2 . " value:".$b2->description;
+                if ($dt1 < abs($b1->Y4 - $b1->Y1) && $dt2 < abs($b1->Y4 - $b1->Y1))
+                {    
+                    return TRUE;
+                }
             }
             return FALSE;
     }
-     function GetValueOfPriceByKey($key,$OCRArray,$anglePopular)
+   function GetValueOfPriceByKey($key,$OCRArray,$anglePopular)
     {
          $index=0;
             for ($i = 0; $i < count($OCRArray) ; $i ++)
@@ -194,10 +224,11 @@ class InvoiceInfo
                  if(strcasecmp($key,$itemOCR->description)==0)
                  {
                      $index=$i;
+                     // echo "Thien Anh" .$itemOCR->description;
                      break;
                  }
             }
-            echo $index;
+           
             if($index>0)
             {
                 $itemFound = $OCRArray[$index];
@@ -209,12 +240,11 @@ class InvoiceInfo
                           //Mapping $itemFound keyword with value
                           $dis = $itemOCR->description;
                            //Replase some special charactor
-                          $dis = str_replace(array(' ', '$', '-'), ' ', $dis);
-                          $dis = str_replace(',', '.', $dis);
+                          $dis = str_replace(array(' ', '$', '-'), '', $dis);
+                          $dis = str_replace(',', '', $dis);
                          if(checkStringIsNumber($dis))
                          {
-                             
-                             if(Check2BillIsLine($itemFound,$itemOCR,TRUE,$anglePopular))
+                           if(Check2BillIsLine($itemFound,$itemOCR,TRUE,$anglePopular,FALSE))
                              {
                               //   echo $dis;
                              //    echo '<br>';
@@ -246,57 +276,177 @@ class InvoiceInfo
                 return $result;
             }
         }
+        return $result;
     }
-    
-    function GetBillIDByKey($OCRArray,$key)
+    function GetInvoiceIDorDateByKeyInItem($OCRArray,$key,$isDate)
+        {
+          $result =new KeyValue();
+           for($i=1; $i<count($OCRArray);$i++)
+           {
+                $itemOCR = $OCRArray[$i];
+          
+                $description = $itemOCR->description;
+                $index = strpos(strtoupper($description),strtoupper($key));
+                if ($index ===FALSE)
+                {
+                    continue;
+                }
+                else
+                {
+                    
+                    if (ValidateBillOrDate($description,$isDate))
+                    {
+                        $value = substr($description,$index + strlen($key));
+                        $result->value = $value;
+                        $point = new Point();
+                         $point->X = $itemOCR->X1;
+                         $point->Y = $itemOCR->Y1;
+                         $result->point= $point;
+                        return $value;
+                        //return word.Replace(key, "");
+                    }
+                }
+            }
+
+            return "";
+        }
+
+   
+    function GetInvoiceIDorDateByKey($OCRArray,$key,$isDate)
     {
         $labelItems = array();
-        $billID ="";
+        $result =new KeyValue();
         foreach ($OCRArray as $itemOCR)
         {
-             if(strcasecmp($key,$itemOCR->description)==0)
+             if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
              {
                  $labelItems[] = $itemOCR;
              }
         }
         
         if (count($labelItems) == 0)
-                    return $billID;
+                    return $result;
         
-         for ($n = 0; n < count($labelItems); $n++)
+         for ($n = 0; $n < count($labelItems); $n++)
             {
-                $labelItem = $labelItems[n];
-                for ($i = 0; $i < count($OCRArray); $i++)
+                $labelItem = $labelItems[$n];
+                for ($i = 1; $i < count($OCRArray); $i++)
                 {
-                     $item = $OCRArray[i];
+                     $item = $OCRArray[$i];
                       if(strcasecmp($labelItem->description,$itemOCR->description)==0)
                         {
                           continue;
                         }
+                        if (ValidateBillOrDate($item->description,$isDate)==FALSE) continue;
+                        
+                        if (abs($labelItem->Y4 - $item->Y4) < 5 &&
+                        (($item->X1 - $labelItem->X2) < ($item->X2 - $item->X1 + $labelItem->X2 - $labelItem->X2) 
+                                && ($item->X2 - $labelItem->X1) > 0)) //horizontal
+                        {
+                             {
+                                $result->value = $item->description;
+                                $point = new Point();
+                                $point->X = $item->X1;
+                                $point->Y = $item->Y1;
+                                $result->point= $point;
+                                return $result;
+                            }
+                        }
+                        else
+                        {
+                            if (($item->Y1 - $labelItem->Y4) < (5 * ($item->Y4 - $item->Y1)) && ($item->Y1 - $labelItem->Y1) > 0)//Vertycal
+                            {
+
+                                if ((abs($item->X1 - $labelItem->X1) < 7) || (abs(($item->X1 + $item->X2) / 2 - ($labelItem->X1 + $labelItem->X2) / 2) < 30))
+                                {
+                                     $result->value = $item->description;
+                                    $point = new Point();
+                                    $point->X = $item->X1;
+                                    $point->Y = $item->Y1;
+                                    $result->point= $point;
+                                    return $result;
+                                }
+                                else
+                                {
+                                    if (abs($labelItem->Y4 - $item->Y4) < 5) //horizontal
+                                    {
+                                        if (($item->X2 - $labelItem->X1) > 0)
+                                        {
+                                             $result->value = $item->description;
+                                            $point = new Point();
+                                            $point->X = $item->X1;
+                                            $point->Y = $item->Y1;
+                                            $result->point= $point;
+                                            return $result;
+                                        }
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (abs($labelItem->Y4 - $item->Y4) < 5) //horizontal
+                                {
+                                    if (($item->X2 - $labelItem->X1) > 0)
+                                    {
+                                         $result->value = $item->description;
+                                        $point = new Point();
+                                        $point->X = $item->X1;
+                                        $point->Y = $item->Y1;
+                                        $result->point= $point;
+                                        return $result;
+                                    }
+
+                                }
+                            }
+                        }
+                        
                 }
             }
+             return $result;
     }
-    function GetInvoiceID($OCRArray,$groupKeysBillID)
+    function GetInvoiceIDOrDate($OCRArray,$groupKeysBillID,$isDate)
     {
+         $result = new KeyValue();
         foreach ($groupKeysBillID as $key)
         {
-            
+         
+             $ret = GetInvoiceIDorDateByKey( $OCRArray,$key,$isDate);
+             if(empty($ret->value)==FALSE)
+             {
+                 $result = $ret;
+                 $result->label=$key;
+               
+                 return $result;
+             }
         }
+        //If not have $result, check it in item
+        foreach ($groupKeysBillID as $key)
+        {               
+          $ret = GetInvoiceIDorDateByKeyInItem($OCRArray,$key,$isDate);
+          if (!empty($ret->value))
+          {
+           $result = $ret;
+            $result->label=$key;
+            return $result;
+          }
+        }
+           
+        return $result;
     }
-    function GetInvoiceInfor($OCRArray)
+    function GetInvoiceInfor($OCRArray,$anglePopular)
     {
         $invoiceInfo = new InvoiceInfo();
         
         //Calculate $anglePopular
-        $anglePopular = AnglePopular($OCRArray);
-         echo $anglePopular;
-         echo "  aaa";
+      
+         
        // $invoiceID = new KeyValue();
-        $invoiceIDKey = array('invoice id','bill id', 'invoice number', 'invoice no');
-        $invoiceDateKey=array('invoice date','bill date', 'date');
+      
         $POKey = array('invoice id','bill id', 'invoice number', 'invoice no');
-        $subTotalKey =array('sub-total','SubTotal');
-        $totalKey=array('Total','Invoice Total');
+        $subTotalKey =array('sub-total','SubTotal','SubTota');
+        $totalKey=array('Tota','Total','Invoice Total');
+        $taxKey=array('Tax','GTS','HST');
        // $taxKey=array
         
         //GetInvoidID
@@ -307,14 +457,90 @@ class InvoiceInfo
        // $PO = GetInvoiceInfoByKey($OCRArray,$POKey);
        // $invoiceInfo->PONumber = $PO;
         
-        //Get Subtotal
-        //$subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
-        //$invoiceInfo->SubTotal = $subtotal;
-        //echo $subtotal->value;
-        //Gettotal
-       // $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
-      //  $invoiceInfo->Total = $Total;
+  
+        $CustomerNumKey =array('Customer No.','Customer','Customer ID');
+        $CustomerNum = GetInvoiceIDOrDate($OCRArray,$CustomerNumKey,FALSE);
+        $invoiceInfo->VendorNumber = $CustomerNum;
+        echo '<br>Vendor Number : ';
+        echo $CustomerNum->value;
+         
+       
+         
+         
+        $invoiceIDKey =array('Invoice','invoice id','bill id', 'invoice number', 'invoice no');
+        $InvoiceID = GetInvoiceIDOrDate($OCRArray,$invoiceIDKey,FALSE);
+        $invoiceInfo->InvoiceID = $InvoiceID;
+        echo '<br>Invoice ID : ';
+        echo $InvoiceID->value;
+         
+         
+        $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
+        $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
+        $invoiceInfo->InvoiceDate = $InvoiceDate;
+        echo '<br>Invoice Date : ';
+        echo $InvoiceDate->value;
+         
+         
+         $groupTermsKey =array('Terms');
+         $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
+         $invoiceInfo->Terms = $Terms;
+         echo '<br>Terms ID : ';
+         echo $Terms->value;
+         
+         
+               //Get Subtotal
+        $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
+        $invoiceInfo->SubTotal = $subtotal;
+        echo '<br>Subtotal : ';
+        echo $subtotal->value;
+        
+        $Tax = GetInvoiceInfoByKey($OCRArray, $taxKey,$anglePopular); 
+        $invoiceInfo->TotalTax = $Tax;
+         echo '<br>Tax : ';
+         echo $Tax->value;
+          //Gettotal
+        $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
+        $invoiceInfo->Total = $Total;
+        echo '<br>Total : ';
+        echo $Total->value;
+         
+      
         return $invoiceInfo;
     }
-//}
+
+    
+    //////////////////////////////get text for user  manual edit////////////////////////////////
+    function GetTextByPosition($posX,$posY,$OCRListArray)
+    {
+        //foreach ($OCRListArray as $item)
+        for($i=1; $i<count($OCRListArray); $i++)
+        {
+            $item = $OCRListArray[$i];
+            if(CheckPointInRectangle($posX,$posY,$item->X1,$item->Y1,$item->X2,$item->Y2,$item->X3,$item->Y3,$item->X4,$item->Y4)>-1)
+            {
+                return $item->description;
+            }
+        }
+        
+        return "";
+    }
+    
+    function GetTextByRectangle($X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4,$OCRListArray)
+    {
+        $text="";
+       for($i=1; $i<count($OCRListArray); $i++)
+        {
+            $item = $OCRListArray[$i];
+            if(CheckPointInRectangle($item->X1,$item->Y1,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X2,$item->Y2,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X3,$item->Y3,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X4,$item->Y4,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1 )
+            {
+                //return $item->description;
+                $text = $text. " ". $item->description;
+            }
+        }
+        
+        return $text;
+    }
 

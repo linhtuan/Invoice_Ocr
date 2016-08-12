@@ -16,6 +16,6 @@ include_once 'creds.php'; // Get $bucket
 use google\appengine\api\cloud_storage\CloudStorageTools;
 
 $options = ['gs_bucket_name' => $bucket];
-$upload_url = CloudStorageTools::createUploadUrl('/process.php', $options);
+$upload_url = CloudStorageTools::createUploadUrl('/OCRProcess.php', $options);
 
 

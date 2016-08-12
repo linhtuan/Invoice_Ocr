@@ -11,8 +11,10 @@
  *
  * @author thienanh
  */
+include_once 'Point.php';
 class KeyValue{
     public $label;
     public $value;
     public $type;
+    public $point;
 }

@@ -7,6 +7,7 @@
  */
 include_once 'OCRValue.php';
 include_once 'Point.php';
+include_once 'pointLocation.php';
 /// <summary>
 /// Funtion get angle of line
 /// </summary>
@@ -99,16 +100,60 @@ function DistanceFromPoint2Line($A,$B,$C,$p)
         /// </summary>
         /// <param name="str">ID of bill</param>
         ///
-       function ValidateBill($str)
-        {
-           // str = str.Replace("~", "");
-            if (strlen($str) > 20) return FALSE;
-            if (strpos($str, 'Date') != FALSE) {
-                return FALSE;
-            }
-            if (strpos($str, 'Amount') != FALSE) {
-                return FALSE;
-            }
-           
-            return preg_match('/[0-9]/', $str);
+function ValidateBillOrDate($str,$isDate)
+{
+    if($isDate==TRUE)
+    {
+        //Validate str is date time
+       $arrayDate = date_parse($str);
+       $year = $arrayDate['year'];
+       $month = $arrayDate['month'];
+       $day = $arrayDate['day'];
+       
+       if(!empty($year) && !empty($month) && !empty($day))
+       {
+           return TRUE;
+       }
+      
+       return FALSE;
+    }
+    else
+    {
+          // str = str.Replace("~", "");
+        if (strlen($str) > 20) return FALSE;
+        if (strpos($str, 'Date') != FALSE) {
+            return FALSE;
         }
+        if (strpos($str, 'Amount') != FALSE) {
+            return FALSE;
+        }
+        
+         return preg_match('/[0-9]/', $str);
+    }
+    
+  
+}
+
+
+  function Pdf2Image($pathFile,$pageNum)
+    {
+        $im = new Imagick();
+        $im->setResolution(96, 96);     //set the resolution of the resulting jpg
+        $im->readImage('file.pdf['+$pageNum + ']');    //[0] for the first page
+        $im->setImageFormat('jpg');
+        header('Content-Type: image/jpeg');
+        
+        $imagedata = $im->getImageBlob();
+        $base64String = base64_decode($imagedata);
+        
+        return $base64String;
+    }
+    
+    
+function CheckPointInRectangle($posX,$posY,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)
+{
+    $pointLocation = new pointLocation();
+    $point = $posX." ".$posY;
+    $polygon = array($X1." ".$Y1,$X2." ".$Y2,$X3." ".$Y3,$X4." ".$Y4);
+    return $pointLocation->pointInPolygon($point, $polygon);
+}

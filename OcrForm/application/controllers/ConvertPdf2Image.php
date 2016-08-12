@@ -14,10 +14,10 @@
 class ConvertPdf2Image {
     //put your code here
     protected $pdfFile;
-    protected $resolution = 144;
+    protected $resolution = 96;
     protected $outputFormat = '';
     protected $page = 1;
-    protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
+    protected $validOutputFormats = ['jpg', 'jpeg'];
     /**
      * @param string $pdfFile The path to the pdffile.
      *
@@ -167,4 +167,6 @@ class ConvertPdf2Image {
         }
         return $outputFormat;
     }
+    
+    
 }
