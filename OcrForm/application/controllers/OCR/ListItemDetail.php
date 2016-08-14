@@ -7,6 +7,21 @@
  */
 include_once 'KeyValue.php';
 include_once 'OCRProcess.php';
+class GroupInItem{
+    public $listOCRValue;
+    public $P1;
+    public $P2;
+    public $P3;
+    public $P4;
+}
+class ColItem{
+    public $key;
+    public $isNumber;
+}
+class ItemTemplate{
+    public $listColItem;
+    
+}
 class ItemDetail{
     public $ID;
     public $POLineNumber;
@@ -29,14 +44,28 @@ class ItemDetail{
     public $ListOCRValue;
 }
 class ListItemDetail {
-    private static $OCRArray = array(); // Check if the point sits exactly on one of the vertices?
+    public static $OCRArray = array(); // Check if the point sits exactly on one of the vertices?
     public $keyArray = array();
     public static $anglePopular;
-    function ListItemDetail($inOCRArray,$inAnglePopular) {
-        self::$OCRArray =$inOCRArray;
-        self::$anglePopular = $inAnglePopular;  
-    }
+    public static $width=0;
+    public static $height=0;
     
+    function SetOcrArray($inOcrArray)
+    {
+        self::$OCRArray = $inOcrArray;
+    }
+    function SetAnglePopular($inAnglePopular)
+    {
+        self::$anglePopular = $inAnglePopular;
+    }
+    function SetWidth($inWidth)
+    {
+        self::$width = $inWidth;
+    }
+    function SetHeight($inHeight)
+    {
+        self::$height = $inHeight;
+    }
     function LoadKeyArray()
     {
         $keyArray = array('');
@@ -118,20 +147,18 @@ class ListItemDetail {
         $p1->X = $firstItem->X1;
         $p1->Y = $firstItem->Y1+5;
        
-        $angle2 = GetAngleOfLine($firstItem->X4, $firstItem->Y4, $firstItem->X3, $firstItem->Y3);
-       // echo  '<br>'. $p1->X .':'.$p1->Y;
-        $tmpp2 = new Point();
-        $tmpp2->X = $p1->X+2500;
-        $tmpp2->Y = $p1->Y;
-        $p2 = Rotate($p1, $tmpp2, 0,$angle2);
+        $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
+        $p1 = $newPoint12[0];
+        $p2 = $newPoint12[1];
+                
       //  echo '<br>'. $p2->X .':'.$p2->Y;
         $p4 = new Point();
         $p4->X = $firstItem->X1;
         $p4->Y = $nextItem->Y1-20;
-        $tmpp3 = new Point();
-        $tmpp3->X = $p1->X+2500;
-        $tmpp3->Y = $p4->Y;
-        $p3 = Rotate($p4, $tmpp3, 0,self::$anglePopular);
+       
+        $newPoint34 = GetNewPoint($p4, self::$anglePopular,self::$width);
+                 $p4 = $newPoint34[0];
+                 $p3 = $newPoint34[1];
       //  echo '<br>'. $p3->X .':'.$p3->Y;
        //  echo '<br>'. $p4->X .':'.$p4->Y;
       // 
@@ -151,7 +178,7 @@ class ListItemDetail {
         return $firstItemDetail;
     }
     
-    function GetListItem($firstItemDetail)
+   function GetListItem($firstItemDetail)
     {
         $bNotStopCheck=TRUE;
         $listItem = array();
@@ -193,19 +220,15 @@ class ListItemDetail {
             if($bNotStopCheck)
             {
               $p1 = new Point();
-                $p1->X = $nextItem->X1;
-                $p1->Y = $nextItem->Y1-5;
+              $p1->X = $nextItem->X1;
+              $p1->Y = $nextItem->Y1-5;
 
-                $angle2 = GetAngleOfLine($nextItem->X4, $nextItem->Y4, $nextItem->X3, $nextItem->Y3);
-               // echo  '<br>'. $p1->X .':'.$p1->Y;
-                $tmpp2 = new Point();
-                $tmpp2->X = $p1->X+2500;
-                $tmpp2->Y = $p1->Y;
-                $p2 = Rotate($p1, $tmpp2, 0,self::$anglePopular);
-                //Verify 
-                /////////////////////////////////
-                $nextItemTmp = new OCRValue();
-                $indexNextTmp = 0;
+              $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
+              $p1 = $newPoint12[0];
+              $p2 = $newPoint12[1];
+              
+              $nextItemTmp = new OCRValue();
+              $indexNextTmp = 0;
               
                 for($i =1; $i< count(self::$OCRArray);$i++)
                 {
@@ -215,7 +238,7 @@ class ListItemDetail {
                         if($this->CheckVertycalPosition($nextItem,$itemOCR)==TRUE)
                         {
                            $nextItemTmp = $itemOCR;
-                           $indexNextTmp=$i;
+                           $indexNextTmp= $i;
                           
                            break;
                         }
@@ -235,11 +258,10 @@ class ListItemDetail {
                     $p4->X = $nextItem->X1;
                     $p4->Y = $nextItem->Y4 + 2*($nextItem->Y4 -$nextItem->Y1);
                 }
-                $tmpp3 = new Point();
-                $tmpp3->X = $p1->X+2500;
-                $tmpp3->Y = $p4->Y;
-                $p3 = Rotate($p4, $tmpp3, 0,self::$anglePopular);
-                
+                 $newPoint34 = GetNewPoint($p4, self::$anglePopular,self::$width);
+                 $p4 = $newPoint34[0];
+                 $p3 = $newPoint34[1];
+             
                 $str = GetTextByRectangle($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);
                 $nextItemDetail = new ItemDetail();
                 $nextItemDetail->TopLeft=$p1;
@@ -270,13 +292,91 @@ class ListItemDetail {
       return  $listItem;
    }
    
+   function CheckDistanFromItem2Group($item,$group)
+   {
+           if(Check2LineOverlap($group->P1->X,$group->P2->X,$item->X1,$item->X2)==TRUE)
+                   return TRUE;
+           $space = ($item->X2 - $item->X1 )/strlen($item->description);
+          // echo "Space  :".$space;
+            if(abs($group->P2->X - $item->X1) < 2*$space)
+            {
+                    return TRUE;
+            }
+            
+
+            return false;
+   }
+   function ClusterringListItem($listItem)
+   {
+       $listGroup = array();
+       $firstGroup = new GroupInItem();
+       $firstGroup->listOCRValue = array();
+       $firstGroup->listOCRValue[] = $listItem[0];
+       $firstGroup->P1 = new Point();
+       $firstGroup->P1->X = $firstGroup->listOCRValue[0]->X1;
+       $firstGroup->P1->Y = $firstGroup->listOCRValue[0]->Y1;
+       $firstGroup->P2 = new Point();
+       $firstGroup->P2->X = $firstGroup->listOCRValue[0]->X2;
+       $firstGroup->P2->Y = $firstGroup->listOCRValue[0]->Y2;
+       $firstGroup->P3 = new Point();
+       $firstGroup->P3->X = $firstGroup->listOCRValue[0]->X3;
+       $firstGroup->P3->Y = $firstGroup->listOCRValue[0]->Y3;
+       $firstGroup->P4 = new Point();
+       $firstGroup->P4->X = $firstGroup->listOCRValue[0]->X4;
+       $firstGroup->P4->Y = $firstGroup->listOCRValue[0]->Y4;
+       $listGroup[] = $firstGroup;
+       $bNew = FALSE;
+       for($i=1; $i<count($listItem);$i++)
+       {
+           $bNew = TRUE;
+           for($j=0; $j<count($listGroup); $j++)
+            {
+               if($this->CheckDistanFromItem2Group($listItem[$i],$listGroup[$j]))
+               {
+                   $bNew = FALSE;
+                   $listGroup[$j]->listOCRValue[] = $listItem[$i];
+                   //Update new Point
+                    $listGroup[$j]->P1->X = min($listGroup[$j]->P1->X,$listItem[$i]->X1);
+                    $listGroup[$j]->P1->Y = min($listGroup[$j]->P1->Y,$listItem[$i]->Y1);
+                    $listGroup[$j]->P2->X = max($listGroup[$j]->P2->X,$listItem[$i]->X2);
+                    $listGroup[$j]->P2->Y = min($listGroup[$j]->P2->Y,$listItem[$i]->Y2);
+                    $listGroup[$j]->P3->X = max($listGroup[$j]->P3->X,$listItem[$i]->X3);
+                    $listGroup[$j]->P3->Y = max($listGroup[$j]->P3->Y,$listItem[$i]->Y3);
+                    $listGroup[$j]->P4->X = min($listGroup[$j]->P4->X,$listItem[$i]->X4);
+                    $listGroup[$j]->P4->Y = max($listGroup[$j]->P4->Y,$listItem[$i]->Y4);
+                    break;
+               }
+            } 
+            
+            if($bNew)
+            {
+                    $newGroup =new GroupInItem();
+                    $newGroup->listOCRValue = array();
+                    $newGroup->listOCRValue[] = $listItem[$i];
+                    $newGroup->P1 = new Point();
+                    $newGroup->P1->X = $newGroup->listOCRValue[0]->X1;
+                    $newGroup->P1->Y = $newGroup->listOCRValue[0]->Y1;
+                    $newGroup->P2 = new Point();
+                    $newGroup->P2->X = $newGroup->listOCRValue[0]->X2;
+                    $newGroup->P2->Y = $newGroup->listOCRValue[0]->Y2;
+                    $newGroup->P3 = new Point();
+                    $newGroup->P3->X = $newGroup->listOCRValue[0]->X3;
+                    $newGroup->P3->Y = $newGroup->listOCRValue[0]->Y3;
+                    $newGroup->P4 = new Point();
+                    $newGroup->P4->X = $newGroup->listOCRValue[0]->X4;
+                    $newGroup->P4->Y = $newGroup->listOCRValue[0]->Y4;
+                    $listGroup[] = $newGroup;
+            }
+       }
+      return $listGroup;
+   }
+   
    function ReSortOCRValueInItem($listOCRValue)
    {
-       
-      // $listOCRValue = $this->array_reorder_keys($listOCRValue,"X1");
+   
       usort($listOCRValue, array($this, "cmp"));
       
-       return $listOCRValue;
+     return $listOCRValue;
    }
    function cmp($a, $b)
     {
