@@ -23,14 +23,13 @@ var ocrCtrl = function (){
     };
     
     var getDataInPositions = function(listPositions){
+        var jsonData = JSON.stringify(listPositions);
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/getdatainpositions',
-            dataType: 'json',
             type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({ 
-                Positions: listPositions 
-            })
+            data: { 
+                data : jsonData 
+            }
         });
     };
     

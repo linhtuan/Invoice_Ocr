@@ -166,13 +166,17 @@ function CheckPointInPolygon($posX,$posY,$listPoint)
     $pointLocation = new pointLocation();
     $point = $posX." ".$posY;
     $polygon = array();
+    $str ="";
     foreach ($listPoint as $itemPoly)
     {
         $X = $itemPoly->X;
         $Y = $itemPoly->Y;
         $poly = $X." ".$Y;
+        $str = $str ."|".$X." ".$Y; 
+                
         $polygon[] = $poly;
     }
+    echo "<br>".$str;
  //   $polygon = array($X1." ".$Y1,$X2." ".$Y2,$X3." ".$Y3,$X4." ".$Y4);
     return $pointLocation->pointInPolygon($point, $polygon);
 }

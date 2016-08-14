@@ -46,29 +46,36 @@ class Invoice extends CI_Controller {
         }
         
         public function GetDataInPositions(){
-            $array = (array) $this->input->post('Positions');
-            echo json_encode($array[0]);
-            echo json_encode($array[1]);
-            echo json_encode($array[2]);
-            echo json_encode($array[3]);
-//            $listPoint = array();
-//            $p1 = new Point();
-//            $p1->X =133;
-//            $p1->Y =1435;
-//            $listPoint[]= $p1;
-//            $p2 = new Point();
-//            $p2->X =2495;
-//            $p2->Y =1475;
-//            $listPoint[]=$p2;
-//            $p3 = new Point();
-//            $p3->X =968;
-//            $p3->Y =591;
-//            $listPoint[]=$p3;
-//            $p4 = new Point();
-//            $p4->X =35;
-//            $p4->Y =551;
-//            $listPoint[]=$p4;
+            $data = json_decode(stripslashes($_POST['data']));
+            $listPoint = array();
+            $p1 = new Point();
+            $p1->X = $data[0]->X;
+            $p1->Y = $data[0]->Y;
+            $listPoint[] = $p1;
+            $p2 = new Point();
+            $p2->X = $data[1]->X;
+            $p2->Y = $data[1]->Y;
+            $listPoint[] = $p2;
+            $p3 = new Point();
+            $p3->X = $data[2]->X;
+            $p3->Y = $data[2]->Y;
+            $listPoint[] = $p3;
+            $p4 = new Point();
+            $p4->X = $data[3]->X;
+            $p4->Y = $data[3]->Y;
+            $listPoint[] = $p4;
             
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+            //   echo $s_Data;
+            $width=0;
+            $height =0;
+            $OCRArray = ParserJson2Object($s_Data,$width,$height);
+            $anglePopular = AnglePopular($OCRArray);
+
+            //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+            $str = GetTextByPolygon($listPoint,$OCRArray);
+            
+            echo json_encode($str);
         }
 }
 

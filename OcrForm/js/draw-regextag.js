@@ -5,26 +5,30 @@ $(function() {
     var isMouseDown = 0;
     var isDrawRectangle = false;
     var startX, startY, endX, endY;
-    var worksheetCanvas = $('#canvas');
-    var canvas = worksheetCanvas.get(0);
-    image = document.getElementById("images");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    var context = canvas.getContext("2d");
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    var imageSize = 100;
     var clicked = false;
-    
     var maxLines = 4;
     var lineNumberCount = 0;
-    
     var storedLines = [];
-    
     var storedLine = {};
-    var mouse = {
-        x: -1,
-        y: -1
-    };
+    var mouse = {x: -1,y: -1};
+    var ratioImage = 1;
+    var worksheetCanvas;
+    var canvas;
+    var context;
     
+    function BindingCanvas(){
+        imageSize = parseInt($('#imagesize').val());
+        ratioImage = (100/imageSize);
+        worksheetCanvas = $('#canvas');
+        canvas = worksheetCanvas.get(0);
+        image = document.getElementById("images");
+        canvas.width = image.width/ratioImage;
+        canvas.height = image.height/ratioImage;
+        context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+    BindingCanvas();
     worksheetCanvas.mousedown(function(k){
         if(!$('.binding-data').hasClass('active-binding-data')) return;
         if(isCtrlKeyDown == true){
@@ -47,15 +51,15 @@ $(function() {
         if(!$('.binding-data').hasClass('active-binding-data')) return;
         if(isDrawRectangle){
             var x1,y1,x2,y2,x3,y3,x4,y4;
-            x1 = x4 = startX;
-            x2 = x3 = endX;
-            y1 = y3 = startY;
-            y2 = y4 = endY;
+            x1 = x4 = startX * ratioImage;
+            x2 = x3 = endX * ratioImage;
+            y1 = y3 = startY * ratioImage;
+            y2 = y4 = endY * ratioImage;
             var arrayPosition = [];
-            arrayPosition.push({X: x1, Y: y1});
-            arrayPosition.push({X: x2, Y: y2});
-            arrayPosition.push({X: x3, Y: y3});
-            arrayPosition.push({X: x4, Y: y4});
+            arrayPosition.push({X: parseInt(x1), Y: parseInt(y1)});
+            arrayPosition.push({X: parseInt(x3), Y: parseInt(y3)});
+            arrayPosition.push({X: parseInt(x2), Y: parseInt(y2)});
+            arrayPosition.push({X: parseInt(x4), Y: parseInt(y4)});
             ocrCtrl.getDataInPositions(arrayPosition);
         }else{
             if(points.length == 4){
@@ -169,5 +173,9 @@ $(function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
     });
-
+    
+    $(document).on('click', '#imagesize', function (event) {
+        context.clearRect(0, 0, 0, 0);
+        BindingCanvas();
+    });
 });

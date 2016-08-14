@@ -21,14 +21,16 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-             $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
            
              //   echo $s_Data;
-              $OCRArray = ParserJson2Object($s_Data);
-              $anglePopular = AnglePopular($OCRArray);
-      
-              $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
-         
+            $width=0;
+            $height =0;
+            $OCRArray = ParserJson2Object($s_Data,$width,$height);
+            $anglePopular = AnglePopular($OCRArray);
+
+         //   $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+
          /*
               $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
               $total = $invoiceInfo->Total;
@@ -38,22 +40,22 @@ class Welcome extends CI_Controller {
              
             //  echo "<br>Text at(1701,271): ".$str;
               
-              $cListItem = new ListItemDetail($OCRArray,$anglePopular);
+            $cListItem = new ListItemDetail($OCRArray,$anglePopular);
            //  $str = $cListItem->GetFirstItemByKey('Number',true);
-             $listItem = $cListItem->GetListItemByKey('Unit Price');
+            $listItem = $cListItem->GetListItemByKey('LShipped');
               
-              foreach($listItem as $item)
-              {
-                  $OCRItemList=$item->ListOCRValue;
-                  $s="";
-                 foreach ($OCRItemList as $OCRitem)
-                 {
-                     $s = $s ." ".$OCRitem->description;
-                 }
-                  echo "<br>Item :".$s ;
-              }
-		$this->load->helper('url');
-		$this->load->view('main');
+            foreach($listItem as $item)
+            {
+                $OCRItemList=$item->ListOCRValue;
+                $s="";
+                foreach ($OCRItemList as $OCRitem)
+                {
+                    $s = $s ." ".$OCRitem->description;
+                }
+                echo "<br>Item :".$s ;
+            }
+            $this->load->helper('url');
+            $this->load->view('main');
                
                
                 //
