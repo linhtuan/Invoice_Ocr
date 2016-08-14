@@ -528,7 +528,7 @@ class InvoiceInfo
     function GetTextByRectangle($X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4,$OCRListArray)
     {
         $text="";
-       for($i=1; $i<count($OCRListArray); $i++)
+        for($i=1; $i<count($OCRListArray); $i++)
         {
             $item = $OCRListArray[$i];
             if(CheckPointInRectangle($item->X1,$item->Y1,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1

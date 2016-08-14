@@ -22,12 +22,27 @@ var ocrCtrl = function (){
         });
     };
     
+    var getDataInPositions = function(listPositions){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/getdatainpositions',
+            dataType: 'json',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ 
+                Positions: listPositions 
+            })
+        });
+    };
+    
     return {
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
         },
         getInvoiceData: function(){
             return getInvoiceData();
+        },
+        getDataInPositions: function(listPositions){
+            return getDataInPositions(listPositions);
         }
     };
 }(ocrCtrl);
@@ -52,6 +67,10 @@ $(document).on('click', '#loadInvoice', function (event) {
    });
 });
 
+$(document).on('click', '.binding-data', function (event) {
+    $('.binding-data').removeClass('active-binding-data')
+    $(this).addClass('active-binding-data');
+});
 
 $(document).on('keydown', '.data-binding', function (event) {
     if (event.which == 13) {

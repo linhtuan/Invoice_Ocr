@@ -21,7 +21,7 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-             $s_Data = file_get_contents('http://localhost:8080/OcrForm/5.json');
+             $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
            
              //   echo $s_Data;
               $OCRArray = ParserJson2Object($s_Data);

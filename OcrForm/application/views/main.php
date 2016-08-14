@@ -68,6 +68,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
         <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/ds.demo.css">
 	<link rel = "stylesheet" type = "text/css" href = "http://localhost:8080/OcrForm/css/bootstrap.min.css">
+        <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/app.css">
 </head>
 <body  class="ds-demo-main">
 
@@ -121,9 +122,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-sm-6">
             <div class="col-sm-6">
-                <div class="form-group">
-
-                </div>
+                
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
@@ -155,115 +154,121 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
     </div>
     <div id="body" class="row"> 
-        <div class="col-sm-6 panel">
-            <div class="col-sm-12 panel panel-default form">
-                <div>
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Invoice Number</th>
-                                <th>Amount Due</th>
-                                <th>Account number</th>
-                                <th>Telephone</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding" id="InvoiceNumber">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control  data-binding" id="InvoiceNumber">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                                 <td>
-                                    <div class="form-group">
-                                        <input class="form-control  data-binding">
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>   
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-6"><h4>Invoice header detail</h4></div>
+                            <div class="col-sm-6  text-right">
+                                <button type="button" class="btn btn-primary" id="clear-active">Clear Active</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6 from">
+                                <div class="form-group">
+                                    <label>Vender Name</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Vender Number</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Invoice Number</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Invoice Date</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>PO Number</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tax 1</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 from">
+                                <div class="form-group">
+                                    <label>Other</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Shipping</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Invoice Total</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Teams</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Global Disc %</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                                <div class="form-group">
+                                    <label>Global Disc %</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Tax 1</th>
-                                <th>Other</th>
-                                <th>Shipping</th>
-                                <th>Invoice Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control  data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control  data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control  data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>   
-                </div>
-                <div>
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th rowspan="1" colspan="1">Tems</th>
-                                <th rowspan="1" colspan="1">Global Disc %</th>
-                                <th rowspan="1" colspan="1">Global Disc %</th>
-                                <th rowspan="1" colspan="1">Calc Disc</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input class="form-control data-binding">
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>   
+            </div>
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>List Item</h4></div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6 from">
+                                <div class="form-group">
+                                    <label>Item Id</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 from">
+                                <div class="form-group">
+                                    <label>Item description</label>
+                                    <input class="form-control binding-data">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            
+                            <div class="col-sm-12 table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>UOM</th>
+                                            <th>Discount</th>
+                                            <th>Multiplier</th>
+                                            <th>Line Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input class="form-control bingind-data"></td>
+                                            <td><input class="form-control bingind-data"></td>
+                                            <td><input class="form-control bingind-data"></td>
+                                            <td><input class="form-control bingind-data"></td>
+                                            <td><input class="form-control bingind-data"></td>
+                                            <td><input class="form-control bingind-data"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -271,7 +276,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="col-sm-12 panel panel-default">
                 <div class="col-sm-12">
                     <div class="col-sm-12" style="min-height: 50px">
-
                     </div>
                 </div>
                 <div class="row" id="hearder">
@@ -392,16 +396,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
-
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>
-<script type = 'text/javascript'>
-    $(document).ready(function () {
-//        canvas = document.getElementById("canvas");
-//        var image = document.getElementById("images");
-//        canvas.width = image.width;
-//        canvas.height = image.height;
-//        init();
-    });
-</script>
 </body>
 </html>
