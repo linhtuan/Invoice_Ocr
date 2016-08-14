@@ -55,7 +55,6 @@ function AnglePopular($OCRArray)
              }
              else
              {
-                  echo '<br>'.$angle .':'.$iCountNumOfAngle;
                  $i=$j;
                  break;
              }
@@ -166,19 +165,21 @@ function CheckPointInPolygon($posX,$posY,$listPoint)
     $pointLocation = new pointLocation();
     $point = $posX." ".$posY;
     $polygon = array();
-    $str ="";
     foreach ($listPoint as $itemPoly)
     {
         $X = $itemPoly->X;
         $Y = $itemPoly->Y;
         $poly = $X." ".$Y;
-        $str = $str ."|".$X." ".$Y; 
-                
         $polygon[] = $poly;
     }
-    echo "<br>".$str;
- //   $polygon = array($X1." ".$Y1,$X2." ".$Y2,$X3." ".$Y3,$X4." ".$Y4);
-    return $pointLocation->pointInPolygon($point, $polygon);
+    $X = $listPoint[0]->X;
+    $Y = $listPoint[0]->Y;
+    $poly = $X." ".$Y;
+    $polygon[] = $poly;
+ 
+    $ret = $pointLocation->pointInPolygon($point, $polygon);
+   
+    return $ret;
 }
 function Check2LineOverlap($x11,$x12,$x21,$x22)
 {

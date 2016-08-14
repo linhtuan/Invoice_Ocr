@@ -558,7 +558,6 @@ class InvoiceInfo
     }
     function GetTextByPolygon($listPoint,$OCRListArray)
     {
-       echo var_dump($listPoint);
        $text="";
        for($i=1; $i<count($OCRListArray); $i++)
         {
