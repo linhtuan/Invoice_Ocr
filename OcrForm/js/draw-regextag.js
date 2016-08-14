@@ -53,14 +53,15 @@ $(function() {
             var x1,y1,x2,y2,x3,y3,x4,y4;
             x1 = x4 = startX * ratioImage;
             x2 = x3 = endX * ratioImage;
-            y1 = y3 = startY * ratioImage;
-            y2 = y4 = endY * ratioImage;
+            y1 = y2 = startY * ratioImage;
+            y3 = y4 = endY * ratioImage;
+            if(x1 == x2)return;
             var arrayPosition = [];
             arrayPosition.push({X: parseInt(x1), Y: parseInt(y1)});
-            arrayPosition.push({X: parseInt(x3), Y: parseInt(y3)});
             arrayPosition.push({X: parseInt(x2), Y: parseInt(y2)});
+            arrayPosition.push({X: parseInt(x3), Y: parseInt(y4)});
             arrayPosition.push({X: parseInt(x4), Y: parseInt(y4)});
-            ocrCtrl.getDataInPositions(arrayPosition);
+            bindingDataInput(arrayPosition);
         }else{
             if(points.length == 4){
                 
@@ -157,6 +158,13 @@ $(function() {
             x: evt.clientX - rect.left,
             y: evt.clientY - rect.top
         };
+    }
+    
+    function bindingDataInput(arrayPosition){
+        var getData = ocrCtrl.getDataInPositions(arrayPosition);
+        $.when(getData).then(function(result, textStatus, jqXHR){
+            $('.active-binding-data').val(result);
+        });
     }
    
    $(document).keydown(function(event){

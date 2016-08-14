@@ -74,8 +74,7 @@ class Invoice extends CI_Controller {
 
             //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
             $str = GetTextByPolygon($listPoint,$OCRArray);
-            
-            echo json_encode($str);
+            echo $str;
         }
 }
 
