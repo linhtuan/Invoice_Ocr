@@ -191,3 +191,22 @@ function Check2LineOverlap($x11,$x12,$x21,$x22)
     }
     return FALSE;
 }
+function GetNewPoint($ip1,$anglePopular,$width)
+{
+    $newPoint = array();
+    $tmpp1 = new Point();
+    $tmpp1->X = 10;
+   
+    $tmpp1->Y = $ip1->Y;
+    $p1 = Rotate($ip1, $tmpp1, 0,$anglePopular);
+    $newPoint[]=$p1;
+    
+    $tmpp2 = new Point();
+    $tmpp2->X = $width+10;
+    $tmpp2->Y = $ip1->Y;
+    $p2 = Rotate($ip1, $tmpp2, 0,$anglePopular);
+    $newPoint[]=$p2;
+    
+    
+    return $newPoint;
+}

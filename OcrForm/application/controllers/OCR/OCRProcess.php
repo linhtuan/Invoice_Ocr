@@ -85,10 +85,14 @@ class InvoiceInfo
           return $json_response;
     }
     
-     function ParserJson2Object($json_response)
+     function ParserJson2Object($json_response,&$width,&$height)
     {
           $a_Data =  json_decode($json_response);
          // echo $json_response;
+         $minX=5000;
+         $minY=5000;
+         $maxX = 0;
+         $maxY= 0;
          
 	  $data = reset($a_Data->responses);
 	  $annotationData = $data->textAnnotations;
@@ -110,11 +114,19 @@ class InvoiceInfo
 			$tempObj->X4 = $object->boundingPoly->vertices[3]->x;
 			$tempObj->Y4 = $object->boundingPoly->vertices[3]->y;
 			
+                        $minX = min($minX, $tempObj->X1);
+                        $maxX = max($maxX, $tempObj->X2);
+                        
+                        $minY =  min($minY, $tempObj->Y1);
+                        $maxY =  max($maxY, $tempObj->Y4);
+                        
 			$returnArray[] = $tempObj;
 			
 		}
                 
-            
+          $width = $maxX-$minX;
+          $height =$maxY - $minY;
+        
 	return  $returnArray;
     }
     
@@ -122,8 +134,9 @@ class InvoiceInfo
     {
         for ($i = 1; $i < count($OCRArray) - 1; $i++)
             {
-                $thress = ($OCRArray[$i]->X2 - $OCRArray[$i]->X1) / strlen($OCRArray[$i]->description);
-              
+                $thress1 = ($OCRArray[$i]->X2 - $OCRArray[$i]->X1) / strlen($OCRArray[$i]->description);
+                $thress2 = ($OCRArray[$i+1]->X2 - $OCRArray[$i+1]->X1) / strlen($OCRArray[$i+1]->description);
+                $thress = min($thress1,$thress2);
                 if (abs($OCRArray[$i]->X2 - $OCRArray[$i + 1]->X1) < (3 * $thress))
                 {
                      if (Check2BillIsLine($OCRArray[$i], $OCRArray[$i + 1],TRUE,$anglePopular,TRUE ))
@@ -532,9 +545,9 @@ class InvoiceInfo
         {
             $item = $OCRListArray[$i];
             if(CheckPointInRectangle($item->X1,$item->Y1,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
-               || CheckPointInRectangle($item->X2,$item->Y2,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
-               || CheckPointInRectangle($item->X3,$item->Y3,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
-               || CheckPointInRectangle($item->X4,$item->Y4,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1 )
+               && CheckPointInRectangle($item->X2,$item->Y2,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               && CheckPointInRectangle($item->X3,$item->Y3,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               && CheckPointInRectangle($item->X4,$item->Y4,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1 )
             {
                 //return $item->description;
                 $text = $text. " ". $item->description;
@@ -545,14 +558,14 @@ class InvoiceInfo
     }
     function GetTextByPolygon($listPoint,$OCRListArray)
     {
-          $text="";
+       $text="";
        for($i=1; $i<count($OCRListArray); $i++)
         {
             $item = $OCRListArray[$i];
             if(CheckPointInPolygon($item->X1,$item->Y1,$listPoint)>-1
-               || CheckPointInPolygon($item->X2,$item->Y2,$listPoint)>-1
-               || CheckPointInPolygon($item->X3,$item->Y3,$listPoint)>-1
-               || CheckPointInPolygon($item->X4,$item->Y4,$listPoint)>-1 )
+               && CheckPointInPolygon($item->X2,$item->Y2,$listPoint)>-1
+               && CheckPointInPolygon($item->X3,$item->Y3,$listPoint)>-1
+               && CheckPointInPolygon($item->X4,$item->Y4,$listPoint)>-1 )
             {
                 //return $item->description;
                 $text = $text. " ". $item->description;
