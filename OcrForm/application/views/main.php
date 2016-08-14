@@ -65,9 +65,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		box-shadow: 0 0 8px #D0D0D0;
 	}
 	</style>
-	 <script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
-         <script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
-	<script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
+        
         <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/ds.demo.css">
 	<link rel = "stylesheet" type = "text/css" href = "http://localhost:8080/OcrForm/css/bootstrap.min.css">
 </head>
@@ -389,6 +387,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
+<script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
+<script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
+<script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
+
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>

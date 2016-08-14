@@ -1,5 +1,6 @@
 <?php
-
+defined('BASEPATH') OR exit('No direct script access allowed');
+include_once 'OCR/OCRProcess.php';
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,6 +23,25 @@ class Invoice extends CI_Controller {
                 'InvoiceListItem' => $this->invoices_model->InvoiceListItem
             );
             echo json_encode($data);
+        }
+        
+        public function GetValueInJson(){
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+
+            //   echo $s_Data;
+            $OCRArray = ParserJson2Object($s_Data);
+            $anglePopular = AnglePopular($OCRArray);
+
+            $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+
+
+            $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
+            $total = $invoiceInfo->Total;
+            $str = GetTextByPosition(1701,271,$OCRArray);
+
+            $str = GetTextByRectangle(31,506,971,550,968,591,35,551,$OCRArray);
+
+            echo "<br>Text at(1701,271): ".$str;
         }
 }
 
