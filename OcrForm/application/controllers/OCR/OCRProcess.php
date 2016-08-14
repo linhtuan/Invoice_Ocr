@@ -543,4 +543,39 @@ class InvoiceInfo
         
         return $text;
     }
+    function GetTextByPolygon($listPoint,$OCRListArray)
+    {
+          $text="";
+       for($i=1; $i<count($OCRListArray); $i++)
+        {
+            $item = $OCRListArray[$i];
+            if(CheckPointInPolygon($item->X1,$item->Y1,$listPoint)>-1
+               || CheckPointInPolygon($item->X2,$item->Y2,$listPoint)>-1
+               || CheckPointInPolygon($item->X3,$item->Y3,$listPoint)>-1
+               || CheckPointInPolygon($item->X4,$item->Y4,$listPoint)>-1 )
+            {
+                //return $item->description;
+                $text = $text. " ". $item->description;
+            }
+        }
+        
+        return $text;
+    }
+    function GetListOCRValueInRectange($X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4,$OCRListArray)
+    {
+         $listOCRValue =array();
+       for($i=1; $i<count($OCRListArray); $i++)
+        {
+            $item = $OCRListArray[$i];
+            if(CheckPointInRectangle($item->X1,$item->Y1,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X2,$item->Y2,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X3,$item->Y3,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
+               || CheckPointInRectangle($item->X4,$item->Y4,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1 )
+            {
+                //return $item->description;
+               $listOCRValue[]= $item;
+            }
+        }
+          return $listOCRValue;
+    }
 
