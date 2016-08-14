@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 include_once 'OCR/OCRProcess.php';
+include_once 'OCR/ListItemDetail.php';
 class Welcome extends CI_Controller {
 
 	/**
@@ -20,26 +21,36 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-             $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+             $s_Data = file_get_contents('http://localhost:8080/OcrForm/5.json');
            
              //   echo $s_Data;
               $OCRArray = ParserJson2Object($s_Data);
               $anglePopular = AnglePopular($OCRArray);
-       
+      
               $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
          
-         
+         /*
               $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
               $total = $invoiceInfo->Total;
               $str = GetTextByPosition(1701,271,$OCRArray);
+              */ 
+           //   $str = GetTextByRectangle(133,1435,2495,1475,968,591,35,551,$OCRArray);
+             
+            //  echo "<br>Text at(1701,271): ".$str;
               
-              $str = GetTextByRectangle(31,506,971,550,968,591,35,551,$OCRArray);
+              $cListItem = new ListItemDetail($OCRArray,$anglePopular);
+           //  $str = $cListItem->GetFirstItemByKey('Number',true);
+             $listItem = $cListItem->GetListItemByKey('Unit Price');
               
-              echo "<br>Text at(1701,271): ".$str;
-              
-              foreach ($OCRArray as $item)
+              foreach($listItem as $item)
               {
-             //     echo "<br> ". $item->description;
+                  $OCRItemList=$item->ListOCRValue;
+                  $s="";
+                 foreach ($OCRItemList as $OCRitem)
+                 {
+                     $s = $s ." ".$OCRitem->description;
+                 }
+                  echo "<br>Item :".$s ;
               }
 		$this->load->helper('url');
 		$this->load->view('main');

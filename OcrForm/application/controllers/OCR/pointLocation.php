@@ -13,6 +13,9 @@
  */
 class pointLocation {
     var $pointOnVertex = true; // Check if the point sits exactly on one of the vertices?
+ 
+    function pointLocation() {
+    }
  //result =-1 -->outside
     //      0 --> boundary
     //      1 --> Inside
