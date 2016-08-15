@@ -22,6 +22,13 @@ var ocrCtrl = function (){
         });
     };
     
+    var getInvoiceInfo = function(){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/getvalueinjson',
+            type: 'POST',
+        });
+    };
+    
     var getDataInPositions = function(listPositions){
         var jsonData = JSON.stringify(listPositions);
         return $.ajax({
@@ -39,6 +46,9 @@ var ocrCtrl = function (){
         },
         getInvoiceData: function(){
             return getInvoiceData();
+        },
+        getInvoiceInfo: function(){
+            return getInvoiceInfo();
         },
         getDataInPositions: function(listPositions){
             return getDataInPositions(listPositions);
@@ -74,4 +84,16 @@ $(document).on('keydown', '.data-binding', function (event) {
         
     }
 });
+
+function bindingInvoiceInfo(){
+    var getData = ocrCtrl.getInvoiceInfo();
+    $.when(getData).then(function(result, textStatus, jqXHR){
+        var data = JSON.parse(result);
+        $('#invoice-date').val(data.InvoiceDate.value);
+        $('#vender-number').val(data.VendorNumber.value);
+        $('#invoice-number').val(data.InvoiceID.value);
+        $('#teams').val(data.Terms.value);
+        $('#invoice-total').val(data.Total.value);
+    });
+}
 

@@ -149,11 +149,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </select>
                 </div>
             </div>
-<!--            <div class="col-sm-3">
+            <div class="col-sm-3">
                 <div class="form-group">
-                    <button type="button" class="btn btn-primary" id="loadInvoice">Load Invoice</button>
+                    <button type="button" class="btn btn-primary" onclick="bindingInvoiceInfo();" id="loadInvoice">Load Invoice</button>
                 </div>
-            </div>-->
+            </div>
         </div>
     </div>
 <div id="body" class="row"> 
@@ -173,53 +173,53 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-sm-6 from">
                             <div class="form-group">
                                 <label>Vender Name</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="vender-name">
                             </div>
                             <div class="form-group">
                                 <label>Vender Number</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data"  id="vender-number">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Number</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="invoice-number">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Date</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="invoice-date">
                             </div>
                             <div class="form-group">
                                 <label>PO Number</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="po-number">
                             </div>
                             <div class="form-group">
                                 <label>Tax 1</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="tax-1">
                             </div>
                         </div>
                         <div class="col-sm-6 from">
                             <div class="form-group">
                                 <label>Other</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="other">
                             </div>
                             <div class="form-group">
                                 <label>Shipping</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="shipping">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Total</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="invoice-total">
                             </div>
                             <div class="form-group">
                                 <label>Teams</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="teams">
                             </div>
                             <div class="form-group">
                                 <label>Global Disc %</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="global-disc-1">
                             </div>
                             <div class="form-group">
                                 <label>Global Disc %</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="global-disc-2">
                             </div>
                         </div>
                     </div>
@@ -234,13 +234,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-sm-6 from">
                             <div class="form-group">
                                 <label>Item Id</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="item-id">
                             </div>
                         </div>
                         <div class="col-sm-6 from">
                             <div class="form-group">
                                 <label>Item description</label>
-                                <input class="form-control binding-data">
+                                <input class="form-control binding-data" id="item-description">
                             </div>
                         </div>
                     </div>
@@ -260,12 +260,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><input class="form-control bingind-data"></td>
-                                        <td><input class="form-control bingind-data"></td>
-                                        <td><input class="form-control bingind-data"></td>
-                                        <td><input class="form-control bingind-data"></td>
-                                        <td><input class="form-control bingind-data"></td>
-                                        <td><input class="form-control bingind-data"></td>
+                                        <td><input class="form-control bingind-data" id="qty"></td>
+                                        <td><input class="form-control bingind-data" id="price"></td>
+                                        <td><input class="form-control bingind-data" id="uom"></td>
+                                        <td><input class="form-control bingind-data" id="discount"></td>
+                                        <td><input class="form-control bingind-data" id="multiplier"></td>
+                                        <td><input class="form-control bingind-data" id="line-total"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -294,6 +294,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
 <script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
 
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/scanTwainImage.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>
 </body>

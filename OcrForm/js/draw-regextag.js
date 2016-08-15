@@ -117,8 +117,6 @@ $(function() {
         mouse.y = pos.y;
 
         context.moveTo(mouse.x, mouse.y);
-        
-        
         if (clicked) {
             storedLines.push({
                 startX: storedLine.startX,
@@ -182,6 +180,7 @@ $(function() {
     });
     
     $(document).on('click', '#clear-active', function (event) {
+        $('.binding-data').val('');
         $('.binding-data').removeClass('active-binding-data');
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, canvas.width, canvas.height);

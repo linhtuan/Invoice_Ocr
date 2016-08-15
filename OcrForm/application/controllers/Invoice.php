@@ -30,19 +30,18 @@ class Invoice extends CI_Controller {
             $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
 
             //   echo $s_Data;
-            $OCRArray = ParserJson2Object($s_Data);
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+            //   echo $s_Data;
+            $width=0;
+            $height =0;
+            $OCRArray = ParserJson2Object($s_Data,$width,$height);
             $anglePopular = AnglePopular($OCRArray);
 
-            $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+            //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
 
 
             $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
-            $total = $invoiceInfo->Total;
-            $str = GetTextByPosition(1701,271, $OCRArray);
-
-            $str = GetTextByRectangle(31,506,971,550,968,591,35,551,$OCRArray);
-
-            echo "<br>Text at(1701,271): ".$str;
+            echo json_encode($invoiceInfo);
         }
         
         public function GetDataInPositions(){
