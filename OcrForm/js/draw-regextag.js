@@ -1,5 +1,6 @@
 var image;
 var points = [];
+var arrayPosition = [];
 $(function() {
     var isCtrlKeyDown = false;
     var isMouseDown = 0;
@@ -56,15 +57,15 @@ $(function() {
             y1 = y2 = startY * ratioImage;
             y3 = y4 = endY * ratioImage;
             if(x1 == x2)return;
-            var arrayPosition = [];
+            arrayPosition = [];
             arrayPosition.push({X: parseInt(x1), Y: parseInt(y1)});
             arrayPosition.push({X: parseInt(x2), Y: parseInt(y2)});
             arrayPosition.push({X: parseInt(x3), Y: parseInt(y4)});
             arrayPosition.push({X: parseInt(x4), Y: parseInt(y4)});
             bindingDataInput(arrayPosition);
         }else{
-            if(points.length == 4){
-                
+            if(lineNumberCount == 5){
+                bindingDataInput(arrayPosition);
             }
         }
     });
@@ -95,6 +96,9 @@ $(function() {
     }
     
     function drawLine(e){
+        if (lineNumberCount == 0){
+            arrayPosition = [];
+        }
         lineNumberCount += 1;
         if(lineNumberCount == 6){
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -104,7 +108,7 @@ $(function() {
             var pos = getMousePos(canvas, e);
             storedLine.startX = pos.x;
             storedLine.startY = pos.y;
-            points = [];
+            arrayPosition = [];
         }
         clicked = true;
         var pos = getMousePos(canvas, e);
@@ -112,8 +116,6 @@ $(function() {
         mouse.y = pos.y;
 
         context.moveTo(mouse.x, mouse.y);
-        
-        
         if (clicked) {
             storedLines.push({
                 startX: storedLine.startX,
@@ -122,7 +124,7 @@ $(function() {
                 endY: mouse.y
             });
             if(lineNumberCount < 5){
-                points.push({x: mouse.x, y: mouse.y});
+                arrayPosition.push({X: parseInt(mouse.x  * ratioImage), Y: parseInt(mouse.y * ratioImage)});
             }
         }
         storedLine.startX = mouse.x;
@@ -176,7 +178,7 @@ $(function() {
         isCtrlKeyDown = false;
     });
     
-    $(document).on('click', '#clear-active', function (event) {
+    $(document).on('click', '.clear-active', function (event) {
         $('.binding-data').removeClass('active-binding-data');
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, canvas.width, canvas.height);

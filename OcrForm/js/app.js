@@ -22,6 +22,13 @@ var ocrCtrl = function (){
         });
     };
     
+    var getInvoiceInfo = function(){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/getvalueinjson',
+            type: 'POST',
+        });
+    };
+    
     var getDataInPositions = function(listPositions){
         var jsonData = JSON.stringify(listPositions);
         return $.ajax({
@@ -33,6 +40,28 @@ var ocrCtrl = function (){
         });
     };
     
+    var updateInvoiceDetail = function(model){
+        var jsonData = JSON.stringify(model);
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicedetail',
+            type: 'POST',
+            data: { 
+                data : jsonData 
+            }
+        });
+    };
+    
+    var updateInvoiceListItems = function(model){
+        var jsonData = JSON.stringify(model);
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicelistitem',
+            type: 'POST',
+            data: { 
+                data : jsonData 
+            }
+        });
+    }
+    
     return {
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
@@ -40,9 +69,18 @@ var ocrCtrl = function (){
         getInvoiceData: function(){
             return getInvoiceData();
         },
+        getInvoiceInfo: function(){
+            return getInvoiceInfo();
+        },
         getDataInPositions: function(listPositions){
             return getDataInPositions(listPositions);
-        }
+        },
+        updateInvoiceDetail: function(model){
+            return updateInvoiceDetail(model);
+        },
+        updateInvoiceListItems: function(model){
+            return updateInvoiceListItems(model);
+        },
     };
 }(ocrCtrl);
 
@@ -74,4 +112,30 @@ $(document).on('keydown', '.data-binding', function (event) {
         
     }
 });
+
+$(document).on('keydown', '.data-binding', function (event) {
+    if (event.which == 13) {
+        
+    }
+});
+
+$(document).on('click', '#update-invoice-detail', function (event) {
+    
+});
+
+$(document).on('click', '#update-list-item', function (event) {
+    
+});
+
+function bindingInvoiceInfo(){
+    var getData = ocrCtrl.getInvoiceInfo();
+    $.when(getData).then(function(result, textStatus, jqXHR){
+        var data = JSON.parse(result);
+        $('#invoice-date').val(data.InvoiceDate.value);
+        $('#vender-number').val(data.VendorNumber.value);
+        $('#invoice-number').val(data.InvoiceID.value);
+        $('#teams').val(data.Terms.value);
+        $('#invoice-total').val(data.Total.value);
+    });
+}
 
