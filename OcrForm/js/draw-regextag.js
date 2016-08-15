@@ -18,7 +18,6 @@ $(function() {
     var canvas;
     var context;
     
-    
     function BindingCanvas(){
         imageSize = parseInt($('#imagesize').val());
         ratioImage = (100/imageSize);
@@ -179,8 +178,7 @@ $(function() {
         isCtrlKeyDown = false;
     });
     
-    $(document).on('click', '#clear-active', function (event) {
-        $('.binding-data').val('');
+    $(document).on('click', '.clear-active', function (event) {
         $('.binding-data').removeClass('active-binding-data');
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, canvas.width, canvas.height);

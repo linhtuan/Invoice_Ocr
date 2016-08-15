@@ -122,7 +122,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 
             </div>
             <div class="col-sm-6">
-                <div class="form-group">
+<!--                <div class="form-group">
                     <label>Customer templates</label>
                     <select class="form-control">
                         <option>1</option>
@@ -131,7 +131,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <option>4</option>
                         <option>5</option>
                     </select>
-                </div>
+                </div>-->
             </div>
 
         </div>
@@ -162,9 +162,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-sm-6"><h4>Invoice header detail</h4></div>
+                        <div class="col-sm-6"><h5>Invoice header detail</h5></div>
                         <div class="col-sm-6  text-right">
-                            <button type="button" class="btn btn-primary" id="clear-active">Clear Active</button>
+                            <button type="button" class="btn btn-primary" id="update-invoice-detail">Save Invoice Detail</button>
+                            <button type="button" class="btn btn-primary clear-active">Clear Active</button>
                         </div>
                     </div>
                 </div>
@@ -228,7 +229,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
         <div class="col-sm-12">
             <div class="panel panel-default">
-                <div class="panel-heading"><h4>List Item</h4></div>
+                <div class="panel-heading">
+                    
+                    <div class="row">
+                        <div class="col-sm-6"><h5>List Item</h5></div>
+                        <div class="col-sm-6  text-right">
+                            <button type="button" class="btn btn-primary" id="update-list-item">Save List Item</button>
+                            <button type="button" class="btn btn-primary clear-active">Clear Active</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-6 from">
@@ -281,9 +291,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
-    <div class="col-sm-12 text-center">
+<!--    <div class="col-sm-12 text-center">
         <button type="button" class="btn btn-primary" id="update">Save Invoice</button>
-    </div>
+    </div>-->
 </div>
 
 
