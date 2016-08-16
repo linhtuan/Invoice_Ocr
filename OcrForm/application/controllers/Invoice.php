@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 include_once 'OCR/OCRProcess.php';
 include_once 'OCR/Point.php';
@@ -37,7 +38,11 @@ class Invoice extends CI_Controller {
         //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
 
         $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
-        echo json_encode($invoiceInfo);
+        $data = array(
+            'InvoiceInfo' => $invoiceInfo,
+            'InvoiceListItem' => []
+        );
+        echo json_encode($data);
     }
 
     public function GetDataInPositions(){
@@ -72,11 +77,81 @@ class Invoice extends CI_Controller {
         echo trim($str);;
     }
     
+    public function upload_file()
+    {
+        $fileTempName = $_FILES['RemoteFile']['tmp_name'];	
+        $fileSize = $_FILES['RemoteFile']['size'];
+        $fileName = "UploadImage\\".$_FILES['RemoteFile']['name'];
+        $fileName = iconv("UTF-8", "gb2312", $fileName);
+
+        if (file_exists($fileName)) 
+          $fWriteHandle = fopen($fileName, 'w');
+        else
+          $fWriteHandle = fopen($fileName, 'w');
+        $fReadHandle = fopen($fileTempName, 'rb');
+        $fileContent = fread($fReadHandle, $fileSize);
+        $strFileSize = (string)intval($fileSize/1024)."KB";
+        fwrite($fWriteHandle, $fileContent);
+        fclose($fWriteHandle);
+        $info = new SplFileInfo($fileName);
+        $fileType = $info->getExtension();
+        if($fileType == "pdf"){
+//            $im = new Imagick($fileName);
+//            $noOfPagesInPDF = $im->getNumberImages();
+//            for ($i = 0; $i < $noOfPagesInPDF; $i++) { 
+// 
+//              $url = $fileName.'['.$i.']'; 
+// 
+//              $image = new Imagick($url);
+// 
+//              $image->setImageFormat("jpg"); 
+// 
+//              $image->writeImage("UploadImage/".__DIR__."/".($i+1).'-'.rand().'.jpg'); 
+//          }
+        }
+        echo "";
+    }
+    
+    public function insertFileInfo(){
+        $data = array(
+            'PathName' => 'My title',
+            'CustomerID' => 'My Name',
+            'TemplateID' => 'My date',
+            'Text' => ''
+        );
+        $this->db->insert('tbfileinfo', $data);
+    }
+
     public function UpdateInvoiceDetail(){
-        echo json_encode('');
+
+        $invoiceInfoId = $this->input->post('InvoiceInfoId');
+        $vendorName = $this->input->post('VendorName');
+        $invoiceNumber = $this->input->post('InvoiceNumber');
+        $date = $this->input->post('Date');
+        $data = array(
+            'VendorName' => $vendorName,
+            'InvoiceNumber' => $invoiceNumber,
+            'Date' => $date
+        );
+
+        $this->db->where('ID', $invoiceInfoId);
+        $this->db->update('tbinvoiceinfo', $data);
+        echo json_encode($data);
     }
     
     public function UpdateInvoiceListItem(){
+        $invoiceInfoId = $this->input->post('InvoiceInfoId');
+        $vendorName = $this->input->post('VendorName');
+        $invoiceNumber = $this->input->post('InvoiceNumber');
+        $date = $this->input->post('Date');
+        $data = array(
+            'VendorName' => $vendorName,
+            'InvoiceNumber' => $invoiceNumber,
+            'Date' => $date
+        );
+
+        $this->db->where('ID', $invoiceInfoId);
+        $this->db->update('tblistitem', $data);
         echo json_encode('');
     }
 }
