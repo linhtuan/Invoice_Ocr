@@ -1,6 +1,7 @@
 Dynamsoft.WebTwainEnv.RegisterEvent('OnWebTwainReady', Dynamsoft_OnReady); // Register OnWebTwainReady event. This event fires as soon as Dynamic Web TWAIN is initialized and ready to be used
 
 var DWObject;
+var fileName;
 
 function Dynamsoft_OnReady() {
     DWObject = Dynamsoft.WebTwainEnv.GetWebTwain('dwtcontrolContainer'); // Get the Dynamic Web TWAIN object that is embeded in the div with id 'dwtcontrolContainer'
@@ -40,7 +41,11 @@ function LoadImages() {
 // OnHttpUploadSuccess and OnHttpUploadFailure are callback functions.
 // OnHttpUploadSuccess is the callback function for successful uploads while OnHttpUploadFailure is for failed ones.
 function OnHttpUploadSuccess() {
-    console.log('successful');
+    var data = ocrCtrl.getPhysicalFileId(fileName);
+    $.when(data).then(function(result){
+        var data = JSON.parse(result);
+        $('#physical-file-id').val(data.ID);
+    });
 }
 
 function OnHttpUploadFailure(errorCode, errorString, sHttpResponse) {
@@ -53,14 +58,13 @@ function UploadImage() {
         if (DWObject.HowManyImagesInBuffer == 0)
             return;
         var strHTTPServer = 'http://localhost:8080/OcrForm/'; //The name of the HTTP server. For example: "www.dynamsoft.com";
-        console.log(strHTTPServer);
         var strActionPage = "index.php/invoice/upload_file";
         DWObject.IfSSL = false; // Set whether SSL is used
         DWObject.HTTPPort = location.port == "" ? 80 : location.port;
 
         var Digital = new Date();
         var uploadfilename = Digital.getMilliseconds(); // Uses milliseconds according to local time as the file name
-
+        //
         // Upload the image(s) to the server asynchronously
         if (document.getElementById("imgTypejpeg").checked == true) {
             //If the current image is B&W
@@ -69,9 +73,11 @@ function UploadImage() {
                 //If so, convert the image to Gray
                 DWObject.ConvertToGrayScale(DWObject.CurrentImageIndexInBuffer);
             //Upload image in JPEG
+            fileName = uploadfilename + ".jpg"
             DWObject.HTTPUploadThroughPost(strHTTPServer, DWObject.CurrentImageIndexInBuffer, strActionPage, uploadfilename + ".jpg", OnHttpUploadSuccess, OnHttpUploadFailure);
         }
         else if (document.getElementById("imgTypepdf").checked == true) {
+            fileName = uploadfilename + ".pdf"
             DWObject.HTTPUploadAllThroughPostAsPDF(strHTTPServer, strActionPage, uploadfilename + ".pdf", OnHttpUploadSuccess, OnHttpUploadFailure);
         }
     }

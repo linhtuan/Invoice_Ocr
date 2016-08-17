@@ -30,21 +30,31 @@ class Invoice extends CI_Controller {
     }
 
     public function GetValueInJson(){
-        $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
-        
-        $width=0;
-        $height =0;
-        $OCRArray = ParserJson2Object($s_Data,$width,$height);
-        $anglePopular = AnglePopular($OCRArray);
-
-        //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
-
-        $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
-        $data = array(
-            'InvoiceInfo' => $invoiceInfo,
-            'InvoiceListItem' => []
+        $query = array(
+            'ID' => $this->input->post('physicalFileId')
         );
-        echo json_encode($data);
+        $this->db->select('PathName', 'Text');
+        $this->db->where($query);
+        $fileInfo = $this->db->get('tbfileinfo')->first_row();
+        if($fileInfo != NULL){
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+            
+            $width=0;
+            $height =0;
+            $OCRArray = ParserJson2Object($fileInfo->Text, $width, $height);
+            $anglePopular = AnglePopular($OCRArray);
+
+            //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+
+            $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
+            $data = array(
+                'InvoiceInfo' => $invoiceInfo,
+                'InvoiceListItem' => [],
+                'PhysicalFilePath' => $fileInfo->PathName
+            );
+            echo json_encode($data);
+        }
+        
     }
 
     public function GetDataInPositions(){
@@ -98,9 +108,14 @@ class Invoice extends CI_Controller {
         $info = new SplFileInfo($fileName);
         $fileType = $info->getExtension();
         
-        $json = CallGGAPIForImage($fileName);
+        //$json = CallGGAPIForImage($fileName);
+        $array = array(
+            'PathName' => $fileName,
+            'Text' => ''
+        );
+        $this->db->set($array);
+        $this->db->insert('tbfileinfo');
         
-        echo $json;
         
         if($fileType == "pdf"){
 //            $im = new Imagick($fileName);
@@ -119,14 +134,16 @@ class Invoice extends CI_Controller {
         echo "";
     }
     
-    public function insertFileInfo(){
-        $data = array(
-            'PathName' => 'My title',
-            'CustomerID' => 'My Name',
-            'TemplateID' => 'My date',
-            'Text' => ''
+    public function GetPhysicalFileId()
+    {
+        $fileName = "UploadImage\\".$this->input->post('physicalFileName');
+        $query = array(
+            'PathName' => $fileName
         );
-        $this->db->insert('tbfileinfo', $data);
+        $this->db->select('ID');
+        $this->db->where($query);
+        $fileInfoId = $this->db->get('tbfileinfo')->first_row();
+        echo json_encode($fileInfoId);
     }
 
     public function UpdateInvoiceDetail(){
@@ -140,7 +157,7 @@ class Invoice extends CI_Controller {
             'InvoiceNumber' => $invoiceNumber,
             'Date' => $date
         );
-
+        
         $this->db->where('ID', $invoiceInfoId);
         $this->db->update('tbinvoiceinfo', $data);
         echo json_encode($data);

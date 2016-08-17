@@ -57,16 +57,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 
             </div>
             <div class="col-sm-6">
-<!--                <div class="form-group">
+                <div class="form-group">
                     <label>Customer templates</label>
                     <select class="form-control">
+                        <option>--- Seleted template ---</option>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
                         <option>4</option>
                         <option>5</option>
                     </select>
-                </div>-->
+                </div>
             </div>
 
         </div>
@@ -86,7 +87,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <div class="col-sm-3">
                 <div class="form-group">
-                    <button type="button" class="btn btn-primary" onclick="bindingInvoiceInfo();" id="loadInvoice">Load Invoice</button>
+                    <label>Action</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="bindingInvoiceInfo();" id="loadInvoice">Process</button>
                 </div>
             </div>
         </div>
@@ -222,13 +224,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
     <div class="col-sm-6 panel" >
         <div class="col-sm-12" id="invoiceImage">
-            <img id="images" src="http://localhost:8080/OcrForm/image/2-2.jpg" class="hidden">
+            <img id="images" src="" class="hidden">
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
 <!--    <div class="col-sm-12 text-center">
         <button type="button" class="btn btn-primary" id="update">Save Invoice</button>
     </div>-->
+
+<input type="hidden" id="physical-file-id" value="0"/>
 </div>
 
 <script id="listInvoicesTemplate" type="text/x-jquery-tmpl">

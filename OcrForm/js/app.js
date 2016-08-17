@@ -22,10 +22,11 @@ var ocrCtrl = function (){
         });
     };
     
-    var getInvoiceInfo = function(){
+    var getInvoiceInfo = function(id){
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/getvalueinjson',
             type: 'POST',
+            data: {physicalFileId: id}
         });
     };
     
@@ -54,8 +55,15 @@ var ocrCtrl = function (){
             type: 'POST',
             data: model
         });
-    }
-
+    };
+    
+    var getPhysicalFileId = function(fileName){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/getphysicalfileid',
+            type: 'POST',
+            data: {physicalFileName: fileName}
+        });
+    };
     
     return {
         bindingInput: function (dataObj, id){
@@ -64,8 +72,8 @@ var ocrCtrl = function (){
         getInvoiceData: function(){
             return getInvoiceData();
         },
-        getInvoiceInfo: function(){
-            return getInvoiceInfo();
+        getInvoiceInfo: function(id){
+            return getInvoiceInfo(id);
         },
         getDataInPositions: function(listPositions){
             return getDataInPositions(listPositions);
@@ -75,6 +83,9 @@ var ocrCtrl = function (){
         },
         updateInvoiceListItems: function(model){
             return updateInvoiceListItems(model);
+        },
+        getPhysicalFileId: function(fileName){
+            return getPhysicalFileId(fileName);
         },
     };
 }(ocrCtrl);
@@ -135,7 +146,9 @@ $(document).on('click', '#update-list-item', function (event) {
 });
 
 function bindingInvoiceInfo(){
-    var getData = ocrCtrl.getInvoiceInfo();
+    var id = parseInt($('#physical-file-id').val());
+    if(id == 0) return;
+    var getData = ocrCtrl.getInvoiceInfo(id);
     $.when(getData).then(function(result, textStatus, jqXHR){
         var data = JSON.parse(result);
         $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
