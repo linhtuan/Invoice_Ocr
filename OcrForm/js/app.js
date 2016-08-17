@@ -41,26 +41,21 @@ var ocrCtrl = function (){
     };
     
     var updateInvoiceDetail = function(model){
-        var jsonData = JSON.stringify(model);
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicedetail',
             type: 'POST',
-            data: { 
-                data : jsonData 
-            }
+            data: model
         });
     };
     
     var updateInvoiceListItems = function(model){
-        var jsonData = JSON.stringify(model);
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicelistitem',
             type: 'POST',
-            data: { 
-                data : jsonData 
-            }
+            data: model
         });
     }
+
     
     return {
         bindingInput: function (dataObj, id){
@@ -120,22 +115,35 @@ $(document).on('keydown', '.data-binding', function (event) {
 });
 
 $(document).on('click', '#update-invoice-detail', function (event) {
-    
+    var model = {
+        InvoiceInfoId: 1,
+        VendorName: $('#vender-name').val(),
+        InvoiceNumber: $('#invoice-number').val(),
+        Date: $('#invoice-date').val(),
+    };
+    ocrCtrl.updateInvoiceDetail(model);
 });
 
 $(document).on('click', '#update-list-item', function (event) {
-    
+    var model = {
+        InvoiceInfoId: 1,
+        VendorName: $('#vender-name').val(),
+        InvoiceNumber: $('#invoice-number').val(),
+        Date: $('#invoice-date').val(),
+    };
+    ocrCtrl.updateInvoiceListItems(model);
 });
 
 function bindingInvoiceInfo(){
     var getData = ocrCtrl.getInvoiceInfo();
     $.when(getData).then(function(result, textStatus, jqXHR){
         var data = JSON.parse(result);
-        $('#invoice-date').val(data.InvoiceDate.value);
-        $('#vender-number').val(data.VendorNumber.value);
-        $('#invoice-number').val(data.InvoiceID.value);
-        $('#teams').val(data.Terms.value);
-        $('#invoice-total').val(data.Total.value);
+        $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
+        $('#vender-number').val(data.InvoiceInfo.VendorNumber.value);
+        $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
+        $('#teams').val(data.InvoiceInfo.Terms.value);
+        $('#invoice-total').val(data.InvoiceInfo.Total.value);
+        //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });
 }
 

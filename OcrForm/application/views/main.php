@@ -6,65 +6,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <head>
 	<meta charset="utf-8">
 	<title>Welcome to Invoice Auto mapping</title>
-
-	<style type="text/css">
-
-	::selection { background-color: #E13300; color: white; }
-	::-moz-selection { background-color: #E13300; color: white; }
-        
-	body {
-		background-color: #fff;
-		margin: 40px;
-		font: 13px/20px normal Helvetica, Arial, sans-serif;
-		color: #4F5155;
-	}
-
-	a {
-		color: #003399;
-		background-color: transparent;
-		font-weight: normal;
-	}
-
-	h1 {
-		color: #444;
-		background-color: transparent;
-		border-bottom: 1px solid #D0D0D0;
-		font-size: 19px;
-		font-weight: normal;
-		margin: 0 0 14px 0;
-		padding: 14px 15px 10px 15px;
-	}
-
-	code {
-		font-family: Consolas, Monaco, Courier New, Courier, monospace;
-		font-size: 12px;
-		background-color: #f9f9f9;
-		border: 1px solid #D0D0D0;
-		color: #002166;
-		display: block;
-		margin: 14px 0 14px 0;
-		padding: 12px 10px 12px 10px;
-	}
-
-	#body {
-		margin: 0 15px 0 15px;
-	}
-
-	p.footer {
-		text-align: right;
-		font-size: 11px;
-		border-top: 1px solid #D0D0D0;
-		line-height: 32px;
-		padding: 0 10px 0 10px;
-		margin: 20px 0 0 0;
-	}
-
-	#container {
-		margin: 10px;
-		border: 1px solid #D0D0D0;
-		box-shadow: 0 0 8px #D0D0D0;
-	}
-	</style>
         
         <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/ds.demo.css">
 	<link rel = "stylesheet" type = "text/css" href = "http://localhost:8080/OcrForm/css/bootstrap.min.css">
@@ -78,42 +19,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
     </div>
     <div class="row">
-       
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
-        <div id="divLeft" class="ds-demo-left ds-demo-inline-block ds-demo-border-light-grey" style="width: 508px; height: 650px;">
-            
-            <div id="dwtcontrolContainer"></div>
+                <select size="1" id="source" style="position: relative; width: 220px;"></select>
+            <div id="divLeft" class="ds-demo-left ds-demo-inline-block ds-demo-border-light-grey" style="width: 508px; height: 650px;">
+                <div id="dwtcontrolContainer"></div>
+            </div>
+            <div class="ds-demo-left ds-demo-bright-grey ds-demo-inline-block ds-demo-padding-large ds-demo-center ds-demo-border-light-grey" style="width: 470px; height: 650px;">
+                <input type="button" value="Scan" onclick="AcquireImage();" class="ds-demo-btn ds-demo-width-92 ds-demo-margin-left-large" />
+                <input type="button" value="Open a local file" onclick="LoadImages();" class="ds-demo-btn ds-demo-width-168 ds-demo-margin-left-large" />
+                <div class="ds-demo-margin" id="div-extra-fields" style="display:none; max-height:140px;">
+                    <div class="div-fields-item ds-demo-margin-bottom">
+                        <input type="text" class="ds-demo-txt ds-demo-margin-zero" style="width: 127px;" placeholder="Field Name" /> : 
+                        <input type="text" class="ds-demo-txt ds-demo-width-168 ds-demo-margin-zero" style="margin-left:10px!important;" placeholder="Field Value" />
+                    </div>
+                </div>
+                <div class="ds-demo-margin">
+                    <input type="radio" value="jpg" name="ImageType" id="imgTypejpeg" class="ds-demo-radio" checked="checked" />
+                    <label style="position:relative;top:6px;">JPEG</label>
+                    <input type="radio" value="pdf" name="ImageType" id="imgTypepdf" class="ds-demo-radio ds-demo-margin-left" />
+                    <label style="position:relative;top:6px;">PDF</label><br />	<br />
+                    <input type="checkbox" value="quiet" class="ds-demo-check" id="quietScan" /><label style="position:relative;top:6px;">Quiet</label>
+                    <span id='quietTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span> 
+                    <input type="checkbox" value="directly" class="ds-demo-check" id="uploadDirectly" /><label style="position:relative;top:6px;">Direct</label>
+                    <span id='directTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span><br />
+                    <div id='quietTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload without showing progress bar.</div>
+                    <div id='directTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload any file without loading it.</div>
+                    <input type="button" value="Upload" onclick="UploadImage();" class="ds-demo-blue ds-demo-btn-large ds-demo-border-0 ds-demo-margin" />			
+                </div>			
+                <hr>	
+            </div>
         </div>
-        <div class="ds-demo-left ds-demo-bright-grey ds-demo-inline-block ds-demo-padding-large ds-demo-center ds-demo-border-light-grey" style="width: 470px; height: 650px;">
-			<input type="button" value="Scan" onclick="AcquireImage();" class="ds-demo-btn ds-demo-width-92 ds-demo-margin-left-large" />
-            <input type="button" value="Open a local file" onclick="LoadImages();" class="ds-demo-btn ds-demo-width-168 ds-demo-margin-left-large" />
-           
-			
-			<div class="ds-demo-margin" id="div-extra-fields" style="display:none; max-height:140px;">
-				<div class="div-fields-item ds-demo-margin-bottom">
-					<input type="text" class="ds-demo-txt ds-demo-margin-zero" style="width: 127px;" placeholder="Field Name" /> : 
-					<input type="text" class="ds-demo-txt ds-demo-width-168 ds-demo-margin-zero" style="margin-left:10px!important;" placeholder="Field Value" />
-				</div>
-			</div>
-            <div class="ds-demo-margin">
-				<input type="radio" value="jpg" name="ImageType" class="ds-demo-radio" checked="checked" />
-				<label style="position:relative;top:6px;">JPEG</label>
-				<input type="radio" value="tif" name="ImageType" class="ds-demo-radio ds-demo-margin-left" />
-				<label style="position:relative;top:6px;">TIFF</label>
-				<input type="radio" value="pdf" name="ImageType" class="ds-demo-radio ds-demo-margin-left" />
-				<label style="position:relative;top:6px;">PDF</label><br />	<br />
-				<input type="checkbox" value="quiet" class="ds-demo-check" id="quietScan" /><label style="position:relative;top:6px;">Quiet</label>
-				<span id='quietTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span> 
-				<input type="checkbox" value="directly" class="ds-demo-check" id="uploadDirectly" /><label style="position:relative;top:6px;">Direct</label>
-				<span id='directTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span><br />
-				<div id='quietTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload without showing progress bar.</div>
-				<div id='directTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload any file without loading it.</div>
-				<input type="button" value="Upload" onclick="UploadImage();" class="ds-demo-blue ds-demo-btn-large ds-demo-border-0 ds-demo-margin" />			
-			</div>			
-			<hr>
-			
-        </div>
-    </div>
     </div>
             </div>
 <div class="row">
@@ -268,15 +203,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <th>Line Total</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
+                                <tbody id="list-invoices-data">
+<!--                                    <tr>
                                         <td><input class="form-control bingind-data" id="qty"></td>
                                         <td><input class="form-control bingind-data" id="price"></td>
                                         <td><input class="form-control bingind-data" id="uom"></td>
                                         <td><input class="form-control bingind-data" id="discount"></td>
                                         <td><input class="form-control bingind-data" id="multiplier"></td>
                                         <td><input class="form-control bingind-data" id="line-total"></td>
-                                    </tr>
+                                    </tr>-->
                                 </tbody>
                             </table>
                         </div>
@@ -296,6 +231,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>-->
 </div>
 
+<script id="listInvoicesTemplate" type="text/x-jquery-tmpl">
+    {{each InvoiceListItem}}
+    <tr class="list-invoices" data-id="${$value.ID}">
+        <td><input class="form-control bingind-data" value="${$value.QTY}" id="qty-${$value.ID}"></td>
+
+        <td><input class="form-control bingind-data" value="${$value.UM}" id="uom-${$value.ID}"></td>
+        <td><input class="form-control bingind-data" value="${$value.Discount}" id="discount-${$value.ID}"></td>
+        <td><input class="form-control bingind-data" value="${$value}" id="multiplier-${$value.ID}"></td>
+        <td><input class="form-control bingind-data" value="${$value.Total}" id="line-total-${$value.ID}"></td>
+    </tr>
+    {{/each}}
+</script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
@@ -304,8 +251,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
 <script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
 
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/scanTwainImage.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-regextag.js"></script>
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-rectangle.js"></script>
+<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/scanTwainImage.js"></script>
 </body>
 </html>
