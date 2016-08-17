@@ -3,6 +3,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 include_once 'OCR/OCRProcess.php';
 include_once 'OCR/Point.php';
+include_once 'OCR/GGApi.php';
+
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -95,6 +97,11 @@ class Invoice extends CI_Controller {
         fclose($fWriteHandle);
         $info = new SplFileInfo($fileName);
         $fileType = $info->getExtension();
+        
+        $json = CallGGAPIForImage($fileName);
+        
+        echo $json;
+        
         if($fileType == "pdf"){
 //            $im = new Imagick($fileName);
 //            $noOfPagesInPDF = $im->getNumberImages();
