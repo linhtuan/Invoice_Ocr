@@ -129,7 +129,7 @@ function ValidateBillOrDate($str,$isDate)
         if (strpos($str, 'Amount') != FALSE) {
             return FALSE;
         }
-        
+       
          return preg_match('/[0-9]/', $str);
     }
     

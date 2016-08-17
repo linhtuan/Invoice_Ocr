@@ -1,23 +1,16 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of pointLocation
- *
- * @author thienanh
- */
-class pointLocation {
-    var $pointOnVertex = true; // Check if the point sits exactly on one of the vertices?
  //result =-1 -->outside
     //      0 --> boundary
     //      1 --> Inside
     //      2 --> vertex
-    
+
+class pointLocation {
+    var $pointOnVertex = true; // Check if the point sits exactly on one of the vertices?
+ 
+    function pointLocation() {
+    }
+ 
     function pointInPolygon($point, $polygon, $pointOnVertex = true) {
         $this->pointOnVertex = $pointOnVertex;
  
@@ -74,4 +67,6 @@ class pointLocation {
         $coordinates = explode(" ", $pointString);
         return array("x" => $coordinates[0], "y" => $coordinates[1]);
     }
+ 
 }
+?>

@@ -150,19 +150,15 @@ class ListItemDetail {
         $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
         $p1 = $newPoint12[0];
         $p2 = $newPoint12[1];
-                
-      //  echo '<br>'. $p2->X .':'.$p2->Y;
+     
         $p4 = new Point();
         $p4->X = $firstItem->X1;
         $p4->Y = $nextItem->Y1-20;
        
         $newPoint34 = GetNewPoint($p4, self::$anglePopular,self::$width);
-                 $p4 = $newPoint34[0];
-                 $p3 = $newPoint34[1];
-      //  echo '<br>'. $p3->X .':'.$p3->Y;
-       //  echo '<br>'. $p4->X .':'.$p4->Y;
-      // 
-       
+        $p4 = $newPoint34[0];
+         $p3 = $newPoint34[1];
+      
         $str = GetTextByRectangle($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);
         $firstItemDetail = new ItemDetail();
         $firstItemDetail->TopLeft=$p1;
@@ -371,6 +367,10 @@ class ListItemDetail {
       return $listGroup;
    }
    
+   function MappinglistGroup2List($listGroup) 
+   {
+       $listNewGroup = array();
+   }
    function ReSortOCRValueInItem($listOCRValue)
    {
    

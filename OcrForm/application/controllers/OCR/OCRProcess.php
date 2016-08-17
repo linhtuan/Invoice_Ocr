@@ -1,11 +1,10 @@
 <?php
 
-include_once 'creds.php'; // Get $api_key
+
 include_once 'OCRValue.php';
 include_once 'KeyValue.php';
 include_once 'Utils.php';
 //include_once '../../models/OCRModel.php';
- $cvurl = 'https://vision.googleapis.com/v1/images:annotate?key=' . $api_key;
 
 class InvoiceInfo
 {
@@ -24,52 +23,7 @@ class InvoiceInfo
 
 //$OCRListArray = array();
  // class OCRProcess extends CI_Controller{
-       
-   function CallGGAPI($pathFile,$pageNum)
-    {
-        $type = 'TEXT_DETECTION';
-        //Check if file is pdf page
-        if($pageNum>=0)
-        {
-            $base64 = Pdf2Image($pathFile, $pageNum);
-        }
-        else {
-             $data = file_get_contents($pathFile);
-             $base64 = base64_encode($data);    
-        }
-             
-            //Create this JSON
-         $request_json = '{
-			  	"requests": [
-					{
-					  "image": {
-					    "content":"' . $base64 . '"
-					  },
-					  "features": [
-					      {
-					      	"type": "' . $type . '",
-							"maxResults": 200
-					      }
-					  ]
-					}
-				]
-			}';
-
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $cvurl);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $request_json);
-            $json_response = curl_exec($curl);
-            $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
-
-            if ($status != 200) {
-                die("Error: call to URL $cvurl failed with status $status, response $json_response, curl_error " . curl_error($curl) . ', curl_errno ' . curl_errno($curl));
-            }
-          return $json_response;
-    }
+   
     
      function ParserJson2Object($json_response,&$width,&$height)
     {
@@ -110,8 +64,8 @@ class InvoiceInfo
 			
 		}
                 
-          $width = $maxX-$minX;
-          $height =$maxY - $minY;
+          $width = $maxX;
+          $height =$maxY;
         
 	return  $returnArray;
     }
@@ -123,7 +77,7 @@ class InvoiceInfo
                 $thress1 = ($OCRArray[$i]->X2 - $OCRArray[$i]->X1) / strlen($OCRArray[$i]->description);
                 $thress2 = ($OCRArray[$i+1]->X2 - $OCRArray[$i+1]->X1) / strlen($OCRArray[$i+1]->description);
                 $thress = min($thress1,$thress2);
-                if (abs($OCRArray[$i]->X2 - $OCRArray[$i + 1]->X1) < (3 * $thress))
+                if (abs($OCRArray[$i]->X2 - $OCRArray[$i + 1]->X1) < (1.5 * $thress))
                 {
                      if (Check2BillIsLine($OCRArray[$i], $OCRArray[$i + 1],TRUE,$anglePopular,TRUE ))
                      {
@@ -295,13 +249,16 @@ class InvoiceInfo
                     
                     if (ValidateBillOrDate($description,$isDate))
                     {
+                         
                         $value = substr($description,$index + strlen($key));
                         $result->value = $value;
+                       
                         $point = new Point();
                          $point->X = $itemOCR->X1;
                          $point->Y = $itemOCR->Y1;
                          $result->point= $point;
-                        return $value;
+                         
+                        return $result;
                         //return word.Replace(key, "");
                     }
                 }
@@ -423,9 +380,10 @@ class InvoiceInfo
         foreach ($groupKeysBillID as $key)
         {               
           $ret = GetInvoiceIDorDateByKeyInItem($OCRArray,$key,$isDate);
+           
           if (!empty($ret->value))
           {
-           $result = $ret;
+            $result = $ret;
             $result->label=$key;
             return $result;
           }
@@ -444,49 +402,60 @@ class InvoiceInfo
       
         $POKey = array('invoice id','bill id', 'invoice number', 'invoice no');
         $subTotalKey =array('sub-total','SubTotal','SubTota');
-        $totalKey=array('Tota','Total','Invoice Total');
+        $totalKey=array('Tota','Total','Invoice Total','TOTAL AMOUNT DUE');
         $taxKey=array('Tax','GTS','HST');
        // $taxKey=array
         
-        //GetInvoidID
-     //   $invoiceID = GetInvoiceInfoByKey($OCRArray,$invoiceIDKey);
-     //  $invoiceInfo->InvoiceID = $invoiceID;
-        
+      
         //Get POKey 
        // $PO = GetInvoiceInfoByKey($OCRArray,$POKey);
        // $invoiceInfo->PONumber = $PO;
         
   
-        $CustomerNumKey =array('Customer No.','Customer','Customer ID');
+        $CustomerNumKey =array('Customer No','Customer','Customer ID');
         $CustomerNum = GetInvoiceIDOrDate($OCRArray,$CustomerNumKey,FALSE);
         $invoiceInfo->VendorNumber = $CustomerNum;
+        echo '<br>Customer Number : ';
+        echo $CustomerNum->value;
+            
        
-        $invoiceIDKey =array('Invoice','invoice id','bill id', 'invoice number', 'invoice no');
+        $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
         $InvoiceID = GetInvoiceIDOrDate($OCRArray,$invoiceIDKey,FALSE);
         $invoiceInfo->InvoiceID = $InvoiceID;
-       
+        echo '<br>Invoice ID : ';
+        echo $InvoiceID->value;
          
          
         $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
         $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
         $invoiceInfo->InvoiceDate = $InvoiceDate;
-       
+        echo '<br>Invoice Date : ';
+        echo $InvoiceDate->value;
          
          
-        $groupTermsKey =array('Terms');
-        $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
-        $invoiceInfo->Terms = $Terms;
+         $groupTermsKey =array('Terms');
+         $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
+         $invoiceInfo->Terms = $Terms;
+         echo '<br>Terms ID : ';
+         echo $Terms->value;
          
+         
+               //Get Subtotal
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
         $invoiceInfo->SubTotal = $subtotal;
-       
+        echo '<br>Subtotal : ';
+        echo $subtotal->value;
+        
         $Tax = GetInvoiceInfoByKey($OCRArray, $taxKey,$anglePopular); 
         $invoiceInfo->TotalTax = $Tax;
-       
-        $Total = GetInvoiceInfoByKey($OCRArray, $totalKey, $anglePopular);
+         echo '<br>Tax : ';
+         echo $Tax->value;
+          //Gettotal
+        $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
         $invoiceInfo->Total = $Total;
-         
-      
+        echo '<br>Total : ';
+        echo $Total->value;
+ 
         return $invoiceInfo;
     }
 
@@ -510,7 +479,7 @@ class InvoiceInfo
     function GetTextByRectangle($X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4,$OCRListArray)
     {
         $text="";
-        for($i=1; $i<count($OCRListArray); $i++)
+       for($i=1; $i<count($OCRListArray); $i++)
         {
             $item = $OCRListArray[$i];
             if(CheckPointInRectangle($item->X1,$item->Y1,$X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4)>-1
@@ -531,12 +500,14 @@ class InvoiceInfo
        for($i=1; $i<count($OCRListArray); $i++)
         {
             $item = $OCRListArray[$i];
+            //$a =CheckPointInPolygon($item->X1,$item->Y1,$listPoint);
+            //echo "<br> ghfhfhf: ".$a;
             if(CheckPointInPolygon($item->X1,$item->Y1,$listPoint)>-1
                && CheckPointInPolygon($item->X2,$item->Y2,$listPoint)>-1
                && CheckPointInPolygon($item->X3,$item->Y3,$listPoint)>-1
                && CheckPointInPolygon($item->X4,$item->Y4,$listPoint)>-1 )
             {
-                //return $item->description;
+               
                 $text = $text. " ". $item->description;
             }
         }
