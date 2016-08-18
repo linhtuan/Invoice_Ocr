@@ -38,10 +38,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <label style="position:relative;top:6px;">JPEG</label>
                     <input type="radio" value="pdf" name="ImageType" id="imgTypepdf" class="ds-demo-radio ds-demo-margin-left" />
                     <label style="position:relative;top:6px;">PDF</label><br />	<br />
-                    <input type="checkbox" value="quiet" class="ds-demo-check" id="quietScan" /><label style="position:relative;top:6px;">Quiet</label>
-                    <span id='quietTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span> 
-                    <input type="checkbox" value="directly" class="ds-demo-check" id="uploadDirectly" /><label style="position:relative;top:6px;">Direct</label>
-                    <span id='directTip' class="ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span><br />
+                    <input type="checkbox" value="quiet" class="ds-demo-check hidden" id="quietScan" /><label class="hidden" style="position:relative;top:6px;">Quiet</label>
+                    <span id='quietTip' class="hidden ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span> 
+                    <input type="checkbox" value="directly" class="ds-demo-check hidden" id="uploadDirectly" /><label class="hidden" style="position:relative;top:6px;">Direct</label>
+                    <span id='directTip' class="hidden ds-demo-cursor-help ds-demo-badge ds-demo-green ds-demo-teal">?</span><br />
                     <div id='quietTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload without showing progress bar.</div>
                     <div id='directTip-div' style='display:none; z-index:100; position:absolute; width:300px;' class="ds-demo-box-shadow ds-demo-light-grey ds-demo-radius-small">Upload any file without loading it.</div>
                     <input type="button" value="Upload" onclick="UploadImage();" class="ds-demo-blue ds-demo-btn-large ds-demo-border-0 ds-demo-margin" />			
@@ -54,7 +54,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="row">
         <div class="col-sm-6">
             <div class="col-sm-6">
-                
+                <div class="form-group">
+                    <h6 style="margin-top: 0 !important; text-transform: uppercase">Action</h6>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTemplate" >Create Template</button>
+                    <button type="button" class="btn btn-primary" onclick="bindingInvoiceInfo();" id="loadInvoice">Process</button>
+                </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
@@ -64,7 +68,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </select>
                 </div>
             </div>
-
         </div>
         <div class="col-sm-6">
             <div class="col-sm-3">
@@ -80,12 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </select>
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>Action</label>
-                    <button type="button" class="form-control btn btn-primary" onclick="bindingInvoiceInfo();" id="loadInvoice">Process</button>
-                </div>
-            </div>
+            
         </div>
     </div>
 <div id="body" class="row"> 
@@ -223,12 +221,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
-<!--    <div class="col-sm-12 text-center">
-        <button type="button" class="btn btn-primary" id="update">Save Invoice</button>
-    </div>-->
-
-<input type="hidden" id="physical-file-id" value="0"/>
-<input type="hidden" id="json-file-path" value=""/>
+    <input type="hidden" id="physical-file-id" value="0"/>
+    <input type="hidden" id="json-file-path" value=""/>
+</div>
+    
+<div id="createTemplate" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Create Template</h4>
+            </div>
+            <div class="modal-body from">
+                <div class="form-group">
+                    <label>Template Name</label>
+                    <input class="form-control binding-data" id="template-name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="createTemplate()" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
 </div>
 
 <script id="listInvoicesTemplate" type="text/x-jquery-tmpl">

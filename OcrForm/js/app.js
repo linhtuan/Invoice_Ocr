@@ -209,6 +209,10 @@ function bindingTemplates(){
     });
 }
 
+function createTemplate(){
+
+}
+
 $(document).ready(function() {
     bindingTemplates();
 });
