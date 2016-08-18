@@ -10,17 +10,25 @@ var dataBinding = {"data":[
 var worksheetCanvas;
 var canvas;
 var context;
+var image;
+var ratioImage = 1;
 
 function BindingCanvas(){
-    imageSize = parseInt($('#imagesize').val());
-    ratioImage = (100/imageSize);
     worksheetCanvas = $('#canvas');
-    canvas = worksheetCanvas.get(0);
-    image = document.getElementById("images");
-    canvas.width = image.width/ratioImage;
-    canvas.height = image.height/ratioImage;
-    context = canvas.getContext("2d");
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    if($('#images').attr('src') == undefined || $('#images').attr('src') == '') return;
+    var d = new Date();
+    var url = $('#images').attr('src');
+    $('#images').attr('src', url + '?t=' + d.getTime());
+    $('#images').on('load', function() {
+        image = this;
+        imageSize = parseInt($('#imagesize').val());
+        ratioImage = (100/imageSize);
+        canvas = worksheetCanvas.get(0);
+        canvas.width = this.width/ratioImage;
+        canvas.height = this.height/ratioImage;
+        context = canvas.getContext("2d");
+        context.drawImage(this, 0, 0, canvas.width, canvas.height);
+    });
 }
 
 var ocrCtrl = function (){
@@ -173,8 +181,8 @@ function bindingInvoiceInfo(){
         $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
         $('#teams').val(data.InvoiceInfo.Terms.value);
         $('#invoice-total').val(data.InvoiceInfo.Total.value);
-        $('#image').attr('src', data.PhysicalFilePath);
-        $('#image').attr('src', data.PhysicalFilePath);
+        $('#images').removeAttr("src").attr('src', "http://localhost:8080/OcrForm/" + data.PhysicalFilePath);
+        $('#json-file-path').val(data.JsonFilePath);
         BindingCanvas();
         //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });

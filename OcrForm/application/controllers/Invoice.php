@@ -82,9 +82,8 @@ class Invoice extends CI_Controller {
         $p4->Y = $data[3]->Y;
         $listPoint[] = $p4;
         
-        $jsonFilePath = $_POST['jsonFilePath'];
+        $jsonFilePath = $this->input->post('jsonFilePath');
         $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$jsonFilePath);
-        //   echo $s_Data;
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);

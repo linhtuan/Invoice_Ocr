@@ -1,4 +1,4 @@
-var image;
+
 var points = [];
 var arrayPosition = [];
 $(function() {
@@ -13,7 +13,6 @@ $(function() {
     var storedLines = [];
     var storedLine = {};
     var mouse = {x: -1,y: -1};
-    var ratioImage = 1;
     
     BindingCanvas();
     worksheetCanvas.mousedown(function(k){
@@ -170,7 +169,7 @@ $(function() {
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
     });
     
-    $(document).on('click', '#imagesize', function (event) {
+    $(document).on('change', '#imagesize', function (event) {
         context.clearRect(0, 0, 0, 0);
         BindingCanvas();
     });
