@@ -14,21 +14,7 @@ $(function() {
     var storedLine = {};
     var mouse = {x: -1,y: -1};
     var ratioImage = 1;
-    var worksheetCanvas;
-    var canvas;
-    var context;
     
-    function BindingCanvas(){
-        imageSize = parseInt($('#imagesize').val());
-        ratioImage = (100/imageSize);
-        worksheetCanvas = $('#canvas');
-        canvas = worksheetCanvas.get(0);
-        image = document.getElementById("images");
-        canvas.width = image.width/ratioImage;
-        canvas.height = image.height/ratioImage;
-        context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    }
     BindingCanvas();
     worksheetCanvas.mousedown(function(k){
         if(!$('.binding-data').hasClass('active-binding-data')) return;

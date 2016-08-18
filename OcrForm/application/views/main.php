@@ -233,6 +233,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>-->
 
 <input type="hidden" id="physical-file-id" value="0"/>
+<input type="hidden" id="json-file-path" value=""/>
 </div>
 
 <script id="listInvoicesTemplate" type="text/x-jquery-tmpl">

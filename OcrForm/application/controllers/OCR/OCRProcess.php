@@ -415,46 +415,29 @@ class InvoiceInfo
         $CustomerNumKey =array('Customer No','Customer','Customer ID');
         $CustomerNum = GetInvoiceIDOrDate($OCRArray,$CustomerNumKey,FALSE);
         $invoiceInfo->VendorNumber = $CustomerNum;
-        echo '<br>Customer Number : ';
-        echo $CustomerNum->value;
-            
        
         $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
         $InvoiceID = GetInvoiceIDOrDate($OCRArray,$invoiceIDKey,FALSE);
         $invoiceInfo->InvoiceID = $InvoiceID;
-        echo '<br>Invoice ID : ';
-        echo $InvoiceID->value;
-         
          
         $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
         $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
         $invoiceInfo->InvoiceDate = $InvoiceDate;
-        echo '<br>Invoice Date : ';
-        echo $InvoiceDate->value;
          
-         
-         $groupTermsKey =array('Terms');
-         $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
-         $invoiceInfo->Terms = $Terms;
-         echo '<br>Terms ID : ';
-         echo $Terms->value;
+        $groupTermsKey =array('Terms');
+        $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
+        $invoiceInfo->Terms = $Terms;
          
          
                //Get Subtotal
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
         $invoiceInfo->SubTotal = $subtotal;
-        echo '<br>Subtotal : ';
-        echo $subtotal->value;
         
         $Tax = GetInvoiceInfoByKey($OCRArray, $taxKey,$anglePopular); 
         $invoiceInfo->TotalTax = $Tax;
-         echo '<br>Tax : ';
-         echo $Tax->value;
           //Gettotal
         $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
         $invoiceInfo->Total = $Total;
-        echo '<br>Total : ';
-        echo $Total->value;
  
         return $invoiceInfo;
     }

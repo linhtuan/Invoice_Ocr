@@ -27,7 +27,7 @@ function CallGGAPIForImage($pathFile)
              ]
            }
        ]
-   }';
+    }';
 
 			//echo $request_json;
     $curl = curl_init();

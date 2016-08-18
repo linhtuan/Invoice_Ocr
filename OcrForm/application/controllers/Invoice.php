@@ -11,6 +11,13 @@ include_once 'OCR/GGApi.php';
  * and open the template in the editor.
  */
 class Invoice extends CI_Controller {
+    
+//    public function __constructor(){
+//        
+//        parent::__construct();
+//        $this->output->enable_profiler(TRUE);
+//    }
+    
     public function GetInvoiceData(){
         $this->load->model('invoices_model');
 
@@ -33,28 +40,26 @@ class Invoice extends CI_Controller {
         $query = array(
             'ID' => $this->input->post('physicalFileId')
         );
-        $this->db->select('PathName', 'Text');
-        $this->db->where($query);
-        $fileInfo = $this->db->get('tbfileinfo')->first_row();
-        if($fileInfo != NULL){
-            $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
-            
+        
+        $fileInfo = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->row();
+        if (isset($fileInfo))
+        {
+            $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$fileInfo->JsonFilePath);
             $width=0;
             $height =0;
-            $OCRArray = ParserJson2Object($fileInfo->Text, $width, $height);
+            $OCRArray = ParserJson2Object($s_Data, $width, $height);
             $anglePopular = AnglePopular($OCRArray);
 
             //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
-
             $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
             $data = array(
                 'InvoiceInfo' => $invoiceInfo,
                 'InvoiceListItem' => [],
-                'PhysicalFilePath' => $fileInfo->PathName
+                'PhysicalFilePath' => $fileInfo->PathName,
+                'JsonFilePath' => $fileInfo->JsonFilePath
             );
             echo json_encode($data);
         }
-        
     }
 
     public function GetDataInPositions(){
@@ -76,8 +81,9 @@ class Invoice extends CI_Controller {
         $p4->X = $data[3]->X;
         $p4->Y = $data[3]->Y;
         $listPoint[] = $p4;
-
-        $s_Data = file_get_contents('http://localhost:8080/OcrForm/2.json');
+        
+        $jsonFilePath = $_POST['jsonFilePath'];
+        $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$jsonFilePath);
         //   echo $s_Data;
         $width=0;
         $height =0;
@@ -108,14 +114,17 @@ class Invoice extends CI_Controller {
         $info = new SplFileInfo($fileName);
         $fileType = $info->getExtension();
         
-        //$json = CallGGAPIForImage($fileName);
+        // create file json of image
+        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
+        $jsonPath = "JsonFile\\".$jsonName;
+        $json = CallGGAPIForImage($fileName);
+        file_put_contents($jsonPath, $json);
         $array = array(
-            'PathName' => $fileName,
-            'Text' => ''
+            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
+            'JsonFilePath' => "JsonFile/".$jsonName
         );
         $this->db->set($array);
         $this->db->insert('tbfileinfo');
-        
         
         if($fileType == "pdf"){
 //            $im = new Imagick($fileName);
@@ -136,7 +145,7 @@ class Invoice extends CI_Controller {
     
     public function GetPhysicalFileId()
     {
-        $fileName = "UploadImage\\".$this->input->post('physicalFileName');
+        $fileName = "UploadImage/".$this->input->post('physicalFileName');
         $query = array(
             'PathName' => $fileName
         );

@@ -7,6 +7,22 @@ var dataBinding = {"data":[
         }
 ]};
 
+var worksheetCanvas;
+var canvas;
+var context;
+
+function BindingCanvas(){
+    imageSize = parseInt($('#imagesize').val());
+    ratioImage = (100/imageSize);
+    worksheetCanvas = $('#canvas');
+    canvas = worksheetCanvas.get(0);
+    image = document.getElementById("images");
+    canvas.width = image.width/ratioImage;
+    canvas.height = image.height/ratioImage;
+    context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+}
+
 var ocrCtrl = function (){
     var bindingInput = function(dataObj, id){
         $('#'+ id).val(dataObj);
@@ -36,7 +52,8 @@ var ocrCtrl = function (){
             url: 'http://localhost:8080/OcrForm/index.php/invoice/getdatainpositions',
             type: 'POST',
             data: { 
-                data : jsonData 
+                data : jsonData,
+                jsonFilePath: $('#json-file-path').val()
             }
         });
     };
@@ -156,6 +173,9 @@ function bindingInvoiceInfo(){
         $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
         $('#teams').val(data.InvoiceInfo.Terms.value);
         $('#invoice-total').val(data.InvoiceInfo.Total.value);
+        $('#image').attr('src', data.PhysicalFilePath);
+        $('#image').attr('src', data.PhysicalFilePath);
+        BindingCanvas();
         //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });
 }
