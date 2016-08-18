@@ -49,16 +49,32 @@ class Invoice extends CI_Controller {
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
             $anglePopular = AnglePopular($OCRArray);
-
-            //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
-            $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
-            $data = array(
-                'InvoiceInfo' => $invoiceInfo,
-                'InvoiceListItem' => [],
-                'PhysicalFilePath' => $fileInfo->PathName,
-                'JsonFilePath' => $fileInfo->JsonFilePath
-            );
-            echo json_encode($data);
+            
+            $templateId = $this->input->post('templateId');
+            if($templateId > 0)
+            {
+                $this->db->where(array('TemplateID' => $templateId));
+                $templateKey = $this->db->get('tbkeyword')->result();
+                $invoiceInfo = GetInvoiceInforByTemplate($OCRArray, $anglePopular, $templateKey);
+                $data = array(
+                    'InvoiceInfo' => $invoiceInfo,
+                    'InvoiceListItem' => [],
+                    'PhysicalFilePath' => $fileInfo->PathName,
+                    'JsonFilePath' => $fileInfo->JsonFilePath
+                );
+                echo json_encode($data);
+            }
+            else{
+                //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+                $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
+                $data = array(
+                    'InvoiceInfo' => $invoiceInfo,
+                    'InvoiceListItem' => [],
+                    'PhysicalFilePath' => $fileInfo->PathName,
+                    'JsonFilePath' => $fileInfo->JsonFilePath
+                );
+                echo json_encode($data);
+            }
         }
     }
 
@@ -154,8 +170,7 @@ class Invoice extends CI_Controller {
         echo json_encode($fileInfoId);
     }
 
-    public function UpdateInvoiceDetail(){
-
+    public function UpdateInvoice(){
         $invoiceInfoId = $this->input->post('InvoiceInfoId');
         $vendorName = $this->input->post('VendorName');
         $invoiceNumber = $this->input->post('InvoiceNumber');
@@ -171,20 +186,8 @@ class Invoice extends CI_Controller {
         echo json_encode($data);
     }
     
-    public function UpdateInvoiceListItem(){
-        $invoiceInfoId = $this->input->post('InvoiceInfoId');
-        $vendorName = $this->input->post('VendorName');
-        $invoiceNumber = $this->input->post('InvoiceNumber');
-        $date = $this->input->post('Date');
-        $data = array(
-            'VendorName' => $vendorName,
-            'InvoiceNumber' => $invoiceNumber,
-            'Date' => $date
-        );
-
-        $this->db->where('ID', $invoiceInfoId);
-        $this->db->update('tblistitem', $data);
-        echo json_encode('');
+    public function GetTemplate(){
+        $query = $this->db->get('tbtemplate')->result();
+        echo json_encode($query);
     }
 }
-

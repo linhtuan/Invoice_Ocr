@@ -46,11 +46,14 @@ var ocrCtrl = function (){
         });
     };
     
-    var getInvoiceInfo = function(id){
+    var getInvoiceInfo = function(id, templateId){
         return $.ajax({
             url: 'http://localhost:8080/OcrForm/index.php/invoice/getvalueinjson',
             type: 'POST',
-            data: {physicalFileId: id}
+            data: {
+                physicalFileId: id,
+                templateId: templateId
+            }
         });
     };
     
@@ -68,15 +71,7 @@ var ocrCtrl = function (){
     
     var updateInvoiceDetail = function(model){
         return $.ajax({
-            url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicedetail',
-            type: 'POST',
-            data: model
-        });
-    };
-    
-    var updateInvoiceListItems = function(model){
-        return $.ajax({
-            url: 'http://localhost:8080/OcrForm/index.php/invoice/updateinvoicelistitem',
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/UpdateInvoice',
             type: 'POST',
             data: model
         });
@@ -90,6 +85,13 @@ var ocrCtrl = function (){
         });
     };
     
+    var getTemplates = function(){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/gettemplate',
+            type: 'POST',
+        });
+    };
+    
     return {
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
@@ -97,8 +99,8 @@ var ocrCtrl = function (){
         getInvoiceData: function(){
             return getInvoiceData();
         },
-        getInvoiceInfo: function(id){
-            return getInvoiceInfo(id);
+        getInvoiceInfo: function(id, templateId){
+            return getInvoiceInfo(id, templateId);
         },
         getDataInPositions: function(listPositions){
             return getDataInPositions(listPositions);
@@ -106,11 +108,11 @@ var ocrCtrl = function (){
         updateInvoiceDetail: function(model){
             return updateInvoiceDetail(model);
         },
-        updateInvoiceListItems: function(model){
-            return updateInvoiceListItems(model);
-        },
         getPhysicalFileId: function(fileName){
             return getPhysicalFileId(fileName);
+        },
+        getTemplates: function(){
+            return getTemplates();
         },
     };
 }(ocrCtrl);
@@ -167,13 +169,17 @@ $(document).on('click', '#update-list-item', function (event) {
         InvoiceNumber: $('#invoice-number').val(),
         Date: $('#invoice-date').val(),
     };
-    ocrCtrl.updateInvoiceListItems(model);
+    ocrCtrl.updateInvoiceDetail(model);
 });
 
 function bindingInvoiceInfo(){
     var id = parseInt($('#physical-file-id').val());
-    if(id == 0) return;
-    var getData = ocrCtrl.getInvoiceInfo(id);
+    var templateId = parseInt($('#template-option').val());
+    if(id == 0) {
+        alert('You need upload file to server.')
+        return;
+    }
+    var getData = ocrCtrl.getInvoiceInfo(id, templateId);
     $.when(getData).then(function(result, textStatus, jqXHR){
         var data = JSON.parse(result);
         $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
@@ -187,4 +193,23 @@ function bindingInvoiceInfo(){
         //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });
 }
+
+function bindingTemplates(){
+    var templates = ocrCtrl.getTemplates();
+    $.when(templates).then(function(result, textStatus, jqXHR){
+        var html = '';
+        var data = JSON.parse(result);
+        html += '<option value="-1">--- Seleted template ---</option>';
+        for(var i = 0; i < data.length; i ++){
+            var item = data[i];
+            html += '<option value="'+ item.ID +'">'+ item.TemplateName +'</option>'
+        }
+        $('#template-option').html('');
+        $('#template-option').html(html);
+    });
+}
+
+$(document).ready(function() {
+    bindingTemplates();
+});
 

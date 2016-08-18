@@ -59,13 +59,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="col-sm-6">
                 <div class="form-group">
                     <label>Customer templates</label>
-                    <select class="form-control">
-                        <option>--- Seleted template ---</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <select class="form-control" id="template-option">
+                        <option value="-1">--- Seleted template ---</option>
                     </select>
                 </div>
             </div>

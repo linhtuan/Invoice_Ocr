@@ -63,7 +63,12 @@ function UploadImage() {
         DWObject.HTTPPort = location.port == "" ? 80 : location.port;
 
         var Digital = new Date();
-        var uploadfilename = Digital.getMilliseconds(); // Uses milliseconds according to local time as the file name
+        var uploadfilename = Digital.getFullYear() 
+                + "_" + Digital.getMonth()
+                + "_" + Digital.getDate()
+                + "_" + Digital.getHours()
+                + "_" + Digital.getMinutes()
+                + "_" + Digital.getMilliseconds(); // Uses milliseconds according to local time as the file name
         //
         // Upload the image(s) to the server asynchronously
         if (document.getElementById("imgTypejpeg").checked == true) {

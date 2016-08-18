@@ -631,7 +631,7 @@ class TemplateKeyword{
             $Vertycal = $KeyWordTemplate->Vertycal;
             $index = $KeyWordTemplate->Index;
             $result = new  KeyValue();
-           
+            
             if($Type==0)
             {
                $result =   GetInvoiceIDOrDateByKeyTemPlate($OCRArray,$keyword,FALSE,$Vertycal);
