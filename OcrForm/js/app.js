@@ -221,7 +221,6 @@ function BindingListInvoiceItems(array){
     $('#list-invoice-title').html(htmlTitle);
     
     var htmlListItems = '';
-    var input = $('.clone-input').clone();
     for(var i = 1; i < array.length; i++){
         var item = array[i];
         for(var j = 0; j < item.length; j++){
