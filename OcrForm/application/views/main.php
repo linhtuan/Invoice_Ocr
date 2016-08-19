@@ -240,7 +240,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="createTemplate()" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-default" onclick="createTemplate()">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
       </div>
@@ -270,5 +270,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-rectangle.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/scanTwainImage.js"></script>
+<script type = 'text/javascript'>
+
+$(document).ready(function() {
+    bindingTemplates();
+});
+
+</script>
 </body>
 </html>

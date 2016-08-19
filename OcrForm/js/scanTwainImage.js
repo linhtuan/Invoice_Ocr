@@ -1,4 +1,4 @@
-Dynamsoft.WebTwainEnv.RegisterEvent('OnWebTwainReady', Dynamsoft_OnReady); // Register OnWebTwainReady event. This event fires as soon as Dynamic Web TWAIN is initialized and ready to be used
+
 
 var DWObject;
 var fileName;
@@ -64,10 +64,11 @@ function UploadImage() {
 
         var Digital = new Date();
         var uploadfilename = Digital.getFullYear() 
-                + "_" + Digital.getMonth()
+                + "_" + (Digital.getMonth() + 1)
                 + "_" + Digital.getDate()
                 + "_" + Digital.getHours()
                 + "_" + Digital.getMinutes()
+                + "_" + Digital.getSeconds()
                 + "_" + Digital.getMilliseconds(); // Uses milliseconds according to local time as the file name
         //
         // Upload the image(s) to the server asynchronously

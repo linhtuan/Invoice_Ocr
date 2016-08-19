@@ -1,3 +1,5 @@
+Dynamsoft.WebTwainEnv.RegisterEvent('OnWebTwainReady', Dynamsoft_OnReady);
+
 var dataBinding = {"data":[
         {
             "InvoiceId": "1234445",
@@ -92,6 +94,14 @@ var ocrCtrl = function (){
         });
     };
     
+    var createTemplate = function(model){
+        return $.ajax({
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/createtemplate',
+            type: 'POST',
+            data: model
+        });
+    }
+    
     return {
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
@@ -113,6 +123,9 @@ var ocrCtrl = function (){
         },
         getTemplates: function(){
             return getTemplates();
+        },
+        createTemplate: function(model){
+            return createTemplate(model);
         },
     };
 }(ocrCtrl);
@@ -196,7 +209,9 @@ function bindingInvoiceInfo(){
 
 function bindingTemplates(){
     var templates = ocrCtrl.getTemplates();
+    Dynamsoft.Lib.detect.showMask();
     $.when(templates).then(function(result, textStatus, jqXHR){
+        Dynamsoft.Lib.detect.hideMask();
         var html = '';
         var data = JSON.parse(result);
         html += '<option value="-1">--- Seleted template ---</option>';
@@ -210,10 +225,14 @@ function bindingTemplates(){
 }
 
 function createTemplate(){
-
+    var id = parseInt($('#physical-file-id').val());
+    if($('#template-name').val() == undefined || $('#template-name').val() == '' || id == 0) return;
+    var model = {
+        physicalFileId: id,
+        templateName: $('#template-name').val()
+    };
+    var data = ocrCtrl.createTemplate(model);
+    $.when(data).then(function(result){
+        bindingTemplates();
+    });
 }
-
-$(document).ready(function() {
-    bindingTemplates();
-});
-

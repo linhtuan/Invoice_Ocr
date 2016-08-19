@@ -116,11 +116,12 @@ class Invoice extends CI_Controller {
         $fileSize = $_FILES['RemoteFile']['size'];
         $fileName = "UploadImage\\".$_FILES['RemoteFile']['name'];
         $fileName = iconv("UTF-8", "gb2312", $fileName);
-
-        if (file_exists($fileName)) 
-          $fWriteHandle = fopen($fileName, 'w');
-        else
-          $fWriteHandle = fopen($fileName, 'w');
+        $fWriteHandle;
+        if (file_exists($fileName)) {
+            $fWriteHandle = fopen($fileName, 'w');
+        } else {
+            $fWriteHandle = fopen($fileName, 'w');
+        }
         $fReadHandle = fopen($fileTempName, 'rb');
         $fileContent = fread($fReadHandle, $fileSize);
         $strFileSize = (string)intval($fileSize/1024)."KB";
@@ -130,19 +131,19 @@ class Invoice extends CI_Controller {
         $fileType = $info->getExtension();
         
         // create file json of image
-        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
-        $jsonPath = "JsonFile\\".$jsonName;
-        $json = CallGGAPIForImage($fileName);
-        file_put_contents($jsonPath, $json);
-        $array = array(
-            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
-            'JsonFilePath' => "JsonFile/".$jsonName
-        );
-        $this->db->set($array);
-        $this->db->insert('tbfileinfo');
+//        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
+//        $jsonPath = "JsonFile\\".$jsonName;
+//        $json = CallGGAPIForImage($fileName);
+//        file_put_contents($jsonPath, $json);
+//        $array = array(
+//            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
+//            'JsonFilePath' => "JsonFile/".$jsonName
+//        );
+//        $this->db->set($array);
+//        $this->db->insert('tbfileinfo');
         
         if($fileType == "pdf"){
-//            $im = new Imagick($fileName);
+            $im = new \Imagick($fileName);
 //            $noOfPagesInPDF = $im->getNumberImages();
 //            for ($i = 0; $i < $noOfPagesInPDF; $i++) { 
 // 
@@ -189,5 +190,33 @@ class Invoice extends CI_Controller {
     public function GetTemplate(){
         $query = $this->db->get('tbtemplate')->result();
         echo json_encode($query);
+    }
+    
+    public function CreateTemplate(){
+        $physicalFileId = $this->input->post('physicalFileId');
+        $templateName = $this->input->post('templateName');
+        
+        $fileInfo = $this->db->get('tbfileinfo')->first_row();
+        
+        $arrayTemplate = array(
+            'TemplateName' => $templateName,
+            'ImageSampleLink' => $fileInfo->PathName
+        );
+        
+        $this->db->set($arrayTemplate);
+        $this->db->insert('tbtemplate');
+        $last_id = $this->db->insert_id();
+        
+        $arrayKeyword = array();
+        
+        $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$fileInfo->JsonFilePath);
+        $width=0;
+        $height =0;
+        $OCRArray = ParserJson2Object($s_Data,$width,$height);
+        $anglePopular = AnglePopular($OCRArray);
+
+        //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+        $str = GetInvoiceInfor($OCRArray,$anglePopular);
+        //$listItem = 
     }
 }
