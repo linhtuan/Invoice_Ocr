@@ -189,7 +189,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered table-hover">
                                 <thead>
-                                    <tr>
+                                    <tr id="list-invoice-title">
                                         <th>Qty</th>
                                         <th>Price</th>
                                         <th>UOM</th>

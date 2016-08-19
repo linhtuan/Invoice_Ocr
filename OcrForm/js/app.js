@@ -14,6 +14,7 @@ var canvas;
 var context;
 var image;
 var ratioImage = 1;
+var listInvoiceItem = [];
 
 function BindingCanvas(){
     worksheetCanvas = $('#canvas');
@@ -202,9 +203,36 @@ function bindingInvoiceInfo(){
         $('#invoice-total').val(data.InvoiceInfo.Total.value);
         $('#images').removeAttr("src").attr('src', "http://localhost:8080/OcrForm/" + data.PhysicalFilePath);
         $('#json-file-path').val(data.JsonFilePath);
+        BindingListInvoiceItems(data.InvoiceListItem);
         BindingCanvas();
         //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });
+}
+
+function BindingListInvoiceItems(array){
+    listInvoiceItem = array;
+    var title = array[0];
+    var htmlTitle = '';
+    for(var i = 0; i < title.length; i ++){
+        var item = title[i];
+        htmlTitle += '<th>'+ item +'</th>'
+    }
+    $('#list-invoice-title').html('');    
+    $('#list-invoice-title').html(htmlTitle);
+    
+    var htmlListItems = '';
+    var input = $('.clone-input').clone();
+    for(var i = 1; i < array.length; i++){
+        var item = array[i];
+        for(var j = 0; j < item.length; j++){
+            var data = item[j];
+            var id = title[j].replace(/ /g, '_');
+            id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+            htmlListItems += '<td><input class="form-control binding-data" value="'+ data +'" id="'+ id +'"></td>';
+        }
+    }
+    $('#list-invoices-data').html('');
+    $('#list-invoices-data').html(htmlListItems);
 }
 
 function bindingTemplates(){

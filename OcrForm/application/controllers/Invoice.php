@@ -53,12 +53,18 @@ class Invoice extends CI_Controller {
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
+                $listItemDetail = array("Item Number", "Description", "Ordered", "B/O", "Shipped", "Unit Price", "Ext. Price");
+                $listItemDetail1 = array("SUR1900", "SURREY GRAY SPELL", "30", "0", "30", "$11.17", "$335.10");
+                $listItems = array();
+                array_push($listItems, $listItemDetail);
+                array_push($listItems, $listItemDetail1);
+                
                 $this->db->where(array('TemplateID' => $templateId));
                 $templateKey = $this->db->get('tbkeyword')->result();
                 $invoiceInfo = GetInvoiceInforByTemplate($OCRArray, $anglePopular, $templateKey);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
-                    'InvoiceListItem' => [],
+                    'InvoiceListItem' => $listItems,
                     'PhysicalFilePath' => $fileInfo->PathName,
                     'JsonFilePath' => $fileInfo->JsonFilePath
                 );
@@ -67,9 +73,14 @@ class Invoice extends CI_Controller {
             else{
                 //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
                 $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
+                $listItemDetail = array("Item Number", "Description", "Ordered", "B/O", "Shipped", "Unit Price", "Ext. Price");
+                $listItemDetail1 = array("SUR1900", "SURREY GRAY SPELL", "30", "0", "30", "$11.17", "$335.10");
+                $listItems = array();
+                array_push($listItems, $listItemDetail);
+                array_push($listItems, $listItemDetail1);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
-                    'InvoiceListItem' => [],
+                    'InvoiceListItem' => $listItems,
                     'PhysicalFilePath' => $fileInfo->PathName,
                     'JsonFilePath' => $fileInfo->JsonFilePath
                 );
@@ -130,17 +141,17 @@ class Invoice extends CI_Controller {
         $info = new SplFileInfo($fileName);
         $fileType = $info->getExtension();
         
-        // create file json of image
-//        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
-//        $jsonPath = "JsonFile\\".$jsonName;
-//        $json = CallGGAPIForImage($fileName);
-//        file_put_contents($jsonPath, $json);
-//        $array = array(
-//            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
-//            'JsonFilePath' => "JsonFile/".$jsonName
-//        );
-//        $this->db->set($array);
-//        $this->db->insert('tbfileinfo');
+        //create file json of image
+        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
+        $jsonPath = "JsonFile\\".$jsonName;
+        $json = CallGGAPIForImage($fileName);
+        file_put_contents($jsonPath, $json);
+        $array = array(
+            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
+            'JsonFilePath' => "JsonFile/".$jsonName
+        );
+        $this->db->set($array);
+        $this->db->insert('tbfileinfo');
         
         if($fileType == "pdf"){
             $im = new \Imagick($fileName);
