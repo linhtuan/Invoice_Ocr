@@ -184,8 +184,12 @@ class TemplateKeyword{
             for ($i = 0; $i < count($OCRArray) ; $i ++)
             {
                 $itemOCR = $OCRArray[$i];
-                 if(strcasecmp($key,$itemOCR->description)==0)
-                 {
+                $perc=0;
+                 //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+                similar_text(strtolower($key),strtolower(str_replace(array('#', '.', ':'), '',$itemOCR->description)),$perc);
+                if($perc>85)
+                // if(strcasecmp($key,$itemOCR->description)==0)
+                {
                      $index=$i;
                      break;
                  }
@@ -329,7 +333,6 @@ class TemplateKeyword{
                 }
                 else
                 {
-                    
                     if (ValidateBillOrDate($description,$isDate))
                     {
                          
@@ -349,15 +352,19 @@ class TemplateKeyword{
 
             return "";
         }
-
+    
     function GetInvoiceIDOrDateByKeyTemPlate($OCRArray,$key,$isDate,$vertycal)
     {
         $labelItems = array();
         $result =new KeyValue();
         foreach ($OCRArray as $itemOCR)
         {
-             if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            $perc=0;
+            //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            similar_text(strtolower($key),strtolower(str_replace(array('#', '.', ':'), '',$itemOCR->description)),$perc);
+            if($perc>85)
              {
+               
                  $labelItems[] = $itemOCR;
              }
         }
@@ -375,11 +382,11 @@ class TemplateKeyword{
                           continue;
                         }
                         if (ValidateBillOrDate($item->description,$isDate)==FALSE) continue;
-                       
+                      
                         //horizontal
                         if(!$vertycal)
                         {
-                            if (abs($labelItem->Y4 - $item->Y4) < 5) //horizontal
+                            if (abs($labelItem->Y4 - $item->Y4) < (($labelItem->Y4-$labelItem->Y1)/1.5)) //horizontal
                                     {
                                         if (($item->X2 - $labelItem->X1) > 0)
                                         {
@@ -398,8 +405,7 @@ class TemplateKeyword{
                         else {  //Vertycal
                               if (($item->Y1 - $labelItem->Y4) < (10 * ($item->Y4 - $item->Y1)) && ($item->Y1 - $labelItem->Y1) > 0)//Vertycal
                                 {
-
-                                    if ((abs($item->X2 - $labelItem->X2) < 7) || (abs($item->X1 - $labelItem->X1) < 7) || (abs(($item->X1 + $item->X2) / 2 - ($labelItem->X1 + $labelItem->X2) / 2) < 30))
+                                   if ((abs($item->X2 - $labelItem->X2) < 7) || (abs($item->X1 - $labelItem->X1) < 7) || (abs(($item->X1 + $item->X2) / 2 - ($labelItem->X1 + $labelItem->X2) / 2) < 30))
                                     {
                                          $result->value = $item->description;
                                         $point = new Point();
@@ -437,7 +443,11 @@ class TemplateKeyword{
         $result =new KeyValue();
         foreach ($OCRArray as $itemOCR)
         {
-             if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            $perc=0;
+            //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            similar_text(strtolower($key),strtolower(str_replace(array('#', '.', ':'), '',$itemOCR->description)),$perc);
+            if($perc>85)
+             //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
              {
                  $labelItems[] = $itemOCR;
              }
@@ -631,7 +641,7 @@ class TemplateKeyword{
             $Vertycal = $KeyWordTemplate->Vertycal;
             $index = $KeyWordTemplate->Index;
             $result = new  KeyValue();
-            
+           
             if($Type==0)
             {
                $result =   GetInvoiceIDOrDateByKeyTemPlate($OCRArray,$keyword,FALSE,$Vertycal);
@@ -785,5 +795,5 @@ class TemplateKeyword{
           return $listOCRValue;
     }
 
-
+   
     

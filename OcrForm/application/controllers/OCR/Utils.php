@@ -114,6 +114,7 @@ function ValidateBillOrDate($str,$isDate)
        
        if(!empty($year) && !empty($month) && !empty($day))
        {
+           
            return TRUE;
        }
       

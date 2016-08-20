@@ -98,6 +98,7 @@ class ListItemDetail {
         for($i =1; $i< count(self::$OCRArray);$i++)
        {
             $itemOCR =self::$OCRArray[$i];
+           
              if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
              {
                  $labelItems = $itemOCR;
@@ -106,7 +107,7 @@ class ListItemDetail {
                  break;
              }
         }
-       
+    
         //Get next item position in vetycal
         $firstItem = new OCRValue();
         $indexFisrt = 0;
@@ -170,7 +171,7 @@ class ListItemDetail {
         $firstItemDetail->KeyIndex =$indexFisrt;
         $listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
         $firstItemDetail->ListOCRValue =  $this->ReSortOCRValueInItem($listOCRValue);
-      
+       
         return $firstItemDetail;
     }
     
@@ -284,8 +285,18 @@ class ListItemDetail {
    {
        $listItem = array();        
        $firstItem = $this->GetFirstItemByKey($key,true);
+       
        $listItem = $this->GetListItem($firstItem);
-      return  $listItem;
+       $listRows = array();
+        foreach($listItem as $item)
+            {
+                $OCRItemList=$item->ListOCRValue;
+                $rows = self::ClusterringListItem($OCRItemList);
+                $listRows[] = $rows;
+            }
+       $result = self::MappinglistGroup2List($listRows) ;
+       
+      return  $result;
    }
    
    function CheckDistanFromItem2Group($item,$group)
@@ -308,6 +319,7 @@ class ListItemDetail {
        $firstGroup = new GroupInItem();
        $firstGroup->listOCRValue = array();
        $firstGroup->listOCRValue[] = $listItem[0];
+    //   echo $listItem[0]->description;
        $firstGroup->P1 = new Point();
        $firstGroup->P1->X = $firstGroup->listOCRValue[0]->X1;
        $firstGroup->P1->Y = $firstGroup->listOCRValue[0]->Y1;
@@ -362,6 +374,8 @@ class ListItemDetail {
                     $newGroup->P4->X = $newGroup->listOCRValue[0]->X4;
                     $newGroup->P4->Y = $newGroup->listOCRValue[0]->Y4;
                     $listGroup[] = $newGroup;
+                    
+                   
             }
        }
       return $listGroup;
@@ -370,7 +384,80 @@ class ListItemDetail {
    function MappinglistGroup2List($listGroup) 
    {
        $listNewGroup = array();
+       
+       //Calculate max col
+       $indexMaxCol=0;
+       $indexGroup =$listGroup[0];
+       $maxColl= count($listGroup[0]);
+       for($i =0; $i<count($listGroup); $i++)
+       {
+           $group = $listGroup[$i];
+           $numCol = count($group);
+           if($numCol>$maxColl)
+           {
+               $maxColl= $numCol;
+               $indexMaxCol=$i;
+               $indexGroup = $listGroup[$i];
+           }
+          
+       }
+      
+       $listRows = array();
+       for($i=0; $i<count($listGroup); $i++)
+       {
+           $rows = array();
+           $currentGroup = $listGroup[$i];
+           $index=0;
+           for($k=0; $k<$maxColl; $k++)
+           {
+               if($index==count($currentGroup)) break;
+               if(self::check2ListOCRValueInCol($currentGroup[$index],$indexGroup[$k]))
+               {
+                   //Add str to rows
+                   $group = $currentGroup[$index];
+                   $s="";
+                   foreach ($group->listOCRValue as $OCRitem)
+                             $s = $s." " .$OCRitem->description;
+                   $rows[] =$s;
+                   $index++;
+               }   
+               else
+               {
+                   $rows[] =" ";
+               }
+           }
+           $listRows[] = $rows;
+       }
+       
+       return $listRows;
    }
+   
+   function check2ListOCRValueInCol($list1,$list2)
+   {
+     // $list1 = new  GroupInItem();
+    //  $list2 = new GroupInItem();
+      if( Check2LineOverlap($list1->P4->X,$list1->P3->X,$list2->P4->X,$list2->P3->X)==TRUE)
+      {
+            return TRUE;
+        }
+       
+        return FALSE;
+   }
+   
+    function GetListOCRItemManual($listTitle, $listFirstItem)
+    {
+        $firstItemDetail = new ItemDetail();
+        if(count($listFirstItem)>0)
+        {
+             $firstItemDetail->TopLeft=$p1;
+             $firstItemDetail->TopRight=$p2;
+             $firstItemDetail->BottomLeft=$p4;
+             $firstItemDetail->BottomRight=$p3;
+             $firstItemDetail->FullStr= $str;
+             $firstItemDetail->Key = $firstItem;
+        }
+    }
+    
    function ReSortOCRValueInItem($listOCRValue)
    {
    
