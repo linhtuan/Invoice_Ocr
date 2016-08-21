@@ -584,30 +584,32 @@ class TemplateKeyword{
         $billInforKey= array();
         //Load Keyword 
         $totalKey =  LoadDefaultTemplate('./template/totalKey.json');
-        $POKey =  LoadDefaultTemplate('./template/totalKey.json');
-        $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
-        $ShippingKey =  LoadDefaultTemplate('./template/totalKey.json');
-        $DiscountKey = LoadDefaultTemplate('./template/totalKey.json');
+        $POKey =  LoadDefaultTemplate('./template/POKey.json');
+        $invoiceIDKey = LoadDefaultTemplate('./template/invoiceIDKey.json');
+        $ShippingKey =  LoadDefaultTemplate('./template/ShippingKey.json');
+        $DiscountKey = LoadDefaultTemplate('./template/DiscountKey.json');
+        $taxKey=LoadDefaultTemplate('./template/taxKey.json');
+        $subTotalKey =LoadDefaultTemplate('./template/subTotalKey.json');
+        $vendorNumKey =LoadDefaultTemplate('./template/vendorNumberKey.json');
+        $InvoiceDateKey =LoadDefaultTemplate('./template/invoiceDateKey.json');
+         $TermsKey =LoadDefaultTemplate('./template/TermsKey.json');
+           
         $billInforKey[] =$totalKey;
         $billInforKey[]  =$POKey;
         $billInforKey[] =$invoiceIDKey;
-        //Calculate $anglePopular
-     
-       // $invoiceID = new KeyValue();
+        $billInforKey[] =$ShippingKey;
+        $billInforKey[] =$DiscountKey;
+        $billInforKey[] =$taxKey;
+        $billInforKey[] =$InvoiceDateKey;
+        $billInforKey[] =$invoiceIDKey;
       
-       // $POKey = array('invoice id','bill id', 'invoice number', 'invoice no');
-        $subTotalKey =array('sub-total','SubTotal','SubTota');
-       // $totalKey=array('Tota','Total','Invoice Total','TOTAL AMOUNT DUE');
-        $taxKey=array('Tax','GTS','HST');
-       // $taxKey=array
-        
          $vendorName = GetVendorName($OCRArray,$billInforKey);
-          $objVendorName = new KeyValue();
+         $objVendorName = new KeyValue();
           $objVendorName->value = $vendorName;
           $objVendorName->index=100;
           $invoiceInfo->VendorName= $objVendorName;
     
-        $vendorNumKey =array('Customer No','Customer','Customer ID');
+       
         $vendorNum = GetInvoiceIDOrDate($OCRArray,$vendorNumKey,FALSE);
         $vendorNum->index =100;
         $invoiceInfo->VendorNumber = $vendorNum;
@@ -616,7 +618,7 @@ class TemplateKeyword{
         $InvoiceID->index= 200;
         $invoiceInfo->InvoiceID = $InvoiceID;
         
-         $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
+       
         $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
         $InvoiceDate->index =300;
         $invoiceInfo->InvoiceDate = $InvoiceDate;
@@ -626,8 +628,8 @@ class TemplateKeyword{
         $invoiceInfo->PONumber = $PO;
                 
          
-         $groupTermsKey =array('Terms');
-         $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
+       
+         $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
          $Terms->index=500;
          $invoiceInfo->Terms = $Terms;
   //       echo '<br>Terms ID : ';
