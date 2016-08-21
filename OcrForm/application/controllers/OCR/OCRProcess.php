@@ -586,7 +586,8 @@ class TemplateKeyword{
         $totalKey =  LoadDefaultTemplate('./template/totalKey.json');
         $POKey =  LoadDefaultTemplate('./template/totalKey.json');
         $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
-        
+        $ShippingKey =  LoadDefaultTemplate('./template/totalKey.json');
+        $DiscountKey = LoadDefaultTemplate('./template/totalKey.json');
         $billInforKey[] =$totalKey;
         $billInforKey[]  =$POKey;
         $billInforKey[] =$invoiceIDKey;
@@ -850,7 +851,7 @@ class TemplateKeyword{
                     {
                         $group = array();
                         $group[] =$item;
-                        if (ValidateVendorGroup($group))
+                       // if (ValidateVendorGroup($group))
                         {
                            
                             if ($str[$pos - 1] == ' ')
