@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once 'OCR/OCRProcess.php';
 include_once 'OCR/Point.php';
 include_once 'OCR/GGApi.php';
-
+include_once 'OCR/ListItemDetail.php';
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -69,18 +69,12 @@ class Invoice extends CI_Controller {
                     'JsonFilePath' => $fileInfo->JsonFilePath
                 );
                 echo json_encode($data);
-            }
-            else{
+            }else{
                 //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
                 $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
-                $listItemDetail = array("Item Number", "Description", "Ordered", "B/O", "Shipped", "Unit Price", "Ext. Price");
-                $listItemDetail1 = array("SUR1900", "SURREY GRAY SPELL", "30", "0", "30", "$11.17", "$335.10");
-                $listItems = array();
-                array_push($listItems, $listItemDetail);
-                array_push($listItems, $listItemDetail1);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
-                    'InvoiceListItem' => $listItems,
+                    'InvoiceListItem' => [],
                     'PhysicalFilePath' => $fileInfo->PathName,
                     'JsonFilePath' => $fileInfo->JsonFilePath
                 );
@@ -260,5 +254,26 @@ class Invoice extends CI_Controller {
         }
         
         echo json_encode($templateId);
+    }
+    
+    public function ListItemProcess(){
+        $cListItem = new ListItemDetail();
+        $cListItem->SetOcrArray($OCRArray);
+        $cListItem->SetAnglePopular($anglePopular);
+        $cListItem->SetWidth($width);
+        $cListItem->SetHeight($height);
+        $listRows = $cListItem->GetListItemByKey('Unit Price',6);
+        $arrayResult = array();
+        for($i=1; $i<count($listRows);$i++)
+        {
+            $arrayItem = $listRows[$i];
+            //Write gias tri
+//            $arrayDetil = 
+//            foreach($arrayItem as $item)
+//            {
+//                echo $item. "--";
+//            }
+//            echo '<br>';
+        }
     }
 }

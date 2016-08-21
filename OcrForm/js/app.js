@@ -198,7 +198,9 @@ function bindingInvoiceInfo(){
         
         $('#images').removeAttr("src").attr('src', "http://localhost:8080/OcrForm/" + data.PhysicalFilePath);
         $('#json-file-path').val(data.JsonFilePath);
-        BindingListInvoiceItems(data.InvoiceListItem);
+        if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
+            BindingListInvoiceItems(data.InvoiceListItem);
+        }
         BindingCanvas();
         //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
     });
