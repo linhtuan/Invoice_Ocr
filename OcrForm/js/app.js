@@ -257,7 +257,7 @@ function bindingInvoiceInfo(){
         $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
         $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
         
-        $('#images').removeAttr("src").attr('src', "http://localhost:8080/OcrForm/" + data.PhysicalFilePath);
+        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.PhysicalFilePath);
         $('#json-file-path').val(data.JsonFilePath);
         if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
             BindingListInvoiceItems(data.InvoiceListItem);

@@ -7,9 +7,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<meta charset="utf-8">
 	<title>Welcome to Invoice Auto mapping</title>
         
-        <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/ds.demo.css">
-	<link rel = "stylesheet" type = "text/css" href = "http://localhost:8080/OcrForm/css/bootstrap.min.css">
-        <link rel="stylesheet" type = "text/css"  href="http://localhost:8080/OcrForm/css/app.css">
+        <link rel="stylesheet" type = "text/css"  href="/OcrForm/css/ds.demo.css">
+	<link rel = "stylesheet" type = "text/css" href = "/OcrForm/css/bootstrap.min.css">
+        <link rel="stylesheet" type = "text/css"  href="/OcrForm/css/app.css">
 </head>
 <body  class="ds-demo-main">
 <div id="container" class="navbar navbar-default navbar-static-top">
@@ -252,16 +252,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
 </div>
 
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/bootstrap.min.js"></script>
-<script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
-<script src="http://localhost:8080/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
-<script src="http://localhost:8080/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/jquery-2.1.4.min.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/jquery.tmpl.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/bootstrap.min.js"></script>
+<script src="/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
+<script src="/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
+<script src="/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
 
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/app.js"></script>
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/draw-rectangle.js"></script>
-<script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/scanTwainImage.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/app.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/draw-rectangle.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/scanTwainImage.js"></script>
 <script type = 'text/javascript'>
 
 $(document).ready(function() {
