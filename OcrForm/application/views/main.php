@@ -179,8 +179,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-sm-6"><h5>List Item</h5></div>
-                        <div class="col-sm-6 text-right">
+                        <div class="col-sm-2"><h5>List Item</h5></div>
+                        <div class="col-sm-10 text-right">
+                            <button type="button" class="btn btn-primary" id="process-list-item">Process List Items</button>
                             <button type="button" class="btn btn-primary" id="update-list-item">Save List Item</button>
                             <button type="button" class="btn btn-primary clear-active">Clear Active</button>
                         </div>
@@ -224,8 +225,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
-    <input type="hidden" id="physical-file-id" value="0"/>
-    <input type="hidden" id="json-file-path" value=""/>
+    <input type="hidden" id="physical-file-id" value="3"/>
+    <input type="hidden" id="json-file-path" value="JsonFile/2016_8_21_15_12_33_182_jpg.json"/>
 </div>
     
 <div id="createTemplate" class="modal fade" role="dialog">

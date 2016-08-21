@@ -166,6 +166,13 @@ $(document).on('click', '#update-list-item', function (event) {
     ocrCtrl.updateInvoiceDetail(model);
 });
 
+$(document).on('click', '#process-list-item', function (event) {
+    var itemId = $('#item-id').val();
+    if(itemId == undefined || itemId == null == itemId == '') return;
+    
+    
+});
+
 function bindingInvoiceInfo(){
     var id = parseInt($('#physical-file-id').val());
     var templateId = parseInt($('#template-option').val());
@@ -224,7 +231,7 @@ function BindingListInvoiceItems(array){
     $('#list-invoices-data').html(htmlListItems);
 }
 
-function bindingTemplates(){
+function bindingTemplates(id){
     var templates = ocrCtrl.getTemplates();
     Dynamsoft.Lib.detect.showMask();
     $.when(templates).then(function(result, textStatus, jqXHR){
@@ -238,6 +245,9 @@ function bindingTemplates(){
         }
         $('#template-option').html('');
         $('#template-option').html(html);
+        if(id == undefined || id == null || id == -1) return;
+        
+        $('#template-option').val(parseInt(id));
     });
 }
 
@@ -245,25 +255,48 @@ function createTemplate(){
     if(invoiceDetail == undefined) return;
     var id = parseInt($('#physical-file-id').val());
     if($('#template-name').val() == undefined || $('#template-name').val() == '' || id == 0) return;
+    
+    var templateDetails = [];
+    templateDetails.push({label: invoiceDetail.InvoiceDate.label, 
+        type: invoiceDetail.InvoiceDate.type,
+        vertycal: invoiceDetail.InvoiceDate.vertycal, 
+        index: invoiceDetail.InvoiceDate.index});
+    templateDetails.push({label: invoiceDetail.VendorNumber.label, 
+        type: invoiceDetail.VendorNumber.type,
+        vertycal: invoiceDetail.VendorNumber.vertycal, 
+        index: invoiceDetail.VendorNumber.index});
+    templateDetails.push({label: invoiceDetail.InvoiceID.label, 
+        type: invoiceDetail.InvoiceID.type,
+        vertycal: invoiceDetail.InvoiceID.vertycal, 
+        index: invoiceDetail.InvoiceID.index});
+    templateDetails.push({label: invoiceDetail.Terms.label, 
+        type: invoiceDetail.Terms.type,
+        vertycal: invoiceDetail.Terms.vertycal, 
+        index: invoiceDetail.Terms.index});
+    templateDetails.push({label: invoiceDetail.Total.label, 
+        type: invoiceDetail.Total.type,
+        vertycal: invoiceDetail.Total.vertycal, 
+        index: invoiceDetail.Total.index});
+//    templateDetails.push({label: invoiceDetail.InvoiceDate.label, 
+//        type: invoiceDetail.InvoiceDate.type,
+//        vertycal: invoiceDetail.InvoiceDate.vertycal, 
+//        index: invoiceDetail.InvoiceDate.index});
+//    templateDetails.push(invoiceDetail.InvoiceDate);
+//    templateDetails.push(invoiceDetail.VendorNumber);
+//    templateDetails.push(invoiceDetail.InvoiceID);
+//    templateDetails.push(invoiceDetail.Terms);
+//    templateDetails.push(invoiceDetail.Total);
+//    model.templateDetail = JSON.stringify(templateDetails);
     var model = {
         physicalFileId: id,
         templateName: $('#template-name').val(),
-        templateDetail: [],
-        templateList: {Key: '', ColumnNumber: 0}
+        templateDetail: JSON.stringify(templateDetails),
+        templateListKey: $('#item-id').val(),
+        templateListCol: $('#column-number').val()
     };
-    
-    model.templateDetail.push(invoiceDetail.InvoiceDate);
-    model.templateDetail.push(invoiceDetail.VendorNumber);
-    model.templateDetail.push(invoiceDetail.InvoiceID);
-    model.templateDetail.push(invoiceDetail.Terms);
-    model.templateDetail.push(invoiceDetail.Total);
-    
-    model.templateList.Key = $('#item-id').val();
-    model.templateList.ColumnNumber = $('#column-number').val();
     
     var data = ocrCtrl.createTemplate(model);
     $.when(data).then(function(result){
-        bindingTemplates();
-        $('#template-option').val(result);
+        bindingTemplates(result);
     });
 }

@@ -219,28 +219,37 @@ class Invoice extends CI_Controller {
         
         //Insert Template Detail
         $data = array();
-        $templateDetail = $this->input->post('templateDetail');
+        $templateDetail = json_decode(stripslashes($this->input->post('templateDetail')));
         foreach ($templateDetail as $item){
-            $templateDetail = array(
-                'TemplateID' => $templateId,
-                'Keyword' => $item->label,
-                'Type' => $item->type,
-                'Vertical' => $item->vertycal,
-                'Index' => $item->index
-            );
-            array_push($arrayTemplateDetail, $templateDetail);
+            if($item->label != NULL && $item->label != '')
+            {
+                $dataItem = array(
+                    'TemplateID' => $templateId,
+                    'Keyword' => $item->label,
+                    'Type' => $item->type,
+                    'Vertical' => $item->vertycal,
+                    'Index' => $item->index
+                );
+                array_push($data, $dataItem);
+            }
         }
-        $this->db->insert_batch('tbtemplatedetail', $templateDetail);
+        $this->db->insert_batch('tbtemplatedetail', $data);
         
         //Insert Template List
-        $templateList = $this->input->post('templateDetail');
-        $arrayTemplateList = array(
-            'TemplateID' => $templateId,
-            'Key' => $templateList->Key,
-            'ColumnNumber' => $templateList->ColumnNumber
-        );
-        $this->db->set($arrayTemplateList);
-        $this->db->insert('tbTemplateList');
+        $templateListKey = $this->input->post('templateListKey');
+        $templateListCol = $this->input->post('templateListCol');
+        //echo $templateList;
+        if($templateListKey != '' && $templateListKey != NULL)
+        {
+            $arrayTemplateList = array(
+                'TemplateID' => $templateId,
+                'Key' => $templateListKey,
+                'ColumnNumber' => $templateListCol
+            );
+            $this->db->set($arrayTemplateList);
+            $this->db->insert('tbTemplateList');
+        }
+        
         echo json_encode($templateId);
     }
 }
