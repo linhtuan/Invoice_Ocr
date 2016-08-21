@@ -281,7 +281,7 @@ class ListItemDetail {
         return $listItem;
     }
     
-   function GetListItemByKey($key)
+   function GetListItemByKey($key,$colNumber)
    {
        $listItem = array();        
        $firstItem = $this->GetFirstItemByKey($key,true);

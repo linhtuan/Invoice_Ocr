@@ -17,7 +17,7 @@ class InvoiceInfo
     public  $SubTotal;  //600
     public  $TotalTax; //700
     public  $Shipping; //800
-     public $Discount; //900
+    public  $Discount; //900
     public  $Total;//1000
    
 
@@ -31,9 +31,24 @@ class TemplateKeyword{
 }
 //$OCRListArray = array();
  // class OCRProcess extends CI_Controller{
-   
+   function LoadDefaultTemplate($stringPath)
+   {
+       $keyArray= array();
+       $strJson = file_get_contents($stringPath);
+       $a_Data =  json_decode($strJson);
+       
+       foreach( $a_Data as $keywords ) 
+       {
+           foreach ($keywords as $key)
+           {
+              $keyArray[] = $key->keyword;
+           }
+       }
+       
+       return $keyArray;
+   }
     
-     function ParserJson2Object($json_response,&$width,&$height)
+   function ParserJson2Object($json_response,&$width,&$height)
     {
           $a_Data =  json_decode($json_response);
          // echo $json_response;
@@ -114,7 +129,7 @@ class TemplateKeyword{
         }
         else
         {
-            if(is_numeric($new_str) && strpos($new_str, ".") != false) //Check string is double
+            if(is_numeric(str_replace(".","",$new_str)) && strpos($new_str, ".") != false) //Check string is double
             {
                 return TRUE;
             }
@@ -250,7 +265,7 @@ class TemplateKeyword{
                 }
             }
             
-            return NULL;
+            return $result;
    }
    function GetValueOfPriceByKey($key,$OCRArray,$anglePopular)
     {
@@ -299,24 +314,23 @@ class TemplateKeyword{
                 }
             }
             
-            return NULL;
+            return $result;
     }
     function GetInvoiceInfoByKey($OCRArray,$invoiceIDKey,$anglePopular)
     {
-          
+          $result = new KeyValue();
         
         for($j=0; $j<count($invoiceIDKey);$j++)
         {
             $key = $invoiceIDKey[$j];
             
             $result = GetValueOfPriceByKey($key, $OCRArray,$anglePopular);
-            if($result!=NULL)
+            if(!empty($result->value))
             {
-               
-                return $result;
+                 return $result;
             }
         }
-        return NULL;
+        return $result;
     } 
     function GetInvoiceIDorDateByKeyInItem($OCRArray,$key,$isDate)
     {
@@ -350,7 +364,7 @@ class TemplateKeyword{
                 }
             }
 
-            return "";
+            return $result;
         }
     
     function GetInvoiceIDOrDateByKeyTemPlate($OCRArray,$key,$isDate,$vertycal)
@@ -567,47 +581,53 @@ class TemplateKeyword{
     function GetInvoiceInfor($OCRArray,$anglePopular)
     {
         $invoiceInfo = new InvoiceInfo();
+        $billInforKey= array();
+        //Load Keyword 
+        $totalKey =  LoadDefaultTemplate('./template/totalKey.json');
+        $POKey =  LoadDefaultTemplate('./template/totalKey.json');
+        $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
         
+        $billInforKey[] =$totalKey;
+        $billInforKey[]  =$POKey;
+        $billInforKey[] =$invoiceIDKey;
         //Calculate $anglePopular
-      
-         
+     
        // $invoiceID = new KeyValue();
       
-        $POKey = array('invoice id','bill id', 'invoice number', 'invoice no');
+       // $POKey = array('invoice id','bill id', 'invoice number', 'invoice no');
         $subTotalKey =array('sub-total','SubTotal','SubTota');
-        $totalKey=array('Tota','Total','Invoice Total','TOTAL AMOUNT DUE');
+       // $totalKey=array('Tota','Total','Invoice Total','TOTAL AMOUNT DUE');
         $taxKey=array('Tax','GTS','HST');
        // $taxKey=array
         
-      
-        //Get POKey 
-       // $PO = GetInvoiceInfoByKey($OCRArray,$POKey);
-       // $invoiceInfo->PONumber = $PO;
-        
-  
-        $CustomerNumKey =array('Customer No','Customer','Customer ID');
-        $CustomerNum = GetInvoiceIDOrDate($OCRArray,$CustomerNumKey,FALSE);
-        $invoiceInfo->VendorNumber = $CustomerNum;
-   //     echo '<br>Customer Number : ';
-    //    echo $CustomerNum->value;
-            
-       
-        $invoiceIDKey =array('invoice','invoice id','bill id', 'Invoice Number', 'invoice no');
+         $vendorName = GetVendorName($OCRArray,$billInforKey);
+          $objVendorName = new KeyValue();
+          $objVendorName->value = $vendorName;
+          $objVendorName->index=100;
+          $invoiceInfo->VendorName= $objVendorName;
+    
+        $vendorNumKey =array('Customer No','Customer','Customer ID');
+        $vendorNum = GetInvoiceIDOrDate($OCRArray,$vendorNumKey,FALSE);
+        $vendorNum->index =100;
+        $invoiceInfo->VendorNumber = $vendorNum;
+             
         $InvoiceID = GetInvoiceIDOrDate($OCRArray,$invoiceIDKey,FALSE);
+        $InvoiceID->index= 200;
         $invoiceInfo->InvoiceID = $InvoiceID;
-    //    echo '<br>Invoice ID : ';
-    //    echo $InvoiceID->value;
-         
-         
-        $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
+        
+         $InvoiceDateKey =array('Date','Invoice Date','Order Date', 'Payment date', 'Billing Date');
         $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
+        $InvoiceDate->index =300;
         $invoiceInfo->InvoiceDate = $InvoiceDate;
-   //     echo '<br>Invoice Date : ';
-    //    echo $InvoiceDate->value;
-         
+        //Get POKey 
+        $PO = GetInvoiceInfoByKey($OCRArray,$POKey,FALSE);
+        $PO->index = 400;
+        $invoiceInfo->PONumber = $PO;
+                
          
          $groupTermsKey =array('Terms');
          $Terms = GetInvoiceIDOrDate($OCRArray,$groupTermsKey,FALSE);
+         $Terms->index=500;
          $invoiceInfo->Terms = $Terms;
   //       echo '<br>Terms ID : ';
    //      echo $Terms->value;
@@ -615,20 +635,28 @@ class TemplateKeyword{
          
                //Get Subtotal
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
+        $subtotal->index =600;
         $invoiceInfo->SubTotal = $subtotal;
-    //    echo '<br>Subtotal : ';
-    //    echo $subtotal->value;
+    
         
         $Tax = GetInvoiceInfoByKey($OCRArray, $taxKey,$anglePopular); 
+        $Tax->index = 700;
         $invoiceInfo->TotalTax = $Tax;
-   //      echo '<br>Tax : ';
-    //     echo $Tax->value;
+        
+        $Shipping = GetInvoiceInfoByKey($OCRArray, $ShippingKey,$anglePopular);
+        $Shipping->index = 800;
+        $invoiceInfo->Shipping = $Shipping;
+        
+        $Discount= GetInvoiceInfoByKey($OCRArray, $DiscountKey,$anglePopular);
+        $Discount->index = 900;
+        $invoiceInfo->Shipping = $Discount;
           //Gettotal
         $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
+        $Total->index = 1000;
         $invoiceInfo->Total = $Total;
-   //     echo '<br>Total : ';
-    //    echo $Total->value;
+   
  
+       
         return $invoiceInfo;
     }
     function GetInvoiceInforByTemplate($OCRArray,$anglePopular,$ListKeyWordTemplate)
@@ -661,7 +689,10 @@ class TemplateKeyword{
             switch ($index) {
                 case 0:
                     {
-                        $invoiceInfo->VendorName =$result;
+                        $vendorName = GetVendorName($OCRArray);
+                        $objVendorName = new KeyValue();
+                        $objVendorName->value = $vendorName;
+                        $invoiceInfo->VendorName =$objVendorName;
                     }
                      break;
                  case 100:
@@ -795,5 +826,219 @@ class TemplateKeyword{
           return $listOCRValue;
     }
 
-   
+   ////////////////////////////////////Get vendor name/////////////////////////////////////
     
+    function GetVendorNameBySpecicalKey($OCRArray)
+    {
+        
+           $Keys = array();
+           $Keys[]="LIMITED";
+            $Keys[]="ltd";
+            $Keys[]="co.";
+            $Keys[]="inc.";
+            $Keys[]="corp.";
+            $vendorName = "";
+            $maxTry = 10;
+            for ($i = 0; $i < min($maxTry, count($OCRArray)); $i++)
+              {
+                $item = $OCRArray[$i];
+                foreach ($Keys as $key)
+                {
+                    $str = $item->description;
+                    $pos = strpos(strtolower($str),  strtolower($key));
+                    if ($pos>1)
+                    {
+                        $group = array();
+                        $group[] =$item;
+                        if (ValidateVendorGroup($group))
+                        {
+                           
+                            if ($str[$pos - 1] == ' ')
+                            {
+                                $vendorName = substr($str,0, $pos + strlen($key));
+
+                                return $vendorName;
+                            }
+                        }
+
+                    }
+                }
+            }
+            return $vendorName;
+    }
+    
+    function GetVendorName($OCRArray,$billInforKey)
+    {
+        $vendorName="";
+        //Try get vendor name by some special key
+        
+        $vendorName = GetVendorNameBySpecicalKey($OCRArray);
+         
+        if(!empty($vendorName)) return $vendorName;
+        //Clustering group of word areas
+         $listGroup = array();
+         $firstGroup= array();
+         $firstGroup[] = $OCRArray[0];
+         $listGroup[] = $firstGroup;
+          
+         $bAdd = FALSE;
+         for ($i = 1; $i < count($OCRArray); $i++)
+            {
+                $bAdd = FALSE;
+                for ($g = 0; $g < count($listGroup); $g++)
+                {  
+                    $gTmp = $listGroup[$g];
+                    if(CheckDistanceToGroup($gTmp, $OCRArray[$i] ))
+                    {
+                         $w = new OCRValue();
+                        $w->X1 = $OCRArray[$i]->X1;
+                        $w->Y1 = $OCRArray[$i]->Y1;
+                        $w->X2 = $OCRArray[$i]->X2;
+                        $w->Y2 = $OCRArray[$i]->Y2;
+                        $w->X3 = $OCRArray[$i]->X3;
+                        $w->Y3 = $OCRArray[$i]->Y3;
+                        $w->X4 = $OCRArray[$i]->X4;
+                        $w->Y4 = $OCRArray[$i]->Y4;
+                        $w->description = $OCRArray[$i]->description;
+                       
+                        $gTmp[] =$w;
+                        $bAdd = true;
+                        break;
+                    }
+                }
+
+                if(!$bAdd)
+                {
+                   $w = new OCRValue();
+                   $w->X1 = $OCRArray[$i]->X1;
+                   $w->Y1 = $OCRArray[$i]->Y1;
+                   $w->X2 = $OCRArray[$i]->X2;
+                   $w->Y2 = $OCRArray[$i]->Y2;
+                   $w->X3 = $OCRArray[$i]->X3;
+                   $w->Y3 = $OCRArray[$i]->Y3;
+                   $w->X4 = $OCRArray[$i]->X4;
+                   $w->Y4 = $OCRArray[$i]->Y4;
+                   $w->description = $OCRArray[$i]->description;
+
+                   $newGroup = array();
+                   $newGroup[] =$w;
+                   $listGroup[] =$newGroup;
+                }
+
+            }
+            
+            $MaxGroupCheck = 5;
+            if ($MaxGroupCheck > count($listGroup)) $MaxGroupCheck = count($listGroup);
+            for ($i = 0; $i < $MaxGroupCheck; $i++)
+            {
+                $group = $listGroup[$i];
+                if(ValidateVendorGroup($group,$billInforKey))
+                {
+                    
+                    $vendorName = $group[0]->description;
+                    
+                    break;
+                }
+            }
+        return $vendorName;    
+    }
+    function CheckDistanceToGroup($group, $word)
+        {
+            $xmin =20000;
+            $ymin =20000;
+            $xmax = 0;
+            $ymax = 0;
+
+            foreach ($group as $item)
+            {
+                $xmin = min($xmin, $item->X1);
+                $ymin = min($ymin, $item->Y1);
+                $xmax = max($xmax, $item->X2);
+                $ymax = max($ymax, $item->Y4);
+            }
+
+            if($ymax > $word->Y1)
+            {
+                if((abs($xmax- $word->X1) <40) || abs($xmin - $word->X1) < 5)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if(($word->Y1 - $ymax)<20)
+                {
+                    if (abs($xmin-$word->X1)<5 ||(abs(($xmax + $xmin) /2  - ($word->X1+$word->X2) / 2) < 15)) return true;
+                }
+            }
+
+            return false;
+        } 
+    function ValidateVendorName($str)
+    {
+           // $str = Regex.Replace(str, "[^0-9a-zA-Z]+", "");
+            if (strlen($str) < 3) return false;
+
+            $count = countDigits($str);
+            if ($count > 6) return false;
+            if ($count / (double)strlen($str) > 0.4) return false;
+
+            return true;
+    }
+    function ValidateVendorGroup($vGroup, $billInforKey)
+        {
+            $unVendorName = array();
+
+            $unVendorName[] = "Page";
+            $unVendorName[] = "http";
+            $unVendorName[] ="Date";
+            $unVendorName[] ="JIS";
+            $unVendorName[] ="Order";
+            $unVendorName[] ="LTR";
+            $unVendorName[] ="Statement";
+            $unVendorName[] ="Billing";
+            $unVendorName[] ="Filing";
+            $unVendorName[] ="Transaction";
+            $unVendorName[] ="PERIOD ENDING";
+            $unVendorName[] ="CONTINUED";
+            $unVendorName[] ="PLEASE";
+            $unVendorName[] ="RECEIVED";
+            $unVendorName[] ="Remit to";
+            $unVendorName[] ="here";
+            $unVendorName[] ="from";
+            $unVendorName[] =" to ";
+            $unVendorName[] =" THANKS ";
+            $unVendorName[] =" Customer ";
+            foreach ($vGroup as  $word  )
+            {
+                foreach($unVendorName as $key)
+                {
+                     if(strpos(strtolower($word->description),  strtolower ($key))!==FALSE)
+                     {
+                         return FALSE;
+                     }
+                }
+                
+                foreach ($billInforKey as $inforKeys)
+                {
+                    foreach ($inforKeys as $key)
+                    {
+                        if(strpos(strtolower($word->description),  strtolower ($key))!==FALSE)
+                        {
+                            return FALSE;
+                        }
+                    }
+                }
+            }
+
+            if (ValidateVendorName($vGroup[0]->description)==FALSE) 
+            {
+                return FALSE;
+            }
+
+            return TRUE;
+        }
+    function countDigits( $str )
+    {
+    return preg_match_all( "/[0-9]/", $str );
+    }

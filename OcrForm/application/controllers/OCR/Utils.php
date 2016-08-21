@@ -133,10 +133,8 @@ function ValidateBillOrDate($str,$isDate)
        
          return preg_match('/[0-9]/', $str);
     }
-    
-  
-}
 
+}
 
   function Pdf2Image($pathFile,$pageNum)
     {
