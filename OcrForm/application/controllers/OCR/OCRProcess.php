@@ -629,14 +629,10 @@ class TemplateKeyword{
                 
          
        
-         $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
-         $Terms->index=500;
-         $invoiceInfo->Terms = $Terms;
-  //       echo '<br>Terms ID : ';
-   //      echo $Terms->value;
-         
-         
-               //Get Subtotal
+        $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
+        $Terms->index=500;
+        $invoiceInfo->Terms = $Terms;
+
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
         $subtotal->index =600;
         $invoiceInfo->SubTotal = $subtotal;
@@ -652,7 +648,7 @@ class TemplateKeyword{
         
         $Discount= GetInvoiceInfoByKey($OCRArray, $DiscountKey,$anglePopular);
         $Discount->index = 900;
-        $invoiceInfo->Shipping = $Discount;
+        $invoiceInfo->Discount = $Discount;
           //Gettotal
         $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
         $Total->index = 1000;

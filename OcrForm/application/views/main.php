@@ -166,9 +166,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <div class="form-group">
                                 <label>Global Disc %</label>
-                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Global Disc %" id="global-disc-1-text">
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Global Disc %" id="global-disc-text">
                                 <br/>
-                                <input class="form-control binding-data" id="global-disc-1">
+                                <input class="form-control binding-data" id="global-disc">
                             </div>
                         </div>
                     </div>
@@ -225,8 +225,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
-    <input type="hidden" id="physical-file-id" value="3"/>
-    <input type="hidden" id="json-file-path" value="JsonFile/2016_8_21_15_12_33_182_jpg.json"/>
+    <input type="hidden" id="physical-file-id" value="0"/>
+    <input type="hidden" id="invoice-info-id" value="0"/>
+    <input type="hidden" id="json-file-path" value=""/>
 </div>
     
 <div id="createTemplate" class="modal fade" role="dialog">

@@ -44,7 +44,7 @@ class Invoice extends CI_Controller {
         $fileInfo = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->row();
         if (isset($fileInfo))
         {
-            $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$fileInfo->JsonFilePath);
+            $s_Data = file_get_contents('/OcrForm/'.$fileInfo->JsonFilePath);
             $width=0;
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
@@ -53,18 +53,34 @@ class Invoice extends CI_Controller {
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
-                $listItemDetail = array("Item Number", "Description", "Ordered", "B/O", "Shipped", "Unit Price", "Ext. Price");
-                $listItemDetail1 = array("SUR1900", "SURREY GRAY SPELL", "30", "0", "30", "$11.17", "$335.10");
-                $listItems = array();
-                array_push($listItems, $listItemDetail);
-                array_push($listItems, $listItemDetail1);
+                $this->db->where(array('TemplateID' => $templateId));
+                $templateList = $this->db->get('tbTemplateList')->first_row();
+                $templateListKey = $templateList->Key;
+                $templateListCol = $templateList->Key;
+                $cListItem = new ListItemDetail();
+                $cListItem->SetOcrArray($OCRArray);
+                $cListItem->SetAnglePopular($anglePopular);
+                $cListItem->SetWidth($width);
+                $cListItem->SetHeight($height);
+                $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
+                $arrayResult = array();
+                for($i=1; $i < count($listRows);$i++)
+                {
+                    $arrayItem = $listRows[$i];
+                    $arrayDetil = array();
+                    foreach($arrayItem as $item)
+                    {
+                        array_push($arrayDetil, $item);
+                    }
+                    array_push($arrayResult, $arrayDetil);
+                }
                 
                 $this->db->where(array('TemplateID' => $templateId));
-                $templateKey = $this->db->get('tbkeyword')->result();
+                $templateKey = $this->db->get('tbTemplatedetail')->result();
                 $invoiceInfo = GetInvoiceInforByTemplate($OCRArray, $anglePopular, $templateKey);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
-                    'InvoiceListItem' => $listItems,
+                    'InvoiceListItem' => $arrayResult,
                     'PhysicalFilePath' => $fileInfo->PathName,
                     'JsonFilePath' => $fileInfo->JsonFilePath
                 );
@@ -104,7 +120,7 @@ class Invoice extends CI_Controller {
         $listPoint[] = $p4;
         
         $jsonFilePath = $this->input->post('jsonFilePath');
-        $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$jsonFilePath);
+        $s_Data = file_get_contents('/OcrForm/'.$jsonFilePath);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
@@ -179,12 +195,26 @@ class Invoice extends CI_Controller {
     public function UpdateInvoice(){
         $invoiceInfoId = $this->input->post('InvoiceInfoId');
         $vendorName = $this->input->post('VendorName');
+        $vendorNumber = $this->input->post('VendorNumber');
         $invoiceNumber = $this->input->post('InvoiceNumber');
-        $date = $this->input->post('Date');
+        $invoiceDate = $this->input->post('InvoiceDate');
+        $poNumber = $this->input->post('PONumber');
+        $shipping = $this->input->post('Shipping');
+        $discount = $this->input->post('Discount');
+        $terms = $this->input->post('Terms');
+        $total = $this->input->post('Total');
+        $tax = $this->input->post('Tax');
+
         $data = array(
             'VendorName' => $vendorName,
             'InvoiceNumber' => $invoiceNumber,
-            'Date' => $date
+            'Date' => $invoiceDate,
+            'PONumber' => $poNumber,
+            'Tax' => $tax,
+            'Shipping' => $shipping,
+            'Discount' => $discount,
+            'Total' => $total,
+            'PONumber' => $poNumber,
         );
         if($invoiceInfoId == NULL || $invoiceInfoId == ''){
             $this->db->set($data);
@@ -257,23 +287,87 @@ class Invoice extends CI_Controller {
     }
     
     public function ListItemProcess(){
+        $templateListKey = $this->input->post('templateListKey');
+        $templateListCol = $this->input->post('templateListCol');
         $cListItem = new ListItemDetail();
         $cListItem->SetOcrArray($OCRArray);
         $cListItem->SetAnglePopular($anglePopular);
         $cListItem->SetWidth($width);
         $cListItem->SetHeight($height);
-        $listRows = $cListItem->GetListItemByKey('Unit Price',6);
+        $listRows = $cListItem->GetListItemByKey($templateListKey,$templateListCol);
         $arrayResult = array();
         for($i=1; $i<count($listRows);$i++)
         {
             $arrayItem = $listRows[$i];
-            //Write gias tri
-//            $arrayDetil = 
-//            foreach($arrayItem as $item)
-//            {
-//                echo $item. "--";
-//            }
-//            echo '<br>';
+            $arrayDetil = array();
+            foreach($arrayItem as $item)
+            {
+                array_push($arrayDetil, $item);
+            }
+            array_push($arrayResult, $arrayDetil);
         }
+    }
+    
+    public function BindingDataByTemplateId(){
+        $templateDetail = $this->db->get_where('tbtemplatedetail', array('TemplateId' => $this->input->post('templateId')))->result();
+        $detailResult = array(
+            'VendorName' => '',
+            'VendorNumber' => '',
+            'InvoiceID' => '',
+            'InvoiceDate' => '',
+            'PONumber' => '',
+            'Terms' => '',
+            'SubTotal' => '',
+            'TotalTax' => '',
+            'Shipping' => '',
+            'Discount' => '',
+            'Total' => '',
+        );
+       
+        foreach ($templateDetail as $item){
+            switch ($item.Index) {
+                case 000:
+                    $detailResult->VendorName = $item->Keyword;
+                    break;
+                case 100:
+                    $detailResult->VendorNumber = $item->Keyword;
+                    break;
+                case 200:
+                    $detailResult->InvoiceID = $item->Keyword;
+                    break;
+                case 300:
+                    $detailResult->InvoiceDate = $item->Keyword;
+                    break;
+                case 400:
+                    $detailResult->PONumber = $item->Keyword;
+                    break;
+                case 500:
+                    $detailResult->Terms = $item->Keyword;
+                    break;
+                case 600:
+                    $detailResult->SubTotal = $item->Keyword;
+                    break;
+                case 700:
+                    $detailResult->TotalTax = $item->Keyword;
+                    break;
+                case 800:
+                    $detailResult->Shipping = $item->Keyword;
+                    break;
+                case 900:
+                    $detailResult->Discount = $item->Keyword;
+                    break;
+                case 1000:
+                    $detailResult->Total = $item->Keyword;
+                    break;
+            }
+        }
+        $templateList = $this->db->get_where('tbtemplateList', 
+                array('TemplateId' => $this->input->post('templateId')))->first_row();
+        
+        $result = array(
+            'templateDetail' => json_encode($templateDetail),
+            'templateList' => json_encode($templateList)
+        );
+        return $result;
     }
 }
