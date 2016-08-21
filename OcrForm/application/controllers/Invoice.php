@@ -192,10 +192,19 @@ class Invoice extends CI_Controller {
             'InvoiceNumber' => $invoiceNumber,
             'Date' => $date
         );
-        
-        $this->db->where('ID', $invoiceInfoId);
-        $this->db->update('tbinvoiceinfo', $data);
-        echo json_encode($data);
+        if($invoiceInfoId == NULL || $invoiceInfoId == ''){
+            $this->db->set($data);
+            $this->db->insert('tbtemplate');
+            $invoiceInfoId = $this->db->insert_id();
+        }
+        else{
+            $this->db->where('ID', $invoiceInfoId);
+            $this->db->update('tbinvoiceinfo', $data);
+        }
+        $result = array(
+            'invoiceInfoId' => $invoiceInfoId
+        );
+        echo json_encode($result);
     }
     
     public function GetTemplate(){

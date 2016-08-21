@@ -277,16 +277,6 @@ function createTemplate(){
         type: invoiceDetail.Total.type,
         vertycal: invoiceDetail.Total.vertycal, 
         index: invoiceDetail.Total.index});
-//    templateDetails.push({label: invoiceDetail.InvoiceDate.label, 
-//        type: invoiceDetail.InvoiceDate.type,
-//        vertycal: invoiceDetail.InvoiceDate.vertycal, 
-//        index: invoiceDetail.InvoiceDate.index});
-//    templateDetails.push(invoiceDetail.InvoiceDate);
-//    templateDetails.push(invoiceDetail.VendorNumber);
-//    templateDetails.push(invoiceDetail.InvoiceID);
-//    templateDetails.push(invoiceDetail.Terms);
-//    templateDetails.push(invoiceDetail.Total);
-//    model.templateDetail = JSON.stringify(templateDetails);
     var model = {
         physicalFileId: id,
         templateName: $('#template-name').val(),
