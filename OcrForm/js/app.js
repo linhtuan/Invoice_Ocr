@@ -205,16 +205,15 @@ $(document).on('click', '#update-list-item', function (event) {
 
 $(document).on('click', '#process-list-item', function (event) {
     var itemId = $('#item-id').val();
-    if(itemId == undefined || itemId == null == itemId == '') return;
-    
+    if(itemId == undefined || itemId == null || itemId == '') return;
     var model = {
         templateListKey: $('#item-id').val(),
         templateListCol: $('#column-number').val()
     };
     
-    var data = ocrCtrl.createTemplate(model);
+    var data = ocrCtrl.listInvoiceProcess(model);
     $.when(data).then(function(result){
-        bindingTemplates(result);
+        BindingListInvoiceItems(JSON.parse(result));
     });
 });
 
@@ -225,6 +224,7 @@ $(document).on('Change', '#template-option', function (event) {
 });
 
 function bindingInvoiceInfo(){
+    $('.binding-data').val('');
     var id = parseInt($('#physical-file-id').val());
     var templateId = parseInt($('#template-option').val());
     if(id == 0) {

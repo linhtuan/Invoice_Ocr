@@ -44,7 +44,7 @@ class Invoice extends CI_Controller {
         $fileInfo = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->row();
         if (isset($fileInfo))
         {
-            $s_Data = file_get_contents('/OcrForm/'.$fileInfo->JsonFilePath);
+            $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$fileInfo->JsonFilePath);
             $width=0;
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
@@ -120,7 +120,7 @@ class Invoice extends CI_Controller {
         $listPoint[] = $p4;
         
         $jsonFilePath = $this->input->post('jsonFilePath');
-        $s_Data = file_get_contents('/OcrForm/'.$jsonFilePath);
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
@@ -306,6 +306,8 @@ class Invoice extends CI_Controller {
             }
             array_push($arrayResult, $arrayDetil);
         }
+        
+        echo json_encode($arrayResult);
     }
     
     public function BindingDataByTemplateId(){

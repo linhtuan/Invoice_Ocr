@@ -53,6 +53,7 @@ function OnHttpUploadFailure(errorCode, errorString, sHttpResponse) {
 }
 
 function UploadImage() {
+    $('#dwtcontrolContainer canvas')
     if (DWObject) {
         // If no image in buffer, return the function
         if (DWObject.HowManyImagesInBuffer == 0)
