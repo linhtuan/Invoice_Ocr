@@ -114,6 +114,7 @@ function ValidateBillOrDate($str,$isDate)
        
        if(!empty($year) && !empty($month) && !empty($day))
        {
+           
            return TRUE;
        }
       
@@ -132,10 +133,8 @@ function ValidateBillOrDate($str,$isDate)
        
          return preg_match('/[0-9]/', $str);
     }
-    
-  
-}
 
+}
 
   function Pdf2Image($pathFile,$pageNum)
     {

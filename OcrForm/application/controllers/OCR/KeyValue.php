@@ -18,4 +18,5 @@ class KeyValue{
     public $type;
     public $point;
     public $vertycal;
+    public $index;
 }
