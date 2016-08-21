@@ -17,7 +17,7 @@ class InvoiceInfo
     public  $SubTotal;  //600
     public  $TotalTax; //700
     public  $Shipping; //800
-     public $Discount; //900
+    public $Discount; //900
     public  $Total;//1000
    
 
@@ -33,7 +33,7 @@ class TemplateKeyword{
  // class OCRProcess extends CI_Controller{
    
     
-     function ParserJson2Object($json_response,&$width,&$height)
+    function ParserJson2Object($json_response,&$width,&$height)
     {
           $a_Data =  json_decode($json_response);
          // echo $json_response;

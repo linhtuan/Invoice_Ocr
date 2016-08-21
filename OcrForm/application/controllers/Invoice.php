@@ -36,7 +36,7 @@ class Invoice extends CI_Controller {
         echo json_encode($data);
     }
 
-    public function GetValueInJson(){
+    public function GetInvoiceInfo(){
         $query = array(
             'ID' => $this->input->post('physicalFileId')
         );
@@ -154,7 +154,7 @@ class Invoice extends CI_Controller {
         $this->db->insert('tbfileinfo');
         
         if($fileType == "pdf"){
-            $im = new \Imagick($fileName);
+            //$im = new \Imagick($fileName);
 //            $noOfPagesInPDF = $im->getNumberImages();
 //            for ($i = 0; $i < $noOfPagesInPDF; $i++) { 
 // 
@@ -204,30 +204,43 @@ class Invoice extends CI_Controller {
     }
     
     public function CreateTemplate(){
+        
+        //Insert Template
         $physicalFileId = $this->input->post('physicalFileId');
         $templateName = $this->input->post('templateName');
-        
         $fileInfo = $this->db->get('tbfileinfo')->first_row();
-        
         $arrayTemplate = array(
             'TemplateName' => $templateName,
             'ImageSampleLink' => $fileInfo->PathName
         );
-        
         $this->db->set($arrayTemplate);
         $this->db->insert('tbtemplate');
-        $last_id = $this->db->insert_id();
+        $templateId = $this->db->insert_id();
         
-        $arrayKeyword = array();
+        //Insert Template Detail
+        $data = array();
+        $templateDetail = $this->input->post('templateDetail');
+        foreach ($templateDetail as $item){
+            $templateDetail = array(
+                'TemplateID' => $templateId,
+                'Keyword' => $item->label,
+                'Type' => $item->type,
+                'Vertical' => $item->vertycal,
+                'Index' => $item->index
+            );
+            array_push($arrayTemplateDetail, $templateDetail);
+        }
+        $this->db->insert_batch('tbtemplatedetail', $templateDetail);
         
-        $s_Data = file_get_contents('http://localhost:8080/OcrForm/'.$fileInfo->JsonFilePath);
-        $width=0;
-        $height =0;
-        $OCRArray = ParserJson2Object($s_Data,$width,$height);
-        $anglePopular = AnglePopular($OCRArray);
-
-        //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
-        $str = GetInvoiceInfor($OCRArray,$anglePopular);
-        //$listItem = 
+        //Insert Template List
+        $templateList = $this->input->post('templateDetail');
+        $arrayTemplateList = array(
+            'TemplateID' => $templateId,
+            'Key' => $templateList->Key,
+            'ColumnNumber' => $templateList->ColumnNumber
+        );
+        $this->db->set($arrayTemplateList);
+        $this->db->insert('tbTemplateList');
+        echo json_encode($templateId);
     }
 }

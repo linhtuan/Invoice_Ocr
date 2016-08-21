@@ -14,13 +14,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body  class="ds-demo-main">
 <div id="container" class="navbar navbar-default navbar-static-top">
     <div class="row">
-            <div class="col-sm-12">
-                <h1 class="page-header">Forms</h1>
-            </div>
+        <div class="col-sm-12">
+            <h1 class="page-header">Forms</h1>
+        </div>
     </div>
     <div class="row">
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
-                <select size="1" id="source" style="position: relative; width: 220px;"></select>
+            <select size="1" id="source" class="hidden" style="position: relative; width: 220px;"></select>
             <div id="divLeft" class="ds-demo-left ds-demo-inline-block ds-demo-border-light-grey" style="width: 508px; height: 650px;">
                 <div id="dwtcontrolContainer"></div>
             </div>
@@ -103,54 +103,72 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="row">
                         <div class="col-sm-6 from">
                             <div class="form-group">
-                                <label>Vender Name</label>
-                                <input class="form-control binding-data" id="vender-name">
+                                <label>Vendor Name</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Vender Name" id="vendor-name-text">
+                                <br/>
+                                <input class="form-control binding-data" id="vendor-name">
                             </div>
                             <div class="form-group">
-                                <label>Vender Number</label>
-                                <input class="form-control binding-data"  id="vender-number">
+                                <label>Vendor Number</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Vender Number" id="vendor-number-text">
+                                <br/>
+                                <input class="form-control binding-data"  id="vendor-number">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Number</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Invoice Number" id="invoice-number-text">
+                                <br/>
                                 <input class="form-control binding-data" id="invoice-number">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Date</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Invoice Date" id="invoice-date-text">
+                                <br/>
                                 <input class="form-control binding-data" id="invoice-date">
                             </div>
                             <div class="form-group">
                                 <label>PO Number</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="PO Number" id="po-number-text">
+                                <br/>
                                 <input class="form-control binding-data" id="po-number">
                             </div>
                             <div class="form-group">
                                 <label>Tax 1</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Tax 1" id="tax-1-text">
+                                <br/>
                                 <input class="form-control binding-data" id="tax-1">
                             </div>
                         </div>
                         <div class="col-sm-6 from">
                             <div class="form-group">
                                 <label>Other</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Other" id="other-text">
+                                <br/>
                                 <input class="form-control binding-data" id="other">
                             </div>
                             <div class="form-group">
                                 <label>Shipping</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Shipping" id="shipping-text">
+                                <br/>
                                 <input class="form-control binding-data" id="shipping">
                             </div>
                             <div class="form-group">
                                 <label>Invoice Total</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Invoice Total" id="invoice-total-text">
+                                <br/>
                                 <input class="form-control binding-data" id="invoice-total">
                             </div>
                             <div class="form-group">
                                 <label>Teams</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Teams" id="teams-text">
+                                <br/>
                                 <input class="form-control binding-data" id="teams">
                             </div>
                             <div class="form-group">
                                 <label>Global Disc %</label>
+                                <input class="form-control binding-data" style="background-color: #87CEEB" placeholder="Global Disc %" id="global-disc-1-text">
+                                <br/>
                                 <input class="form-control binding-data" id="global-disc-1">
-                            </div>
-                            <div class="form-group">
-                                <label>Global Disc %</label>
-                                <input class="form-control binding-data" id="global-disc-2">
                             </div>
                         </div>
                     </div>
@@ -160,10 +178,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    
                     <div class="row">
                         <div class="col-sm-6"><h5>List Item</h5></div>
-                        <div class="col-sm-6  text-right">
+                        <div class="col-sm-6 text-right">
                             <button type="button" class="btn btn-primary" id="update-list-item">Save List Item</button>
                             <button type="button" class="btn btn-primary clear-active">Clear Active</button>
                         </div>
@@ -179,34 +196,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div class="col-sm-6 from">
                             <div class="form-group">
-                                <label>Item description</label>
-                                <input class="form-control binding-data" id="item-description">
+                                <label>Column number</label>
+                                <input class="form-control binding-data" id="column-number">
                             </div>
                         </div>
                     </div>
                     <div class="row">
-
                         <div class="col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr id="list-invoice-title">
-                                        <th>Qty</th>
-                                        <th>Price</th>
-                                        <th>UOM</th>
-                                        <th>Discount</th>
-                                        <th>Multiplier</th>
-                                        <th>Line Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="list-invoices-data">
-<!--                                    <tr>
-                                        <td><input class="form-control bingind-data" id="qty"></td>
-                                        <td><input class="form-control bingind-data" id="price"></td>
-                                        <td><input class="form-control bingind-data" id="uom"></td>
-                                        <td><input class="form-control bingind-data" id="discount"></td>
-                                        <td><input class="form-control bingind-data" id="multiplier"></td>
-                                        <td><input class="form-control bingind-data" id="line-total"></td>
-                                    </tr>-->
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -246,19 +249,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       </div>
     </div>
 </div>
-
-<script id="listInvoicesTemplate" type="text/x-jquery-tmpl">
-    {{each InvoiceListItem}}
-    <tr class="list-invoices" data-id="${$value.ID}">
-        <td><input class="form-control bingind-data" value="${$value.QTY}" id="qty-${$value.ID}"></td>
-
-        <td><input class="form-control bingind-data" value="${$value.UM}" id="uom-${$value.ID}"></td>
-        <td><input class="form-control bingind-data" value="${$value.Discount}" id="discount-${$value.ID}"></td>
-        <td><input class="form-control bingind-data" value="${$value}" id="multiplier-${$value.ID}"></td>
-        <td><input class="form-control bingind-data" value="${$value.Total}" id="line-total-${$value.ID}"></td>
-    </tr>
-    {{/each}}
-</script>
 
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery-2.1.4.min.js"></script>
 <script type = 'text/javascript' src = "http://localhost:8080/OcrForm/js/jquery.tmpl.js"></script>

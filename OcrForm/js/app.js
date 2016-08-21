@@ -15,6 +15,8 @@ var context;
 var image;
 var ratioImage = 1;
 var listInvoiceItem = [];
+var invoiceDetail;
+var templateIdIsActive = -1;
 
 function BindingCanvas(){
     worksheetCanvas = $('#canvas');
@@ -39,19 +41,9 @@ var ocrCtrl = function (){
         $('#'+ id).val(dataObj);
     };
     
-    var getInvoiceData = function(){
-        return $.ajax({
-            url: 'http://localhost:8080/OcrForm/index.php/invoice/getinvoicedata',
-            dataType: 'json',
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({ contactId: 1 })
-        });
-    };
-    
     var getInvoiceInfo = function(id, templateId){
         return $.ajax({
-            url: 'http://localhost:8080/OcrForm/index.php/invoice/getvalueinjson',
+            url: 'http://localhost:8080/OcrForm/index.php/invoice/GetInvoiceInfo',
             type: 'POST',
             data: {
                 physicalFileId: id,
@@ -107,9 +99,6 @@ var ocrCtrl = function (){
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
         },
-        getInvoiceData: function(){
-            return getInvoiceData();
-        },
         getInvoiceInfo: function(id, templateId){
             return getInvoiceInfo(id, templateId);
         },
@@ -138,16 +127,7 @@ $(document).on('click', '.data-binding', function (event) {
    
    ocrCtrl.bindingInput(dataObj, id);
 });
-//
-//$(document).on('click', '#loadInvoice', function (event) {
-//   var invoiceData = ocrCtrl.getInvoiceData();
-//   $.when(invoiceData).then(function (reuslt) {
-//       var obj = reuslt;
-//       $('#invoiceInfoTemplate').tmpl(obj.InvoiceInfo).appendTo('#hearder');
-//       $('#invoiceListTemplate').tmpl(obj).appendTo('#bodyInvoice');
-//       $('#invoiceFooterTemplate').tmpl(obj.InvoiceInfo).appendTo('#footer');
-//   });
-//});
+
 
 $(document).on('click', '.binding-data', function (event) {
     $('.binding-data').removeClass('active-binding-data')
@@ -169,7 +149,7 @@ $(document).on('keydown', '.data-binding', function (event) {
 $(document).on('click', '#update-invoice-detail', function (event) {
     var model = {
         InvoiceInfoId: 1,
-        VendorName: $('#vender-name').val(),
+        VendorName: $('#vendor-name').val(),
         InvoiceNumber: $('#invoice-number').val(),
         Date: $('#invoice-date').val(),
     };
@@ -179,7 +159,7 @@ $(document).on('click', '#update-invoice-detail', function (event) {
 $(document).on('click', '#update-list-item', function (event) {
     var model = {
         InvoiceInfoId: 1,
-        VendorName: $('#vender-name').val(),
+        VendorName: $('#vendor-name').val(),
         InvoiceNumber: $('#invoice-number').val(),
         Date: $('#invoice-date').val(),
     };
@@ -196,11 +176,19 @@ function bindingInvoiceInfo(){
     var getData = ocrCtrl.getInvoiceInfo(id, templateId);
     $.when(getData).then(function(result, textStatus, jqXHR){
         var data = JSON.parse(result);
+        invoiceDetail = data.InvoiceInfo;
         $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
-        $('#vender-number').val(data.InvoiceInfo.VendorNumber.value);
+        $('#vendor-number').val(data.InvoiceInfo.VendorNumber.value);
         $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
         $('#teams').val(data.InvoiceInfo.Terms.value);
         $('#invoice-total').val(data.InvoiceInfo.Total.value);
+        
+        $('#invoice-date-text').val(data.InvoiceInfo.InvoiceDate.label);
+        $('#vendor-number-text').val(data.InvoiceInfo.VendorNumber.label);
+        $('#invoice-number-text').val(data.InvoiceInfo.InvoiceID.label);
+        $('#teams-text').val(data.InvoiceInfo.Terms.label);
+        $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
+        
         $('#images').removeAttr("src").attr('src', "http://localhost:8080/OcrForm/" + data.PhysicalFilePath);
         $('#json-file-path').val(data.JsonFilePath);
         BindingListInvoiceItems(data.InvoiceListItem);
@@ -215,7 +203,9 @@ function BindingListInvoiceItems(array){
     var htmlTitle = '';
     for(var i = 0; i < title.length; i ++){
         var item = title[i];
-        htmlTitle += '<th>'+ item +'</th>'
+        var id = item.replace(/ /g, '_');
+        id = item.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+        htmlTitle += '<th><input class="form-control binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
     }
     $('#list-invoice-title').html('');    
     $('#list-invoice-title').html(htmlTitle);
@@ -252,14 +242,28 @@ function bindingTemplates(){
 }
 
 function createTemplate(){
+    if(invoiceDetail == undefined) return;
     var id = parseInt($('#physical-file-id').val());
     if($('#template-name').val() == undefined || $('#template-name').val() == '' || id == 0) return;
     var model = {
         physicalFileId: id,
-        templateName: $('#template-name').val()
+        templateName: $('#template-name').val(),
+        templateDetail: [],
+        templateList: {Key: '', ColumnNumber: 0}
     };
+    
+    model.templateDetail.push(invoiceDetail.InvoiceDate);
+    model.templateDetail.push(invoiceDetail.VendorNumber);
+    model.templateDetail.push(invoiceDetail.InvoiceID);
+    model.templateDetail.push(invoiceDetail.Terms);
+    model.templateDetail.push(invoiceDetail.Total);
+    
+    model.templateList.Key = $('#item-id').val();
+    model.templateList.ColumnNumber = $('#column-number').val();
+    
     var data = ocrCtrl.createTemplate(model);
     $.when(data).then(function(result){
         bindingTemplates();
+        $('#template-option').val(result);
     });
 }
