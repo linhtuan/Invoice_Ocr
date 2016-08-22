@@ -222,7 +222,7 @@ class ListItemDetail {
                 {
                    $nextItem = $itemOCR;
                    $indexNext=$i;
-                  
+                   
                    break;
                 }
             }
@@ -231,7 +231,7 @@ class ListItemDetail {
         
         $p1 = new Point();
         $p1->X = $firstItem->X1;
-        $p1->Y = $firstItem->Y1+5;
+        $p1->Y = $firstItem->Y1-5;
        
         $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
         $p1 = $newPoint12[0];
@@ -245,7 +245,14 @@ class ListItemDetail {
         $p4 = $newPoint34[0];
          $p3 = $newPoint34[1];
       
-        $str = GetTextByRectangle($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);
+        $listPoint = array();
+        $listPoint[] = $p1;
+        $listPoint[] = $p2;
+        $listPoint[] = $p3;
+        $listPoint[] = $p4;
+         
+        $str = GetTextByPolygon($listPoint,self::$OCRArray);
+     //   $str = GetTextByRectangle($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);
         $firstItemDetail = new ItemDetail();
         $firstItemDetail->TopLeft=$p1;
         $firstItemDetail->TopRight=$p2;
@@ -254,9 +261,10 @@ class ListItemDetail {
         $firstItemDetail->FullStr= $str;
         $firstItemDetail->Key = $firstItem;
         $firstItemDetail->KeyIndex =$indexFisrt;
-        $listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
+         $listOCRValue = GetListOCRValueByPolygon($listPoint, self::$OCRArray);
+       // $listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
         $firstItemDetail->ListOCRValue =  $this->ReSortOCRValueInItem($listOCRValue);
-       
+       //  echo $str;
         return $firstItemDetail;
     }
    function GetListItem($firstItemDetail)
@@ -364,12 +372,54 @@ class ListItemDetail {
         
         return $listItem;
     }
-    
+    function GetTitleByPosition($listPolygon,$firstItemDetail )
+    {
+        $TitleItem = new ItemDetail();
+        $p1 = new Point();
+        $p1->X = $listPolygon[0]->X;
+        $p1->Y = $listPolygon[0]->Y-5;
+       
+      //  echo "p1:".$p1->X.":".$p1->Y."p4:".$listPolygon[3]->X.":".$firstItemDetail->TopLeft->Y;
+        
+        $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
+        $p1 = $newPoint12[0];
+        $p2 = $newPoint12[1];
+     
+        $p4 = new Point();
+        $p4->X =  $listPolygon[3]->X;
+        $p4->Y = $firstItemDetail->TopLeft->Y-10;
+      
+        $newPoint34 = GetNewPoint($p4, self::$anglePopular,self::$width);
+        $p4 = $newPoint34[0];
+        $p3 = $newPoint34[1];
+       
+      //   echo "<br>p1:".$p1->X.":".$p1->Y."p2:".$p2->X.":".$p2->Y."p3:".$p3->X.":".$p3->Y."p4:".$p4->X.":".$p4->Y;
+         
+        $listPoint = array();
+        $listPoint[] = $p1;
+        $listPoint[] = $p2;
+        $listPoint[] = $p3;
+        $listPoint[] = $p4;
+       
+        $str = GetTextByPolygon($listPoint,self::$OCRArray);
+      
+        $TitleItem->TopLeft=$p1;
+        $TitleItem->TopRight=$p2;
+        $TitleItem->BottomLeft=$p4;
+        $TitleItem->BottomRight=$p3;
+      
+        $TitleItem->FullStr= $str;
+        $listOCRValue = GetListOCRValueByPolygon($listPoint, self::$OCRArray);
+        //$listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
+        $TitleItem->ListOCRValue =  $this->ReSortOCRValueInItem($listOCRValue);
+      //   echo "Thien Anh".$str;
+       return $TitleItem;
+    }
    function GetListItemByKey($key,$colNumber)
    {
        $listItem = array();        
        $firstItem = $this->GetFirstItemByKey($key,true);
-     //  var_dump($firstItem);
+     
        $listItem = $this->GetListItem($firstItem);
        $listRows = array();
         foreach($listItem as $item)
@@ -388,14 +438,41 @@ class ListItemDetail {
    {
        $listKey = GetListOCRValueByPolygon($listPolygon,self::$OCRArray);
        $OCRKey = new OCRValue();
-       if(count($listKey)>0)
-           $OCRKey = $listKey[count($listKey)-1];
        
+      
+       if(count($listKey)>0)
+       {
+           $OCRKey = new OCRValue();
+           $OCRKey->X1 = $listPolygon[0]->X;
+           $OCRKey->Y1 = $listPolygon[0]->Y;
+           $OCRKey->X2= $listPolygon[1]->X;
+           $OCRKey->Y2 = $listPolygon[1]->Y;
+           $OCRKey->X3 = $listPolygon[2]->X;
+           $OCRKey->Y3 = $listPolygon[2]->Y;
+           $OCRKey->X4 = $listPolygon[3]->X;
+           $OCRKey->Y4 = $listPolygon[3]->Y;
+           $str="";
+           foreach ($listKey as $key)
+           {
+               $str = $str." ".$key->description; 
+           }
+           $OCRKey->description = $str;
+       }
        $listItem = array();        
        $firstItem = $this->GetFirstItemByPosition($OCRKey,true);
-       
+      
+       $titleItem = $this->GetTitleByPosition($listPolygon,$firstItem);
        $listItem = $this->GetListItem($firstItem);
+       
        $listRows = array();
+       //Label
+    //   if($titleItem)
+       {
+        $OCRTitlelList=$titleItem->ListOCRValue;
+        $rowsTitle = self::ClusterringListItem($OCRTitlelList);
+        $listRows[] =$rowsTitle;
+       }
+       //Label
         foreach($listItem as $item)
             {
                 $OCRItemList=$item->ListOCRValue;
