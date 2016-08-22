@@ -43,7 +43,8 @@ class Invoice extends CI_Controller {
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
             $anglePopular = AnglePopular($OCRArray);
-            
+            $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+			
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
@@ -80,7 +81,7 @@ class Invoice extends CI_Controller {
                 );
                 echo json_encode($data);
             }else{
-                //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+                
                 $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
@@ -287,7 +288,9 @@ class Invoice extends CI_Controller {
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
+		
         $anglePopular = AnglePopular($OCRArray);
+		$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $cListItem = new ListItemDetail();
         $cListItem->SetOcrArray($OCRArray);
         $cListItem->SetAnglePopular($anglePopular);
@@ -295,6 +298,7 @@ class Invoice extends CI_Controller {
         $cListItem->SetHeight($height);
         $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
         $arrayResult = array();
+						
         for($i=1; $i<count($listRows);$i++)
         {
             $arrayItem = $listRows[$i];
