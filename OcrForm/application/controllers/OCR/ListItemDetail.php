@@ -92,14 +92,18 @@ class ListItemDetail {
     
     function GetFirstItemByKey($key,$isNumber)
     {
+        
         $labelItems = new OCRValue();
         $result =new KeyValue();
         $index =0;
         for($i =1; $i< count(self::$OCRArray);$i++)
        {
             $itemOCR =self::$OCRArray[$i];
-           
-             if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            $perc=0;
+            //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            similar_text(strtolower($key),strtolower(str_replace(array('#', '.', ':'), '',$itemOCR->description)),$perc);
+            if($perc>85)
+           //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
              {
                  $labelItems = $itemOCR;
                 
@@ -107,7 +111,88 @@ class ListItemDetail {
                  break;
              }
         }
-    
+     
+  // echo "Nguyen Thien: ".$labelItems->description." done";
+      
+       
+        //Get next item position in vetycal
+        $firstItem = new OCRValue();
+        $indexFisrt = 0;
+        for($i =1; $i< count(self::$OCRArray);$i++)
+        {
+            if($i!==$index)
+            {
+                $itemOCR =self::$OCRArray[$i];
+                if($this->CheckVertycalPosition($labelItems,$itemOCR)==TRUE)
+                {
+                   $firstItem = $itemOCR;
+                  
+                   $indexFisrt=$i;
+                   break;
+                }
+            }
+        }
+           
+           
+        $nextItem = new OCRValue();
+        $indexNext = 0;
+        for($i =1; $i< count(self::$OCRArray);$i++)
+        {
+            if($i!==$indexFisrt)
+            {
+                $itemOCR =self::$OCRArray[$i];
+                if($this->CheckVertycalPosition($firstItem,$itemOCR)==TRUE)
+                {
+                   $nextItem = $itemOCR;
+                   $indexNext=$i;
+                  
+                   break;
+                }
+            }
+        }
+     
+        $p1 = new Point();
+        $p1->X = $firstItem->X1;
+        $p1->Y = $firstItem->Y1+5;
+       
+        $newPoint12 = GetNewPoint($p1, self::$anglePopular,self::$width);
+        $p1 = $newPoint12[0];
+        $p2 = $newPoint12[1];
+     
+        $p4 = new Point();
+        $p4->X = $firstItem->X1;
+        $p4->Y = $nextItem->Y1-20;
+       
+       // echo self::$anglePopular;
+        
+        $newPoint34 = GetNewPoint($p4, self::$anglePopular,self::$width);
+        $p4 = $newPoint34[0];
+        $p3 = $newPoint34[1];
+       
+        $str = GetTextByRectangle($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);
+        $firstItemDetail = new ItemDetail();
+        $firstItemDetail->TopLeft=$p1;
+        $firstItemDetail->TopRight=$p2;
+        $firstItemDetail->BottomLeft=$p4;
+        $firstItemDetail->BottomRight=$p3;
+        $firstItemDetail->FullStr= $str;
+        $firstItemDetail->Key = $firstItem;
+        $firstItemDetail->KeyIndex =$indexFisrt;
+        $listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
+        $firstItemDetail->ListOCRValue =  $this->ReSortOCRValueInItem($listOCRValue);
+       
+	 
+        return $firstItemDetail;
+    }
+     function GetFirstItemByPosition($OCRValue,$isNumber)
+    {
+        $labelItems = new OCRValue();
+        $labelItems =$OCRValue;
+        $result =new KeyValue();
+        $index =0;
+     
+        $index = array_search($labelItems,self::$OCRArray);
+        
         //Get next item position in vetycal
         $firstItem = new OCRValue();
         $indexFisrt = 0;
@@ -174,7 +259,6 @@ class ListItemDetail {
        
         return $firstItemDetail;
     }
-    
    function GetListItem($firstItemDetail)
     {
         $bNotStopCheck=TRUE;
@@ -285,6 +369,30 @@ class ListItemDetail {
    {
        $listItem = array();        
        $firstItem = $this->GetFirstItemByKey($key,true);
+     //  var_dump($firstItem);
+       $listItem = $this->GetListItem($firstItem);
+       $listRows = array();
+        foreach($listItem as $item)
+            {
+                $OCRItemList=$item->ListOCRValue;
+                $rows = self::ClusterringListItem($OCRItemList);
+                $listRows[] = $rows;
+             
+            }
+       $result = self::MappinglistGroup2List($listRows) ;
+       
+      return  $result;
+   }
+   
+    function GetListItemByPosition($listPolygon,$colNumber)
+   {
+       $listKey = GetListOCRValueByPolygon($listPolygon,self::$OCRArray);
+       $OCRKey = new OCRValue();
+       if(count($listKey)>0)
+           $OCRKey = $listKey[count($listKey)-1];
+       
+       $listItem = array();        
+       $firstItem = $this->GetFirstItemByPosition($OCRKey,true);
        
        $listItem = $this->GetListItem($firstItem);
        $listRows = array();
@@ -298,7 +406,6 @@ class ListItemDetail {
        
       return  $result;
    }
-   
    function CheckDistanFromItem2Group($item,$group)
    {
            if(Check2LineOverlap($group->P1->X,$group->P2->X,$item->X1,$item->X2)==TRUE)
@@ -315,6 +422,7 @@ class ListItemDetail {
    }
    function ClusterringListItem($listItem)
    {
+       if(count($listItem)==0) return;
        $listGroup = array();
        $firstGroup = new GroupInItem();
        $firstGroup->listOCRValue = array();

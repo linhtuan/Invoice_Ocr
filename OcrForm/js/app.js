@@ -263,6 +263,16 @@ function bindingInvoiceInfo(){
         $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
         $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
         listFileInfos = data.FileInfos;
+        if(listFileInfos.length > 1){
+            $('#page-index').show();
+            html = '';
+            for(var i = 0; i < listFileInfos.length; i++){
+                var item = listFileInfos[i];
+                html += '<option value="'+ (i+1) +'">Page '+ (i+1) +'</option>'
+            }
+            $('#page-index').html('');
+            $('#page-index').html(html);
+        }
         if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
             BindingListInvoiceItems(data.InvoiceListItem);
         }

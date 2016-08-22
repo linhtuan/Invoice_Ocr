@@ -97,6 +97,30 @@ function DistanceFromPoint2Line($A,$B,$C,$p)
     $distance = $tu / $mau;
     return $distance;
 }
+
+function StringIsDate($str)
+{
+      //Validate str is date time
+       $arrayDate = date_parse($str);
+       $year = $arrayDate['year'];
+       $month = $arrayDate['month'];
+       $day = $arrayDate['day'];
+       
+       if(!empty($year) && !empty($month) && !empty($day))
+       { 
+           return TRUE;
+       }
+	   if(!empty($month) && !empty($day))
+       { 
+           return TRUE;
+       }
+	 if(!empty($year) && !empty($month))
+       { 
+           return TRUE;
+       }
+	
+       return FALSE;
+}
  /// <summary>
         ///  Function for validate bill info 
         /// </summary>
@@ -107,7 +131,8 @@ function ValidateBillOrDate($str,$isDate)
     if($isDate==TRUE)
     {
         //Validate str is date time
-       $arrayDate = date_parse($str);
+        return StringIsDate($str);
+      /* $arrayDate = date_parse($str);
        $year = $arrayDate['year'];
        $month = $arrayDate['month'];
        $day = $arrayDate['day'];
@@ -119,6 +144,7 @@ function ValidateBillOrDate($str,$isDate)
        }
       
        return FALSE;
+       */
     }
     else
     {

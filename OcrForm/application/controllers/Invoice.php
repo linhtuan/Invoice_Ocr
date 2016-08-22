@@ -372,4 +372,59 @@ class Invoice extends CI_Controller {
         );
         return $result;
     }
+    
+    public function BindingInvoiceByPageIndex(){
+        $jsonFile = $this->input->post('jsonFile');
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFile);
+        $width=0;
+        $height =0;
+        $OCRArray = ParserJson2Object($s_Data, $width, $height);
+        $anglePopular = AnglePopular($OCRArray);
+        $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+
+        $templateId = $this->input->post('templateId');
+        if($templateId > 0)
+        {
+            $this->db->where(array('TemplateID' => $templateId));
+            $templateList = $this->db->get('tbTemplateList')->first_row();
+            $templateListKey = $templateList->Key;
+            $templateListCol = $templateList->Key;
+            $cListItem = new ListItemDetail();
+            $cListItem->SetOcrArray($OCRArray);
+            $cListItem->SetAnglePopular($anglePopular);
+            $cListItem->SetWidth($width);
+            $cListItem->SetHeight($height);
+            $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
+            $arrayResult = array();
+            for($i=1; $i < count($listRows);$i++)
+            {
+                $arrayItem = $listRows[$i];
+                $arrayDetil = array();
+                foreach($arrayItem as $item)
+                {
+                    array_push($arrayDetil, $item);
+                }
+                array_push($arrayResult, $arrayDetil);
+            }
+
+            $this->db->where(array('TemplateID' => $templateId));
+            $templateKey = $this->db->get('tbTemplatedetail')->result();
+            $invoiceInfo = GetInvoiceInforByTemplate($OCRArray, $anglePopular, $templateKey);
+            $data = array(
+                'InvoiceInfo' => $invoiceInfo,
+                'InvoiceListItem' => $arrayResult,
+                'FileInfos' => $arrayFileInfos,
+            );
+            echo json_encode($data);
+        }else{
+
+            $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
+            $data = array(
+                'InvoiceInfo' => $invoiceInfo,
+                'InvoiceListItem' => [],
+                'FileInfos' => $arrayFileInfos,
+            );
+            echo json_encode($data);
+        }
+    }
 }

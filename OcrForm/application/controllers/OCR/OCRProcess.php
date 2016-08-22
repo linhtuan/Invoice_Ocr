@@ -357,7 +357,7 @@ class TemplateKeyword{
                          $point->X = $itemOCR->X1;
                          $point->Y = $itemOCR->Y1;
                          $result->point= $point;
-                         
+                         $result->vertycal=FALSE;
                         return $result;
                         //return word.Replace(key, "");
                     }
@@ -492,6 +492,7 @@ class TemplateKeyword{
                                 $point->X = $item->X1;
                                 $point->Y = $item->Y1;
                                 $result->point= $point;
+                                $result->vertycal=FALSE;
                                 return $result;
                             }
                         }
@@ -507,6 +508,7 @@ class TemplateKeyword{
                                     $point->X = $item->X1;
                                     $point->Y = $item->Y1;
                                     $result->point= $point;
+                                    $result->vertycal=TRUE;
                                     return $result;
                                 }
                                 else
@@ -520,6 +522,7 @@ class TemplateKeyword{
                                             $point->X = $item->X1;
                                             $point->Y = $item->Y1;
                                             $result->point= $point;
+                                            $result->vertycal=FALSE;
                                             return $result;
                                         }
 
@@ -537,6 +540,7 @@ class TemplateKeyword{
                                         $point->X = $item->X1;
                                         $point->Y = $item->Y1;
                                         $result->point= $point;
+                                        $result->vertycal=FALSE;
                                         return $result;
                                     }
 
@@ -606,7 +610,7 @@ class TemplateKeyword{
          $vendorName = GetVendorName($OCRArray,$billInforKey);
          $objVendorName = new KeyValue();
           $objVendorName->value = $vendorName;
-          $objVendorName->index=100;
+          $objVendorName->index=0;
           $invoiceInfo->VendorName= $objVendorName;
     
        
@@ -629,10 +633,11 @@ class TemplateKeyword{
                 
          
        
-        $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
-        $Terms->index=500;
-        $invoiceInfo->Terms = $Terms;
-
+         $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
+         $Terms->index=500;
+         $invoiceInfo->Terms = $Terms;
+  
+               //Get Subtotal
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
         $subtotal->index =600;
         $invoiceInfo->SubTotal = $subtotal;
@@ -653,9 +658,6 @@ class TemplateKeyword{
         $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
         $Total->index = 1000;
         $invoiceInfo->Total = $Total;
-   
- 
-       
         return $invoiceInfo;
     }
     function GetInvoiceInforByTemplate($OCRArray,$anglePopular,$ListKeyWordTemplate)
@@ -807,6 +809,28 @@ class TemplateKeyword{
         
         return $text;
     }
+    
+    function GetListOCRValueByPolygon($listPoint,$OCRListArray)
+    {
+        $listOCRValue =array();
+       for($i=1; $i<count($OCRListArray); $i++)
+        {
+            $item = $OCRListArray[$i];
+            //$a =CheckPointInPolygon($item->X1,$item->Y1,$listPoint);
+            //echo "<br> ghfhfhf: ".$a;
+            if(CheckPointInPolygon($item->X1,$item->Y1,$listPoint)>-1
+               && CheckPointInPolygon($item->X2,$item->Y2,$listPoint)>-1
+               && CheckPointInPolygon($item->X3,$item->Y3,$listPoint)>-1
+               && CheckPointInPolygon($item->X4,$item->Y4,$listPoint)>-1 )
+            {
+               
+                $listOCRValue[]= $item;
+            }
+        }
+        
+        return $listOCRValue;
+    }
+    
     function GetListOCRValueInRectange($X1,$Y1,$X2,$Y2,$X3,$Y3,$X4,$Y4,$OCRListArray)
     {
          $listOCRValue =array();
@@ -829,7 +853,6 @@ class TemplateKeyword{
     
     function GetVendorNameBySpecicalKey($OCRArray)
     {
-        
            $Keys = array();
            $Keys[]="LIMITED";
             $Keys[]="ltd";
@@ -838,7 +861,7 @@ class TemplateKeyword{
             $Keys[]="corp.";
             $vendorName = "";
             $maxTry = 10;
-            for ($i = 0; $i < min($maxTry, count($OCRArray)); $i++)
+            for ($i = 1; $i < min($maxTry, count($OCRArray)); $i++)
               {
                 $item = $OCRArray[$i];
                 foreach ($Keys as $key)
@@ -850,12 +873,11 @@ class TemplateKeyword{
                         $group = array();
                         $group[] =$item;
                        // if (ValidateVendorGroup($group))
-                        {
-                           
+                        {                    
                             if ($str[$pos - 1] == ' ')
                             {
                                 $vendorName = substr($str,0, $pos + strlen($key));
-
+                               
                                 return $vendorName;
                             }
                         }
@@ -981,7 +1003,7 @@ class TemplateKeyword{
             $count = countDigits($str);
             if ($count > 6) return false;
             if ($count / (double)strlen($str) > 0.4) return false;
-
+            if(StringIsDate($str)==TRUE) return false;
             return true;
     }
     function ValidateVendorGroup($vGroup, $billInforKey)
