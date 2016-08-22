@@ -148,6 +148,7 @@ $(function() {
     }
     
     function bindingDataInput(arrayPosition){
+        possitionListInvoice = arrayPosition;
         var getData = ocrCtrl.getDataInPositions(arrayPosition);
         $.when(getData).then(function(result, textStatus, jqXHR){
             $('.active-binding-data').val(result);

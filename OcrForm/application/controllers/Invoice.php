@@ -331,7 +331,7 @@ class Invoice extends CI_Controller {
     }
     
     public function ListItemProcess(){
-        $templateListKey = $this->input->post('templateListKey');
+        $possitionListInvoice = json_decode(stripslashes($this->input->post('possitionListInvoice')));
         $templateListCol = $this->input->post('templateListCol');
         
         $jsonFilePath = $this->input->post('jsonFilePath');
@@ -341,13 +341,13 @@ class Invoice extends CI_Controller {
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
 		
         $anglePopular = AnglePopular($OCRArray);
-		$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
+        $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $cListItem = new ListItemDetail();
         $cListItem->SetOcrArray($OCRArray);
         $cListItem->SetAnglePopular($anglePopular);
         $cListItem->SetWidth($width);
         $cListItem->SetHeight($height);
-        $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
+        $listRows = $cListItem->GetListItemByPosition($possitionListInvoice, $templateListCol);
         $arrayResult = array();
         for($i = 1; $i < count($listRows); $i++)
         {

@@ -18,6 +18,7 @@ var listInvoiceItem = [];
 var invoiceDetail;
 var templateIdIsActive = -1;
 var listFileInfos = [];
+var possitionListInvoice;
 
 function BindingCanvas(){
     worksheetCanvas = $('#canvas');
@@ -38,6 +39,7 @@ function BindingCanvas(){
 }
 
 var ocrCtrl = function (){
+    
     var bindingInput = function(dataObj, id){
         $('#'+ id).val(dataObj);
     };
@@ -207,10 +209,9 @@ $(document).on('click', '#update-list-item', function (event) {
 });
 
 $(document).on('click', '#process-list-item', function (event) {
-    var itemId = $('#item-id').val();
-    if(itemId == undefined || itemId == null || itemId == '') return;
+    if(possitionListInvoice == undefined || possitionListInvoice == null || possitionListInvoice.length == 0) return;
     var model = {
-        templateListKey: $('#item-id').val(),
+        possitionListInvoice: JSON.stringify(possitionListInvoice),
         templateListCol: $('#column-number').val(),
         jsonFilePath: $('#json-file-path').val()
     };
@@ -268,7 +269,7 @@ function bindingInvoiceInfo(){
             html = '';
             for(var i = 0; i < listFileInfos.length; i++){
                 var item = listFileInfos[i];
-                html += '<option value="'+ (i+1) +'">Page '+ (i+1) +'</option>'
+                html += '<option value="' + (i+1) + '">Page ' + (i+1) + '</option>'
             }
             $('#page-index').html('');
             $('#page-index').html(html);
@@ -297,12 +298,14 @@ function BindingListInvoiceItems(array){
     var htmlListItems = '';
     for(var i = 1; i < array.length; i++){
         var item = array[i];
+        htmlListItems += "<tr>";
         for(var j = 0; j < item.length; j++){
             var data = item[j];
             var id = title[j].replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
             htmlListItems += '<td><input class="form-control binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
         }
+        htmlListItems += "</tr>";
     }
     $('#list-invoices-data').html('');
     $('#list-invoices-data').html(htmlListItems);
