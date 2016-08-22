@@ -83,7 +83,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </select>
                 </div>
             </div>
-            
+            <div class="col-sm-3">
+                <div class="form-group" id="page-index">
+                    <label>Page Index</label>
+                    <select class="form-control" id="page-size">
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 <div id="body" class="row"> 

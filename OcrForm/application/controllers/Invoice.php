@@ -35,15 +35,32 @@ class Invoice extends CI_Controller {
             'ID' => $this->input->post('physicalFileId')
         );
         
-        $fileInfo = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->row();
-        if (isset($fileInfo))
+        $fileInfos = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->result();
+        $arrayFileInfos = array();
+        $fistJson;
+        $index = 1;
+        foreach ($fileInfos as $row)
         {
-            $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$fileInfo->JsonFilePath);
+            if($index == 1){
+                $fistJson = $row->JsonFilePath;
+            }
+            $fileInfo = array(
+                'FileInfoId' => $row->ID,
+                'PathName' => $row->PathName,
+                'JsonFilePath' => $row->JsonFilePath,
+                'FileIndex' => $row->FileIndex,
+            );
+            array_push($arrayFileInfos, $fileInfo);
+            $index++;
+        }
+        if (count($arrayFileInfos) > 0)
+        {
+            $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$fistJson);
             $width=0;
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
             $anglePopular = AnglePopular($OCRArray);
-            
+            $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
@@ -75,18 +92,15 @@ class Invoice extends CI_Controller {
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => $arrayResult,
-                    'PhysicalFilePath' => $fileInfo->PathName,
-                    'JsonFilePath' => $fileInfo->JsonFilePath
+                    'FileInfos' => $arrayFileInfos,
                 );
                 echo json_encode($data);
             }else{
-                //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
                 $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => [],
-                    'PhysicalFilePath' => $fileInfo->PathName,
-                    'JsonFilePath' => $fileInfo->JsonFilePath
+                    'FileInfos' => $arrayFileInfos,
                 );
                 echo json_encode($data);
             }
@@ -137,37 +151,49 @@ class Invoice extends CI_Controller {
         }
         $fReadHandle = fopen($fileTempName, 'rb');
         $fileContent = fread($fReadHandle, $fileSize);
-        $strFileSize = (string)intval($fileSize/1024)."KB";
         fwrite($fWriteHandle, $fileContent);
         fclose($fWriteHandle);
         $info = new SplFileInfo($fileName);
         $fileType = $info->getExtension();
         
-        //create file json of image
-        $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
-        $jsonPath = "JsonFile\\".$jsonName;
-        $json = CallGGAPIForImage($fileName);
-        file_put_contents($jsonPath, $json);
-        $array = array(
-            'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
-            'JsonFilePath' => "JsonFile/".$jsonName
-        );
-        $this->db->set($array);
-        $this->db->insert('tbfileinfo');
-        
         if($fileType == "pdf"){
-            //$im = new \Imagick($fileName);
-//            $noOfPagesInPDF = $im->getNumberImages();
-//            for ($i = 0; $i < $noOfPagesInPDF; $i++) { 
-// 
-//              $url = $fileName.'['.$i.']'; 
-// 
-//              $image = new Imagick($url);
-// 
-//              $image->setImageFormat("jpg"); 
-// 
-//              $image->writeImage("UploadImage/".__DIR__."/".($i+1).'-'.rand().'.jpg'); 
-//          }
+            $fileBaseName = $info->getBasename('.' . $info->getExtension());
+            $folderUpload = "UploadPDF\\".$fileBaseName;
+            $ret = mkdir($folderUpload); 
+            $string = "Magick\convert.exe -density 300 \"".$fileName."\" \"".$folderUpload."\"".$fileBaseName.".jpg\"";
+            $str = exec($string);
+            $files = scandir($folderUpload);
+            $fileIndex = 1;
+            foreach ($files as $value) {
+                $fileNamePath = $folderUpload."\\".$value;
+                $jsonName = str_replace(".","_",$value).".json";
+                $ret = mkdir("JsonFile\\".$fileBaseName); 
+                $jsonPath = "JsonFile\\".$fileBaseName."\\".$jsonName;
+                $json = CallGGAPIForImage($fileNamePath);
+                file_put_contents($jsonPath, $json);
+                $array = array(
+                    'PathName' => "UploadPDF/".$fileBaseName."/".$_FILES['RemoteFile']['name'],
+                    'JsonFilePath' => "JsonFile/".$fileBaseName."/".$jsonName,
+                    'FileIndex' => $fileIndex
+                );
+                $this->db->set($array);
+                $this->db->insert('tbfileinfo');
+                
+                $fileIndex++;
+            }
+        }
+        else{
+            //create file json of image
+            $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
+            $jsonPath = "JsonFile\\".$jsonName;
+            $json = CallGGAPIForImage($fileName);
+            file_put_contents($jsonPath, $json);
+            $array = array(
+                'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
+                'JsonFilePath' => "JsonFile/".$jsonName
+            );
+            $this->db->set($array);
+            $this->db->insert('tbfileinfo');
         }
         echo "";
     }
@@ -208,14 +234,17 @@ class Invoice extends CI_Controller {
             'Total' => $total,
             'PONumber' => $poNumber,
         );
+        $listInvoiceItems = json_decode(stripslashes($this->input->post('listInvoiceItems')));
         if($invoiceInfoId == NULL || $invoiceInfoId == ''){
             $this->db->set($data);
             $this->db->insert('tbtemplate');
             $invoiceInfoId = $this->db->insert_id();
+            InsertListInvoice($listInvoiceItems, $invoiceInfoId);
         }
         else{
             $this->db->where('ID', $invoiceInfoId);
             $this->db->update('tbinvoiceinfo', $data);
+            InsertListInvoice($listInvoiceItems, $invoiceInfoId);
         }
         $result = array(
             'invoiceInfoId' => $invoiceInfoId
@@ -223,11 +252,32 @@ class Invoice extends CI_Controller {
         echo json_encode($result);
     }
     
+    public function InsertListInvoice($listInvoiceItems, $invoiceInfoId){
+        $this->db->delete('tblistitemkeys', array('InvoiceInfoID' => $invoiceInfoId));
+        $this->db->delete('tblistitem', array('InvoiceInfoID' => $invoiceInfoId));
+        foreach ($listInvoiceItems as $item){
+            $this->db->set(array('InvoiceInfoID'=> $invoiceInfoId, 'ItemID' => $item->ItemId));
+            $this->db->insert('tblistitem');
+            $listItemId = $this->db->insert_id();
+            $itemKeys = array();
+            foreach ($item->ListKey as $itemKey){
+                $data = array(
+                    'InvoiceInfoID' => $invoiceInfoId,
+                    'ListItemId' => $listItemId,
+                    'Key' => $itemKey->Key,
+                    'Value' => $itemKey->Value
+                );
+                array_push($itemKeys, $data);
+            }
+            $this->db->insert_batch('tblistitemkeys', $itemKeys);
+        }
+    }
+    
     public function GetTemplate(){
         $query = $this->db->get('tbtemplate')->result();
         echo json_encode($query);
     }
-    
+
     public function CreateTemplate(){
         
         //Insert Template
@@ -295,7 +345,7 @@ class Invoice extends CI_Controller {
         $cListItem->SetHeight($height);
         $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
         $arrayResult = array();
-        for($i=1; $i<count($listRows);$i++)
+        for($i = 1; $i < count($listRows); $i++)
         {
             $arrayItem = $listRows[$i];
             $arrayDetil = array();

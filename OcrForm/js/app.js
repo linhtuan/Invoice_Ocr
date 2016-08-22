@@ -17,6 +17,7 @@ var ratioImage = 1;
 var listInvoiceItem = [];
 var invoiceDetail;
 var templateIdIsActive = -1;
+var listFileInfos = [];
 
 function BindingCanvas(){
     worksheetCanvas = $('#canvas');
@@ -259,8 +260,9 @@ function bindingInvoiceInfo(){
         $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
         $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
         
-        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.PhysicalFilePath);
-        $('#json-file-path').val(data.JsonFilePath);
+        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
+        $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
+        listFileInfos = data.FileInfos;
         if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
             BindingListInvoiceItems(data.InvoiceListItem);
         }
