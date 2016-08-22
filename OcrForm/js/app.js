@@ -187,20 +187,22 @@ $(document).on('click', '#update-invoice-detail', function (event) {
 });
 
 $(document).on('click', '#update-list-item', function (event) {
-    var model = {
-        InvoiceInfoId: $('#invoice-info-id').val(),
-        VendorName: $('#vendor-name').val(),
-        VendorNumber: $('#vendor-number').val(),
-        InvoiceNumber: $('#invoice-number').val(),
-        InvoiceDate: $('#invoice-date').val(),
-        PONumber: $('#po-number').val(),
-        Shipping: $('#shipping').val(),
-        Discount: $('#global-disc').val(),
-        Terms: $('#teams').val(),
-        Total: $('#invoice-total').val(),
-        Tax: $('#tax-1').val(),
-    };
-    ocrCtrl.updateInvoiceDetail(model);
+    var listInvoice = getListInvoiceItem();
+    console.log(listInvoice);
+//    var model = {
+//        InvoiceInfoId: $('#invoice-info-id').val(),
+//        VendorName: $('#vendor-name').val(),
+//        VendorNumber: $('#vendor-number').val(),
+//        InvoiceNumber: $('#invoice-number').val(),
+//        InvoiceDate: $('#invoice-date').val(),
+//        PONumber: $('#po-number').val(),
+//        Shipping: $('#shipping').val(),
+//        Discount: $('#global-disc').val(),
+//        Terms: $('#teams').val(),
+//        Total: $('#invoice-total').val(),
+//        Tax: $('#tax-1').val(),
+//    };
+//    ocrCtrl.updateInvoiceDetail(model);
 });
 
 $(document).on('click', '#process-list-item', function (event) {
@@ -208,7 +210,8 @@ $(document).on('click', '#process-list-item', function (event) {
     if(itemId == undefined || itemId == null || itemId == '') return;
     var model = {
         templateListKey: $('#item-id').val(),
-        templateListCol: $('#column-number').val()
+        templateListCol: $('#column-number').val(),
+        jsonFilePath: $('#json-file-path').val()
     };
     
     var data = ocrCtrl.listInvoiceProcess(model);
@@ -219,8 +222,7 @@ $(document).on('click', '#process-list-item', function (event) {
 
 $(document).on('Change', '#template-option', function (event) {
     if(templateIdIsActive != parseInt($(this).val())) return;
-    
-    
+
 });
 
 function bindingInvoiceInfo(){
@@ -287,11 +289,28 @@ function BindingListInvoiceItems(array){
             var data = item[j];
             var id = title[j].replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-            htmlListItems += '<td><input class="form-control binding-data" value="'+ data +'" id="'+ id +'"></td>';
+            htmlListItems += '<td><input class="form-control binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
         }
     }
     $('#list-invoices-data').html('');
     $('#list-invoices-data').html(htmlListItems);
+}
+
+function getListInvoiceItem(){
+    var title = listInvoiceItem[0];
+    var dataResult = [];
+    for(var i = 1; i < listInvoiceItem.length; i++){
+        var item = listInvoiceItem[i];
+        var dataIndex = {ItemId: i, ListKey:[]}
+        for(var j = 0; j < item.length; j++){
+            var id = title[j].replace(/ /g, '_');
+            id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+            var dataCtrl = $("#" + id + "-" + i + "-" + j ).val();
+            dataIndex.ListKey.push({Key: title[j], Value: dataCtrl});
+        }
+        dataResult.push(dataIndex);
+    }
+    return dataResult;
 }
 
 function bindingTemplates(id){

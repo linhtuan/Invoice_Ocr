@@ -204,7 +204,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <div class="row">
                         <div class="col-sm-12 table-responsive">
-                            <table class="table table-striped table-bordered table-hover">
+                            <table class="table table-striped table-bordered table-hover" id="list-invoice">
                                 <thead>
                                     <tr id="list-invoice-title">
                                     </tr>

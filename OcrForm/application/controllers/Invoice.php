@@ -12,12 +12,6 @@ include_once 'OCR/ListItemDetail.php';
  */
 class Invoice extends CI_Controller {
     
-//    public function __constructor(){
-//        
-//        parent::__construct();
-//        $this->output->enable_profiler(TRUE);
-//    }
-    
     public function GetInvoiceData(){
         $this->load->model('invoices_model');
 
@@ -125,8 +119,6 @@ class Invoice extends CI_Controller {
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
         $anglePopular = AnglePopular($OCRArray);
-
-        //$OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $str = GetTextByPolygon($listPoint,$OCRArray);
         echo trim($str);;
     }
@@ -289,12 +281,19 @@ class Invoice extends CI_Controller {
     public function ListItemProcess(){
         $templateListKey = $this->input->post('templateListKey');
         $templateListCol = $this->input->post('templateListCol');
+        
+        $jsonFilePath = $this->input->post('jsonFilePath');
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
+        $width=0;
+        $height =0;
+        $OCRArray = ParserJson2Object($s_Data,$width,$height);
+        $anglePopular = AnglePopular($OCRArray);
         $cListItem = new ListItemDetail();
         $cListItem->SetOcrArray($OCRArray);
         $cListItem->SetAnglePopular($anglePopular);
         $cListItem->SetWidth($width);
         $cListItem->SetHeight($height);
-        $listRows = $cListItem->GetListItemByKey($templateListKey,$templateListCol);
+        $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
         $arrayResult = array();
         for($i=1; $i<count($listRows);$i++)
         {
@@ -311,63 +310,10 @@ class Invoice extends CI_Controller {
     }
     
     public function BindingDataByTemplateId(){
-        $templateDetail = $this->db->get_where('tbtemplatedetail', array('TemplateId' => $this->input->post('templateId')))->result();
-        $detailResult = array(
-            'VendorName' => '',
-            'VendorNumber' => '',
-            'InvoiceID' => '',
-            'InvoiceDate' => '',
-            'PONumber' => '',
-            'Terms' => '',
-            'SubTotal' => '',
-            'TotalTax' => '',
-            'Shipping' => '',
-            'Discount' => '',
-            'Total' => '',
-        );
-       
-        foreach ($templateDetail as $item){
-            switch ($item.Index) {
-                case 000:
-                    $detailResult->VendorName = $item->Keyword;
-                    break;
-                case 100:
-                    $detailResult->VendorNumber = $item->Keyword;
-                    break;
-                case 200:
-                    $detailResult->InvoiceID = $item->Keyword;
-                    break;
-                case 300:
-                    $detailResult->InvoiceDate = $item->Keyword;
-                    break;
-                case 400:
-                    $detailResult->PONumber = $item->Keyword;
-                    break;
-                case 500:
-                    $detailResult->Terms = $item->Keyword;
-                    break;
-                case 600:
-                    $detailResult->SubTotal = $item->Keyword;
-                    break;
-                case 700:
-                    $detailResult->TotalTax = $item->Keyword;
-                    break;
-                case 800:
-                    $detailResult->Shipping = $item->Keyword;
-                    break;
-                case 900:
-                    $detailResult->Discount = $item->Keyword;
-                    break;
-                case 1000:
-                    $detailResult->Total = $item->Keyword;
-                    break;
-            }
-        }
         $templateList = $this->db->get_where('tbtemplateList', 
                 array('TemplateId' => $this->input->post('templateId')))->first_row();
         
         $result = array(
-            'templateDetail' => json_encode($templateDetail),
             'templateList' => json_encode($templateList)
         );
         return $result;
