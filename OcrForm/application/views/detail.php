@@ -14,11 +14,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body  class="ds-demo-main">
 <div id="container" class="navbar navbar-default navbar-static-top">
     <div class="row">
-        <div class="col-sm-12">
-            <h1 class="page-header">Forms</h1>
+        <div class="col-sm-12" id="image">
+            
         </div>
     </div>
 </div>
+    
+<script id="imageTemplate" type="text/x-jquery-tmpl">
+    <div class="col-sm-3">
+        <img data-id="${ID}" src="${PathName}" style="width: 100%;">
+    </div>
+</script>
     
 <div id="createTemplate" class="modal fade" role="dialog">
     <div class="modal-dialog">

@@ -34,6 +34,12 @@ var detailCtrl = function(){
 
 
 function GetImageList(){
-    
+    var images = detailCtrl.getImage();
+    $.when(images).then(function(result, textStatus, jqXHR){
+        var data = JSON.parse(result);
+        $('#imageTemplate').tmpl(data).appendTo('#image');
+    });
 }
+
+
 
