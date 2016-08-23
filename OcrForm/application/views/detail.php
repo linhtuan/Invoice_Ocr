@@ -13,6 +13,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </head>
 <body  class="ds-demo-main">
 <div id="container" class="navbar navbar-default navbar-static-top">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav in" id="side-menu">
+                    <li>
+                        <a href="/OcrForm/" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice</a>
+                        <a href="/OcrForm/index.php/InvoiceDetail" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice Detail</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="row">
         <div class="col-sm-12" id="image">
             
