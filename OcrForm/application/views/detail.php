@@ -22,11 +22,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     
 <script id="imageTemplate" type="text/x-jquery-tmpl">
     <div class="col-sm-3">
-        <img data-id="${ID}" src="${PathName}" style="width: 100%;">
+        <img data-id="${ID}" onclick="bindingInvoiceDetail(${ID})" src="/OcrForm/${PathName}" style="width: 100%;">
     </div>
 </script>
     
-<div id="createTemplate" class="modal fade" role="dialog">
+<div id="invoice-detail-popup" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
