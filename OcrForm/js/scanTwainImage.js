@@ -45,6 +45,7 @@ function OnHttpUploadSuccess() {
     $.when(data).then(function(result){
         var data = JSON.parse(result);
         $('#physical-file-id').val(data.ID);
+        $('#pdf-file-id').val(data.PDFFileId);
     });
 }
 

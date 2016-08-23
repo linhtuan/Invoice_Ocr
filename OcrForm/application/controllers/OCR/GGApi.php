@@ -9,7 +9,7 @@ include_once 'creds.php'; // Get $api_key
      $cvurl = 'https://vision.googleapis.com/v1/images:annotate?key=' . $api_key;
      $type = 'TEXT_DETECTION';
       $data = file_get_contents($pathFile);
-      
+    //  echo $pathFile;
       $base64 = base64_encode($data); 
       str_replace("data:image/jpeg;base64,", "",$base64)	  ;
        //Create this JSON

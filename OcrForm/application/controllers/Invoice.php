@@ -34,8 +34,15 @@ class Invoice extends CI_Controller {
         $query = array(
             'ID' => $this->input->post('physicalFileId')
         );
+        $pdfId = $this->input->post('pdfId');
+        $fileInfos;
+        if($pdfId == 0){
+            $fileInfos = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->result();
+        }
+        else{
+            $fileInfos = $this->db->get_where('tbfileinfo', array('PDFFileId' => $pdfId))->result();
+        }
         
-        $fileInfos = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->result();
         $arrayFileInfos = array();
         $fistJson;
         $index = 1;
@@ -159,10 +166,17 @@ class Invoice extends CI_Controller {
         $fileType = $info->getExtension();
         
         if($fileType == "pdf"){
+            $array = array(
+                'PathName' => $fileName,
+            );
+            $this->db->set($array);
+            $this->db->insert('tbpdffile');
+            $pdfId = $this->db->insert_id();
+            
             $fileBaseName = $info->getBasename('.' . $info->getExtension());
             $folderUpload = "UploadPDF\\".$fileBaseName;
             $ret = mkdir($folderUpload); 
-            $string = "Magick\convert.exe -density 300 \"".$fileName."\" \"".$folderUpload."\\".$fileBaseName.".jpg\"";
+            $string = "Magick\convert.exe -density 96 \"".$fileName."\" -resize 1700x2000 -quality 85 \"".$folderUpload."\\".$fileBaseName.".jpg\"";
             $str = exec($string);
             $files = scandir($folderUpload);
             $fileIndex = 1;
@@ -172,14 +186,17 @@ class Invoice extends CI_Controller {
                         if($file == null || $file == '' || $file == '.' || $file == '..') continue;
                         $fileNamePath = $folderUpload."\\".$file;
                         $jsonName = str_replace(".","_",$file).".json";
-                        $ret = mkdir("JsonFile\\".$fileBaseName); 
+                        if($fileIndex == 1){
+                            $ret = mkdir("JsonFile\\".$fileBaseName); 
+                        }
                         $jsonPath = "JsonFile\\".$fileBaseName."\\".$jsonName;
                         $json = CallGGAPIForImage($fileNamePath);
                         file_put_contents($jsonPath, $json);
                         $array = array(
                             'PathName' => "UploadPDF/".$fileBaseName."/".$file,
                             'JsonFilePath' => "JsonFile/".$fileBaseName."/".$jsonName,
-                            'FileIndex' => $fileIndex
+                            'FileIndex' => $fileIndex,
+                            'PDFFileId' => $pdfId
                         );
                         $this->db->set($array);
                         $this->db->insert('tbfileinfo');
@@ -209,12 +226,24 @@ class Invoice extends CI_Controller {
     public function GetPhysicalFileId()
     {
         $fileName = "UploadImage/".$this->input->post('physicalFileName');
-        $query = array(
-            'PathName' => $fileName
-        );
-        $this->db->select('ID');
-        $this->db->where($query);
-        $fileInfoId = $this->db->get('tbfileinfo')->first_row();
+        $info = new SplFileInfo("UploadImage\\".$this->input->post('physicalFileName'));
+        $fileType = $info->getExtension();
+        
+        if($fileType == "pdf"){
+            $name = $info->getBasename('.pdf');
+            $this->db->select('*');
+            $this->db->like('PathName', $name);
+            $fileInfoId = $this->db->get('tbfileinfo')->first_row();
+        }
+        else{
+            $query = array(
+                'PathName' => $fileName
+            );
+            $this->db->select('*');
+            $this->db->where($query);
+            $fileInfoId = $this->db->get('tbfileinfo')->first_row();
+        }
+        
         echo json_encode($fileInfoId);
     }
 
@@ -406,6 +435,7 @@ class Invoice extends CI_Controller {
     }
     
     public function BindingInvoiceByPageIndex(){
+        $filePath = $this->input->post('filePath');
         $jsonFile = $this->input->post('jsonFile');
         $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFile);
         $width=0;
@@ -445,7 +475,7 @@ class Invoice extends CI_Controller {
             $data = array(
                 'InvoiceInfo' => $invoiceInfo,
                 'InvoiceListItem' => $arrayResult,
-                'FileInfos' => $arrayFileInfos,
+                'FilePath' => $filePath,
             );
             echo json_encode($data);
         }else{
@@ -453,7 +483,7 @@ class Invoice extends CI_Controller {
             $data = array(
                 'InvoiceInfo' => $invoiceInfo,
                 'InvoiceListItem' => [],
-                'FileInfos' => $arrayFileInfos,
+                'FilePath' => $filePath,
             );
             echo json_encode($data);
         }

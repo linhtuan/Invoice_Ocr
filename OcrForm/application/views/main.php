@@ -236,6 +236,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
         </div>
     </div>
+    <input type="hidden" id="pdf-file-id" value="0"/>
     <input type="hidden" id="physical-file-id" value="0"/>
     <input type="hidden" id="invoice-info-id" value="0"/>
     <input type="hidden" id="json-file-path" value=""/>

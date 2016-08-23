@@ -44,13 +44,14 @@ var ocrCtrl = function (){
         $('#'+ id).val(dataObj);
     };
     
-    var getInvoiceInfo = function(id, templateId){
+    var getInvoiceInfo = function(id, templateId, pdfId){
         return $.ajax({
             url: '/OcrForm/index.php/invoice/GetInvoiceInfo',
             type: 'POST',
             data: {
                 physicalFileId: id,
-                templateId: templateId
+                templateId: templateId,
+                pdfId: pdfId
             }
         });
     };
@@ -126,8 +127,8 @@ var ocrCtrl = function (){
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
         },
-        getInvoiceInfo: function(id, templateId){
-            return getInvoiceInfo(id, templateId);
+        getInvoiceInfo: function(id, templateId, pdfId){
+            return getInvoiceInfo(id, templateId, pdfId);
         },
         getDataInPositions: function(listPositions){
             return getDataInPositions(listPositions);
@@ -234,41 +235,67 @@ $(document).on('click', '#process-list-item', function (event) {
     });
 });
 
-$(document).on('Change', '#template-option', function (event) {
+$(document).on('change', '#template-option', function (event) {
     if(templateIdIsActive != parseInt($(this).val())) return;
 
 });
 
-$(document).on('Change', '#page-size', function (event) {
-    $('#physical-file-id').val($(this).val());
+$("#page-size").change(function() {
+    $('#physical-file-id').val($('#page-size option:selected').val());
     $('#invoice-info-id').val(0);
-    $('#json-file-path').val($(this).attr('data-json-path'));
+    $('#json-file-path').val($('#page-size option:selected').attr('data-json-path'));
     var model = {
-        jsonFile: $(this).attr('data-json-path'),
+        filePath: $('#page-size option:selected').attr('data-file-path'),
+        jsonFile: $('#page-size option:selected').attr('data-json-path'),
         templateId: parseInt($('#template-option').val())
     };
     var dataBinding = ocrCtrl.getInvoiceByPageIndex(model);
     $.when(dataBinding).then(function(result, textStatus, jqXHR){
-        BindingDataInvoiceJson(result);
-    })
+        var data = JSON.parse(result);
+        BindingDataInvoiceJson(data);
+        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FilePath);
+        if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
+            BindingListInvoiceItems(data.InvoiceListItem);
+        }
+        BindingCanvas();
+    });
 });
 
 function bindingInvoiceInfo(){
     $('.binding-data').val('');
     var id = parseInt($('#physical-file-id').val());
+    var pdfId = parseInt($('#pdf-file-id').val());
     var templateId = parseInt($('#template-option').val());
     if(id == 0) {
         alert('You need upload file to server.')
         return;
     }
-    var getData = ocrCtrl.getInvoiceInfo(id, templateId);
+    var getData = ocrCtrl.getInvoiceInfo(id, templateId, pdfId);
     $.when(getData).then(function(result, textStatus, jqXHR){
-        BindingDataInvoiceJson(result);
+        var data = JSON.parse(result);
+        BindingDataInvoiceJson(data);
+        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
+        $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
+        listFileInfos = data.FileInfos;
+        if(listFileInfos.length > 1){
+            $('#page-index').show();
+            $('#page-index').removeClass('hidden');
+            html = '';
+            for(var i = 0; i < listFileInfos.length; i++){
+                var item = listFileInfos[i];
+                html += '<option data-file-path="' + item.PathName + '" data-json-path="'+ item.JsonFilePath +'" value="' + (i+1) + '">Page ' + (i+1) + '</option>'
+            }
+            $('#page-size').html('');
+            $('#page-size').html(html);
+        }
+        if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
+            BindingListInvoiceItems(data.InvoiceListItem);
+        }
+        BindingCanvas();
     });
 }
 
-function BindingDataInvoiceJson(result){
-    var data = JSON.parse(result);
+function BindingDataInvoiceJson(data){
     invoiceDetail = data.InvoiceInfo;
     $('#vendor-name').val(data.InvoiceInfo.VendorName.value);
     $('#vendor-number').val(data.InvoiceInfo.VendorNumber.value);
@@ -292,23 +319,7 @@ function BindingDataInvoiceJson(result){
     $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
     $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
 
-    $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
-    $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
-    listFileInfos = data.FileInfos;
-    if(listFileInfos.length > 1){
-        $('#page-index').show();
-        html = '';
-        for(var i = 0; i < listFileInfos.length; i++){
-            var item = listFileInfos[i];
-            html += '<option data-json-path="'+ item.JsonFilePath +'" value="' + (i+1) + '">Page ' + (i+1) + '</option>'
-        }
-        $('#page-index').html('');
-        $('#page-index').html(html);
-    }
-    if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
-        BindingListInvoiceItems(data.InvoiceListItem);
-    }
-    BindingCanvas();
+    
 }
 
 function BindingListInvoiceItems(array){
