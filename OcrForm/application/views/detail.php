@@ -82,19 +82,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "/OcrForm/js/jquery-2.1.4.min.js"></script>
 <script type = 'text/javascript' src = "/OcrForm/js/jquery.tmpl.js"></script>
 <script type = 'text/javascript' src = "/OcrForm/js/bootstrap.min.js"></script>
-<script src="/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
-<script src="/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
-<script src="/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/invoice-detail.js"></script>
 
-<script type = 'text/javascript' src = "/OcrForm/js/app.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/draw-rectangle.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/scanTwainImage.js"></script>
-<script type = 'text/javascript'>
-
-$(document).ready(function() {
-    bindingTemplates();
-});
-
-</script>
 </body>
 </html>
