@@ -184,28 +184,28 @@ $(document).on('click', '#update-invoice-detail', function (event) {
         Terms: $('#teams').val(),
         Total: $('#invoice-total').val(),
         Tax: $('#tax-1').val(),
-        
+        ListInvoices: null
     };
     ocrCtrl.updateInvoiceDetail(model);
 });
 
 $(document).on('click', '#update-list-item', function (event) {
     var listInvoice = getListInvoiceItem();
-    console.log(listInvoice);
-//    var model = {
-//        InvoiceInfoId: $('#invoice-info-id').val(),
-//        VendorName: $('#vendor-name').val(),
-//        VendorNumber: $('#vendor-number').val(),
-//        InvoiceNumber: $('#invoice-number').val(),
-//        InvoiceDate: $('#invoice-date').val(),
-//        PONumber: $('#po-number').val(),
-//        Shipping: $('#shipping').val(),
-//        Discount: $('#global-disc').val(),
-//        Terms: $('#teams').val(),
-//        Total: $('#invoice-total').val(),
-//        Tax: $('#tax-1').val(),
-//    };
-//    ocrCtrl.updateInvoiceDetail(model);
+    var model = {
+        InvoiceInfoId: $('#invoice-info-id').val(),
+        VendorName: $('#vendor-name').val(),
+        VendorNumber: $('#vendor-number').val(),
+        InvoiceNumber: $('#invoice-number').val(),
+        InvoiceDate: $('#invoice-date').val(),
+        PONumber: $('#po-number').val(),
+        Shipping: $('#shipping').val(),
+        Discount: $('#global-disc').val(),
+        Terms: $('#teams').val(),
+        Total: $('#invoice-total').val(),
+        Tax: $('#tax-1').val(),
+        ListInvoices: JSON.stringify(listInvoice)
+    };
+    ocrCtrl.updateInvoiceDetail(model);
 });
 
 $(document).on('click', '#process-list-item', function (event) {

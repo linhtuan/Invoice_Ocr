@@ -236,17 +236,23 @@ class Invoice extends CI_Controller {
             'Total' => $total,
             'PONumber' => $poNumber,
         );
-        $listInvoiceItems = json_decode(stripslashes($this->input->post('listInvoiceItems')));
+        $listInvoiceItems = json_decode(stripslashes($this->input->post('ListInvoices')));
         if($invoiceInfoId == NULL || $invoiceInfoId == ''){
             $this->db->set($data);
             $this->db->insert('tbtemplate');
             $invoiceInfoId = $this->db->insert_id();
-            InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+            if($listInvoiceItems != null && $listInvoiceItems != '')
+            {
+                InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+            }
         }
         else{
             $this->db->where('ID', $invoiceInfoId);
             $this->db->update('tbinvoiceinfo', $data);
-            InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+            if($listInvoiceItems != null && $listInvoiceItems != '')
+            {
+                InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+            }
         }
         $result = array(
             'invoiceInfoId' => $invoiceInfoId
