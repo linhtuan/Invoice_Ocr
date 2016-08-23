@@ -114,6 +114,14 @@ var ocrCtrl = function (){
         });
     };
     
+    var getInvoiceByPageIndex = function(model){
+         return $.ajax({
+            url: '/OcrForm/index.php/invoice/BindingInvoiceByPageIndex',
+            type: 'POST',
+            data: model
+        });
+    };
+    
     return {
         bindingInput: function (dataObj, id){
             return bindingInput(dataObj, id);
@@ -142,6 +150,9 @@ var ocrCtrl = function (){
         bindingDataByTemplateId: function(id){
             return bindingDataByTemplateId(id);
         },
+        getInvoiceByPageIndex: function(model){
+            return getInvoiceByPageIndex(model);
+        }
     };
 }(ocrCtrl);
 
@@ -228,6 +239,20 @@ $(document).on('Change', '#template-option', function (event) {
 
 });
 
+$(document).on('Change', '#page-size', function (event) {
+    $('#physical-file-id').val($(this).val());
+    $('#invoice-info-id').val(0);
+    $('#json-file-path').val($(this).attr('data-json-path'));
+    var model = {
+        jsonFile: $(this).attr('data-json-path'),
+        templateId: parseInt($('#template-option').val())
+    };
+    var dataBinding = ocrCtrl.getInvoiceByPageIndex(model);
+    $.when(dataBinding).then(function(result, textStatus, jqXHR){
+        BindingDataInvoiceJson(result);
+    })
+});
+
 function bindingInvoiceInfo(){
     $('.binding-data').val('');
     var id = parseInt($('#physical-file-id').val());
@@ -238,49 +263,52 @@ function bindingInvoiceInfo(){
     }
     var getData = ocrCtrl.getInvoiceInfo(id, templateId);
     $.when(getData).then(function(result, textStatus, jqXHR){
-        var data = JSON.parse(result);
-        invoiceDetail = data.InvoiceInfo;
-        $('#vendor-name').val(data.InvoiceInfo.VendorName.value);
-        $('#vendor-number').val(data.InvoiceInfo.VendorNumber.value);
-        $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
-        $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
-        $('#po-number').val(data.InvoiceInfo.PONumber.value);
-        $('#shipping').val(data.InvoiceInfo.Shipping.value);
-        $('#global-disc').val(data.InvoiceInfo.Discount.value);
-        $('#teams').val(data.InvoiceInfo.Terms.value);
-        $('#invoice-total').val(data.InvoiceInfo.Total.value);
-        $('#tax-1').val(data.InvoiceInfo.TotalTax.value);
-        
-        $('#vendor-name-text').val(data.InvoiceInfo.VendorName.label);
-        $('#vendor-number-text').val(data.InvoiceInfo.VendorNumber.label);
-        $('#invoice-number-text').val(data.InvoiceInfo.InvoiceID.label);
-        $('#invoice-date-text').val(data.InvoiceInfo.InvoiceDate.label);
-        $('#po-number-text').val(data.InvoiceInfo.PONumber.label);
-        $('#shipping-text').val(data.InvoiceInfo.Shipping.label);
-        $('#global-disc-text').val(data.InvoiceInfo.Discount.label);
-        $('#teams-text').val(data.InvoiceInfo.Terms.label);
-        $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
-        $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
-        
-        $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
-        $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
-        listFileInfos = data.FileInfos;
-        if(listFileInfos.length > 1){
-            $('#page-index').show();
-            html = '';
-            for(var i = 0; i < listFileInfos.length; i++){
-                var item = listFileInfos[i];
-                html += '<option value="' + (i+1) + '">Page ' + (i+1) + '</option>'
-            }
-            $('#page-index').html('');
-            $('#page-index').html(html);
-        }
-        if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
-            BindingListInvoiceItems(data.InvoiceListItem);
-        }
-        BindingCanvas();
-        //$('#listInvoicesTemplate').tmpl(data).appendTo('#list-invoices-data');
+        BindingDataInvoiceJson(result);
     });
+}
+
+function BindingDataInvoiceJson(result){
+    var data = JSON.parse(result);
+    invoiceDetail = data.InvoiceInfo;
+    $('#vendor-name').val(data.InvoiceInfo.VendorName.value);
+    $('#vendor-number').val(data.InvoiceInfo.VendorNumber.value);
+    $('#invoice-number').val(data.InvoiceInfo.InvoiceID.value);
+    $('#invoice-date').val(data.InvoiceInfo.InvoiceDate.value);
+    $('#po-number').val(data.InvoiceInfo.PONumber.value);
+    $('#shipping').val(data.InvoiceInfo.Shipping.value);
+    $('#global-disc').val(data.InvoiceInfo.Discount.value);
+    $('#teams').val(data.InvoiceInfo.Terms.value);
+    $('#invoice-total').val(data.InvoiceInfo.Total.value);
+    $('#tax-1').val(data.InvoiceInfo.TotalTax.value);
+
+    $('#vendor-name-text').val(data.InvoiceInfo.VendorName.label);
+    $('#vendor-number-text').val(data.InvoiceInfo.VendorNumber.label);
+    $('#invoice-number-text').val(data.InvoiceInfo.InvoiceID.label);
+    $('#invoice-date-text').val(data.InvoiceInfo.InvoiceDate.label);
+    $('#po-number-text').val(data.InvoiceInfo.PONumber.label);
+    $('#shipping-text').val(data.InvoiceInfo.Shipping.label);
+    $('#global-disc-text').val(data.InvoiceInfo.Discount.label);
+    $('#teams-text').val(data.InvoiceInfo.Terms.label);
+    $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
+    $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
+
+    $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FileInfos[0].PathName);
+    $('#json-file-path').val(data.FileInfos[0].JsonFilePath);
+    listFileInfos = data.FileInfos;
+    if(listFileInfos.length > 1){
+        $('#page-index').show();
+        html = '';
+        for(var i = 0; i < listFileInfos.length; i++){
+            var item = listFileInfos[i];
+            html += '<option data-json-path="'+ item.JsonFilePath +'" value="' + (i+1) + '">Page ' + (i+1) + '</option>'
+        }
+        $('#page-index').html('');
+        $('#page-index').html(html);
+    }
+    if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
+        BindingListInvoiceItems(data.InvoiceListItem);
+    }
+    BindingCanvas();
 }
 
 function BindingListInvoiceItems(array){
@@ -409,6 +437,7 @@ function createTemplate(){
     
     var data = ocrCtrl.createTemplate(model);
     $.when(data).then(function(result){
+        $('#createTemplate').model('hide');
         bindingTemplates(result);
     });
 }

@@ -162,26 +162,32 @@ class Invoice extends CI_Controller {
             $fileBaseName = $info->getBasename('.' . $info->getExtension());
             $folderUpload = "UploadPDF\\".$fileBaseName;
             $ret = mkdir($folderUpload); 
-            $string = "Magick\convert.exe -density 300 \"".$fileName."\" \"".$folderUpload."\"".$fileBaseName.".jpg\"";
+            $string = "Magick\convert.exe -density 300 \"".$fileName."\" \"".$folderUpload."\\".$fileBaseName.".jpg\"";
             $str = exec($string);
             $files = scandir($folderUpload);
             $fileIndex = 1;
-            foreach ($files as $value) {
-                $fileNamePath = $folderUpload."\\".$value;
-                $jsonName = str_replace(".","_",$value).".json";
-                $ret = mkdir("JsonFile\\".$fileBaseName); 
-                $jsonPath = "JsonFile\\".$fileBaseName."\\".$jsonName;
-                $json = CallGGAPIForImage($fileNamePath);
-                file_put_contents($jsonPath, $json);
-                $array = array(
-                    'PathName' => "UploadPDF/".$fileBaseName."/".$_FILES['RemoteFile']['name'],
-                    'JsonFilePath' => "JsonFile/".$fileBaseName."/".$jsonName,
-                    'FileIndex' => $fileIndex
-                );
-                $this->db->set($array);
-                $this->db->insert('tbfileinfo');
-                
-                $fileIndex++;
+            if (is_dir($folderUpload)){
+                if ($dh = opendir($folderUpload)){
+                    while (($file = readdir($dh)) !== false){
+                        if($file == null || $file == '' || $file == '.' || $file == '..') continue;
+                        $fileNamePath = $folderUpload."\\".$file;
+                        $jsonName = str_replace(".","_",$file).".json";
+                        $ret = mkdir("JsonFile\\".$fileBaseName); 
+                        $jsonPath = "JsonFile\\".$fileBaseName."\\".$jsonName;
+                        $json = CallGGAPIForImage($fileNamePath);
+                        file_put_contents($jsonPath, $json);
+                        $array = array(
+                            'PathName' => "UploadPDF/".$fileBaseName."/".$file,
+                            'JsonFilePath' => "JsonFile/".$fileBaseName."/".$jsonName,
+                            'FileIndex' => $fileIndex
+                        );
+                        $this->db->set($array);
+                        $this->db->insert('tbfileinfo');
+
+                        $fileIndex++;
+                    }
+                    closedir($dh);
+                }
             }
         }
         else{
