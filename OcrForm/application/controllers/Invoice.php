@@ -417,7 +417,6 @@ class Invoice extends CI_Controller {
             );
             echo json_encode($data);
         }else{
-
             $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
             $data = array(
                 'InvoiceInfo' => $invoiceInfo,
