@@ -224,8 +224,10 @@ class Invoice extends CI_Controller {
         $terms = $this->input->post('Terms');
         $total = $this->input->post('Total');
         $tax = $this->input->post('Tax');
+        $fileInfoID = $this->input->post('FileInfoID');
 
         $data = array(
+            'FileInfoID' => $fileInfoID,
             'VendorName' => $vendorName,
             'InvoiceNumber' => $invoiceNumber,
             'Date' => $invoiceDate,

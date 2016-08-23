@@ -28,7 +28,7 @@ class InvoiceDetail extends CI_Controller {
         $physicalFileId = $this->input->post('physicalFileId');
         $fileInfos = $this->db->get_where('tbfileinfo', array('ID' => $this->input->post('physicalFileId')))->result();
         $arrayFileInfos = array();
-        $fistId;
+        $fistId = 0;
         $index = 1;
         foreach ($fileInfos as $row)
         {
@@ -47,11 +47,10 @@ class InvoiceDetail extends CI_Controller {
         if (count($arrayFileInfos) > 0)
         {
             $invoiceDetail = $this->db->get_where('tbinvoiceinfo', array('FileInfoID' => $fistId))->first_row();
-            
             $this->db->select('*');
             $this->db->from('tblistitem');
-            $this->db->join('tblistitemkeys', 'tbinvoiceinfo.ID = tblistitemkeys.ListItemId');
-            $this->db->where('tblistitem.FileInfoID', $fistId);
+            $this->db->join('tblistitemkeys', 'tblistitem.ID = tblistitemkeys.ListItemId');
+            $this->db->where('tblistitem.InvoiceInfoId', $invoiceDetail->ID);
             $invoiceList = $this->db->get()->result();
             
             $result = array(

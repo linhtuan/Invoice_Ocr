@@ -184,6 +184,7 @@ $(document).on('click', '#update-invoice-detail', function (event) {
         Terms: $('#teams').val(),
         Total: $('#invoice-total').val(),
         Tax: $('#tax-1').val(),
+        FileInfoID: $('#physical-file-id').val(),
         ListInvoices: null
     };
     ocrCtrl.updateInvoiceDetail(model);

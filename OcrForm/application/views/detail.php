@@ -27,67 +27,68 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </script>
 
 <script id="invoice-list" type="text/x-jquery-tmpl">
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover" id="list-invoice">
-            <thead>
-                <tr id="list-invoice-title">
-                </tr>
-            </thead>
-            <tbody id="list-invoices-data">
-            </tbody>
-        </table>
-    </div>
+    
 </script>
     
-<div id="invoice-detail-popup" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+<div id="invoice-detail-popup" class="modal fade" role="dialog" style="width: 1500px">
+    <div class="modal-dialog" style="width: 800px">
       <!-- Modal content-->
       <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Create Template</h4>
             </div>
-            <div class="modal-body from">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Vendor Name: </label><label id="vendor-name"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Vendor Number: </label><label id="vendor-number"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Invoice Number: </label><label id="invoice-number"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Invoice Date: </label><label id="invoice-date"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>PO Number: </label><label id="po-number"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Tax: </label><label id="tax"></label>
-                    </div>
-                    
+            <div class="modal-body from col-sm-6">
+                <div class="form-group">
+                    <label>Vendor Name: </label><label id="vendor-name"></label>
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Other: </label><label id="other"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Shipping: </label><label id="shipping"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Invoice Total: </label><label id="invoice-total"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Teams: </label><label id="teams"></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Global Disc: </label><label id="global-disc"></label>
-                    </div>
+                <div class="form-group">
+                    <label>Invoice Number: </label><label id="invoice-number"></label>
                 </div>
-                <div class="col-sm-12">
-                    
+                <div class="form-group">
+                    <label>PO Number: </label><label id="po-number"></label>
+                </div>
+                <div class="form-group">
+                    <label>Other: </label><label id="other"></label>
+                </div>
+                <div class="form-group">
+                    <label>Invoice Total: </label><label id="invoice-total"></label>
+                </div>
+                <div class="form-group">
+                    <label>Global Disc: </label><label id="global-disc"></label>
+                </div>
+            </div>
+            <div class="modal-body from col-sm-6">
+                <div class="form-group">
+                   <label>Vendor Number: </label><label id="vendor-number"></label>
+                </div>
+                <div class="form-group">
+                    <label>Invoice Date: </label><label id="invoice-date"></label>
+                </div>
+                <div class="form-group">
+                    <label>Tax: </label><label id="tax"></label>
+                </div>
+                <div class="form-group">
+                    <label>Shipping: </label><label id="shipping"></label>
+                </div>
+                <div class="form-group">
+                    <label>Teams: </label><label id="teams"></label>
+                </div>
+            </div>
+            <div class="modal-body from col-sm-12">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                           <table class="table table-striped table-bordered table-hover" id="list-invoice">
+                               <thead>
+                                    <tr id="list-invoice-title">
+                                    </tr>
+                               </thead>
+                               <tbody id="list-invoices-data">
+                               </tbody>
+                           </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
