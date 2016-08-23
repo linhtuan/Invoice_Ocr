@@ -11,7 +11,7 @@
  *
  * @author linh tuan
  */
-class Invoice extends CI_Controller {
+class InvoiceDetail extends CI_Controller {
     
     public function index()
     {
