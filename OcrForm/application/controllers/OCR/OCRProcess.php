@@ -284,6 +284,7 @@ class TemplateKeyword{
             if($index>0)
             {
                 $itemFound = $OCRArray[$index];
+                
                 for ($i = 0; $i < count($OCRArray) ; $i ++)
                 {
                     if($i!=$index)
@@ -327,6 +328,7 @@ class TemplateKeyword{
             $result = GetValueOfPriceByKey($key, $OCRArray,$anglePopular);
             if(!empty($result->value))
             {
+               
                  return $result;
             }
         }
@@ -482,7 +484,9 @@ class TemplateKeyword{
                         }
                         if (ValidateBillOrDate($item->description,$isDate)==FALSE) continue;
                         
-                        if (abs($labelItem->Y4 - $item->Y4) < 5 &&
+                      //  echo "<br>thien anh".$item->description;
+                        
+                        if (abs($labelItem->Y4 - $item->Y4) < (($item->Y4-$item->Y1)/2) &&
                         (($item->X1 - $labelItem->X2) < ($item->X2 - $item->X1 + $labelItem->X2 - $labelItem->X2) 
                          && ($item->X2 - $labelItem->X1) > 0)) //horizontal
                         {
@@ -513,7 +517,7 @@ class TemplateKeyword{
                                 }
                                 else
                                 {
-                                    if (abs($labelItem->Y4 - $item->Y4) < 5) //horizontal
+                                    if (abs($labelItem->Y4 - $item->Y4) < (($item->Y4-$item->Y1)/2)) //horizontal
                                     {
                                         if (($item->X2 - $labelItem->X1) > 0)
                                         {
@@ -531,7 +535,7 @@ class TemplateKeyword{
                             }
                             else
                             {
-                                if (abs($labelItem->Y4 - $item->Y4) < 5) //horizontal
+                                if (abs($labelItem->Y4 - $item->Y4) < (($item->Y4-$item->Y1)/2)) //horizontal
                                 {
                                     if (($item->X2 - $labelItem->X1) > 0)
                                     {
@@ -611,52 +615,65 @@ class TemplateKeyword{
          $objVendorName = new KeyValue();
           $objVendorName->value = $vendorName;
           $objVendorName->index=0;
+          $objVendorName->type =0;
           $invoiceInfo->VendorName= $objVendorName;
     
-       
+       $vendorNum = new KeyValue();
         $vendorNum = GetInvoiceIDOrDate($OCRArray,$vendorNumKey,FALSE);
         $vendorNum->index =100;
+        $vendorNum->type =0;
         $invoiceInfo->VendorNumber = $vendorNum;
              
+        $InvoiceID= new KeyValue();
         $InvoiceID = GetInvoiceIDOrDate($OCRArray,$invoiceIDKey,FALSE);
         $InvoiceID->index= 200;
+        $InvoiceID->type=0;
         $invoiceInfo->InvoiceID = $InvoiceID;
         
-       
+       $InvoiceDate= new KeyValue();
         $InvoiceDate = GetInvoiceIDOrDate($OCRArray,$InvoiceDateKey,TRUE);
         $InvoiceDate->index =300;
+        $InvoiceDate->type=1;
         $invoiceInfo->InvoiceDate = $InvoiceDate;
         //Get POKey 
-        $PO = GetInvoiceInfoByKey($OCRArray,$POKey,FALSE);
+        $PO = new KeyValue();
+        $PO = GetInvoiceIDOrDate($OCRArray,$POKey,FALSE);
         $PO->index = 400;
+        $PO->type =0;
         $invoiceInfo->PONumber = $PO;
-                
+         
          
        
          $Terms = GetInvoiceIDOrDate($OCRArray,$TermsKey,FALSE);
          $Terms->index=500;
+         $Terms->type=0;
          $invoiceInfo->Terms = $Terms;
   
                //Get Subtotal
         $subtotal = GetInvoiceInfoByKey($OCRArray, $subTotalKey,$anglePopular);
         $subtotal->index =600;
+        $subtotal->type=2;
         $invoiceInfo->SubTotal = $subtotal;
     
         
         $Tax = GetInvoiceInfoByKey($OCRArray, $taxKey,$anglePopular); 
         $Tax->index = 700;
+        $Tax->type=2;
         $invoiceInfo->TotalTax = $Tax;
         
         $Shipping = GetInvoiceInfoByKey($OCRArray, $ShippingKey,$anglePopular);
         $Shipping->index = 800;
+        $Shipping->type=2;
         $invoiceInfo->Shipping = $Shipping;
         
         $Discount= GetInvoiceInfoByKey($OCRArray, $DiscountKey,$anglePopular);
         $Discount->index = 900;
+        $Discount->type=2;
         $invoiceInfo->Discount = $Discount;
           //Gettotal
         $Total = GetInvoiceInfoByKey($OCRArray, $totalKey,$anglePopular);
         $Total->index = 1000;
+         $Total->type=2;
         $invoiceInfo->Total = $Total;
         return $invoiceInfo;
     }
@@ -667,7 +684,7 @@ class TemplateKeyword{
         {
             $keyword = $KeyWordTemplate->Keyword;
             $Type =$KeyWordTemplate->Type;
-            $Vertycal = $KeyWordTemplate->Vertycal;
+            $Vertycal = $KeyWordTemplate->Vertical;
             $index = $KeyWordTemplate->Index;
             $result = new  KeyValue();
            
@@ -677,7 +694,7 @@ class TemplateKeyword{
             }
             else
             {
-                if($Type==2)
+                if($Type==1)
                 {
                     $result =   GetInvoiceIDOrDateByKeyTemPlate($OCRArray,$keyword,TRUE,$Vertycal);
                 }
@@ -693,56 +710,78 @@ class TemplateKeyword{
                         $vendorName = GetVendorName($OCRArray);
                         $objVendorName = new KeyValue();
                         $objVendorName->value = $vendorName;
+                        $objVendorName->index = 0;
+                         $objVendorName->type=0;
                         $invoiceInfo->VendorName =$objVendorName;
                     }
                      break;
                  case 100:
                     {
+                        $result->index = 100;
+                         $result->type=0;
                         $invoiceInfo->VendorNumber =$result;
                     }
                      break;
                 case 200:
                     {
+                         $result->index = 200;
+                         $result->type=0;
                         $invoiceInfo->InvoiceID =$result;
                     }
                      break;
                 case 300:
                      {
+                         $result->index = 300;
+                         $result->type=1;
                          $invoiceInfo->InvoiceDate =$result;
                      }
                     break;
                 case 400:
                      {
+                        $result->index = 400;
+                         $result->type=0;
                          $invoiceInfo->PONumber =$result;
                      }
                     break;
                 case 500:
                      {
+                         $result->index = 500;
+                         $result->type=0;
                          $invoiceInfo->Terms =$result;
                      }
                     break;
                 case 600:
                      {
+                         $result->index = 600;
+                         $result->type=2;
                          $invoiceInfo->SubTotal =$result;
                      }
                     break;
                 case 700:
                      {
+                         $result->index = 700;
+                         $result->type=2;
                          $invoiceInfo->TotalTax =$result;
                      }
                     break;
                 case 800:
                      {
+                         $result->index = 800;
+                         $result->type=2;
                          $invoiceInfo->Shipping =$result;
                      }
                     break;
                 case 900:
                      {
+                         $result->index = 900;
+                         $result->type=2;
                          $invoiceInfo->Discount =$result;
                      }
                     break;
                 case 1000:
                      {
+                         $result->index = 1000;
+                         $result->type=2;
                          $invoiceInfo->Total =$result;
                      }
                     break;
