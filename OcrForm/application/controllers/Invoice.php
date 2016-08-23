@@ -237,13 +237,31 @@ class Invoice extends CI_Controller {
             'PONumber' => $poNumber,
         );
         $listInvoiceItems = json_decode(stripslashes($this->input->post('ListInvoices')));
-        if($invoiceInfoId == NULL || $invoiceInfoId == ''){
+        if($invoiceInfoId == NULL || $invoiceInfoId == '' || $invoiceInfoId == 0){
             $this->db->set($data);
-            $this->db->insert('tbtemplate');
+            $this->db->insert('tbinvoiceinfo');
             $invoiceInfoId = $this->db->insert_id();
             if($listInvoiceItems != null && $listInvoiceItems != '')
             {
-                InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+                $this->db->delete('tblistitemkeys', array('InvoiceInfoID' => $invoiceInfoId));
+                $this->db->delete('tblistitem', array('InvoiceInfoID' => $invoiceInfoId));
+                foreach ($listInvoiceItems as $item){
+                    $this->db->set(array('InvoiceInfoID'=> $invoiceInfoId, 'ItemID' => $item->ItemId));
+                    $this->db->insert('tblistitem');
+                    $listItemId = $this->db->insert_id();
+                    $itemKeys = array();
+                    foreach ($item->ListKey as $itemKey){
+                        $data = array(
+                            'InvoiceInfoID' => $invoiceInfoId,
+                            'ListItemId' => $listItemId,
+                            'Key' => $itemKey->Key,
+                            'Value' => $itemKey->Value
+                        );
+                        array_push($itemKeys, $data);
+                    }
+                    $this->db->insert_batch('tblistitemkeys', $itemKeys);
+                }
+                //InsertListInvoice($listInvoiceItems, $invoiceInfoId);
             }
         }
         else{
@@ -251,7 +269,24 @@ class Invoice extends CI_Controller {
             $this->db->update('tbinvoiceinfo', $data);
             if($listInvoiceItems != null && $listInvoiceItems != '')
             {
-                InsertListInvoice($listInvoiceItems, $invoiceInfoId);
+                $this->db->delete('tblistitemkeys', array('InvoiceInfoID' => $invoiceInfoId));
+                $this->db->delete('tblistitem', array('InvoiceInfoID' => $invoiceInfoId));
+                foreach ($listInvoiceItems as $item){
+                    $this->db->set(array('InvoiceInfoID'=> $invoiceInfoId, 'ItemID' => $item->ItemId));
+                    $this->db->insert('tblistitem');
+                    $listItemId = $this->db->insert_id();
+                    $itemKeys = array();
+                    foreach ($item->ListKey as $itemKey){
+                        $data = array(
+                            'InvoiceInfoID' => $invoiceInfoId,
+                            'ListItemId' => $listItemId,
+                            'Key' => $itemKey->Key,
+                            'Value' => $itemKey->Value
+                        );
+                        array_push($itemKeys, $data);
+                    }
+                    $this->db->insert_batch('tblistitemkeys', $itemKeys);
+                }
             }
         }
         $result = array(
@@ -261,24 +296,7 @@ class Invoice extends CI_Controller {
     }
     
     public function InsertListInvoice($listInvoiceItems, $invoiceInfoId){
-        $this->db->delete('tblistitemkeys', array('InvoiceInfoID' => $invoiceInfoId));
-        $this->db->delete('tblistitem', array('InvoiceInfoID' => $invoiceInfoId));
-        foreach ($listInvoiceItems as $item){
-            $this->db->set(array('InvoiceInfoID'=> $invoiceInfoId, 'ItemID' => $item->ItemId));
-            $this->db->insert('tblistitem');
-            $listItemId = $this->db->insert_id();
-            $itemKeys = array();
-            foreach ($item->ListKey as $itemKey){
-                $data = array(
-                    'InvoiceInfoID' => $invoiceInfoId,
-                    'ListItemId' => $listItemId,
-                    'Key' => $itemKey->Key,
-                    'Value' => $itemKey->Value
-                );
-                array_push($itemKeys, $data);
-            }
-            $this->db->insert_batch('tblistitemkeys', $itemKeys);
-        }
+        
     }
     
     public function GetTemplate(){

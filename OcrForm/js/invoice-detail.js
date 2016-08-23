@@ -44,7 +44,27 @@ function bindingInvoiceDetail(id){
     var model = {physicalFileId: id};
     var detail = detailCtrl.getInvoiceDetail(model);
     $.when(detail).then(function(result, textStatus, jqXHR){
-        $('#invoice-detail-popup').modal('show');
+        var data = JSON.parse(result);
+        console.log(data);
+        var firstRowListInvoice =  $.grep(data.InvoiceList, function (e) { return e.ItemID === 1; });
+        var title = [];
+        for(var i = 0 ; i < firstRowListInvoice.length; i++){
+            var item = firstRowListInvoice[i];
+            title.push(item.Key);
+        }
+        var rowIndex = 0;
+        var htmlListItems = '';
+        for(var i = 0; i < data.InvoiceList.length; i++){
+            var item = data.InvoiceList[i];
+            if(item.ItemID != rowIndex){
+                htmlListItems += "<tr>";
+            }
+            htmlListItems += '<td>'+ item.Value +'</td>';
+            if(item.ItemID != rowIndex){
+                htmlListItems += "</tr>";
+            }
+            rowIndex = item.ItemID;
+        }
     });
 }
 

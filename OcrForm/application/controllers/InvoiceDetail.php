@@ -51,7 +51,7 @@ class InvoiceDetail extends CI_Controller {
             $this->db->select('*');
             $this->db->from('tblistitem');
             $this->db->join('tblistitemkeys', 'tbinvoiceinfo.ID = tblistitemkeys.ListItemId');
-            $this->db->where(array('tblistitem.FileInfoID' => $fistId));
+            $this->db->where('tblistitem.FileInfoID', $fistId);
             $invoiceList = $this->db->get()->result();
             
             $result = array(
