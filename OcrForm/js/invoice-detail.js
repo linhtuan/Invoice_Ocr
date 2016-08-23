@@ -32,8 +32,7 @@ var detailCtrl = function(){
     
 }(detailCtrl);
 
-
-function GetImageList(){
+function getImageList(){
     var images = detailCtrl.getImage();
     $.when(images).then(function(result, textStatus, jqXHR){
         var data = JSON.parse(result);
@@ -41,5 +40,15 @@ function GetImageList(){
     });
 }
 
+function bindingInvoiceDetail(id){
+    var model = {physicalFileId: id};
+    var detail = detailCtrl.getInvoiceDetail(model);
+    $.when(detail).then(function(result, textStatus, jqXHR){
+        
+    });
+}
 
+$(document).ready(function() {
+    getImageList();
+});
 
