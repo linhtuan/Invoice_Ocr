@@ -83,7 +83,7 @@ class Invoice extends CI_Controller {
                 $cListItem->SetHeight($height);
                 $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
                 $arrayResult = array();
-                for($i=1; $i < count($listRows);$i++)
+                for($i=0; $i < count($listRows);$i++)
                 {
                     $arrayItem = $listRows[$i];
                     $arrayDetil = array();
