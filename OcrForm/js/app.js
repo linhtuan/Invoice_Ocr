@@ -19,6 +19,7 @@ var invoiceDetail;
 var templateIdIsActive = -1;
 var listFileInfos = [];
 var possitionListInvoice;
+$('#imagesize').val(40);
 
 function BindingCanvas(){
     worksheetCanvas = $('#canvas');
@@ -216,6 +217,7 @@ $(document).on('click', '#update-list-item', function (event) {
         Terms: $('#teams').val(),
         Total: $('#invoice-total').val(),
         Tax: $('#tax-1').val(),
+        FileInfoID: $('#physical-file-id').val(),
         ListInvoices: JSON.stringify(listInvoice)
     };
     ocrCtrl.updateInvoiceDetail(model);
@@ -262,6 +264,8 @@ $("#page-size").change(function() {
 });
 
 function bindingInvoiceInfo(){
+    $('#list-invoice-title').html('');    
+    $('#list-invoices-data').html('');
     $('.binding-data').val('');
     var id = parseInt($('#physical-file-id').val());
     var pdfId = parseInt($('#pdf-file-id').val());
@@ -448,7 +452,7 @@ function createTemplate(){
     
     var data = ocrCtrl.createTemplate(model);
     $.when(data).then(function(result){
-        $('#createTemplate').model('hide');
+        $('#createTemplate').modal('toggle');
         bindingTemplates(result);
     });
 }

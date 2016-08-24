@@ -33,7 +33,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
     
 <script id="imageTemplate" type="text/x-jquery-tmpl">
-    <div class="col-sm-3">
+    <div class="col-sm-2" style="margin-top: 20px">
         <img data-id="${ID}" onclick="bindingInvoiceDetail(${ID})" src="/OcrForm/${PathName}" style="width: 100%;">
     </div>
 </script>

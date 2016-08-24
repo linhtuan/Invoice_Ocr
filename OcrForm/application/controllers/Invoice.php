@@ -72,26 +72,29 @@ class Invoice extends CI_Controller {
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
+                
                 $this->db->where(array('TemplateID' => $templateId));
                 $templateList = $this->db->get('tbTemplateList')->first_row();
-                $templateListKey = $templateList->Key;
-                $templateListCol = $templateList->Key;
-                $cListItem = new ListItemDetail();
-                $cListItem->SetOcrArray($OCRArray);
-                $cListItem->SetAnglePopular($anglePopular);
-                $cListItem->SetWidth($width);
-                $cListItem->SetHeight($height);
-                $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
                 $arrayResult = array();
-                for($i=0; $i < count($listRows);$i++)
-                {
-                    $arrayItem = $listRows[$i];
-                    $arrayDetil = array();
-                    foreach($arrayItem as $item)
+                if($templateList != NULL){
+                    $templateListKey = $templateList->Key;
+                    $templateListCol = $templateList->ColumnNumber;
+                    $cListItem = new ListItemDetail();
+                    $cListItem->SetOcrArray($OCRArray);
+                    $cListItem->SetAnglePopular($anglePopular);
+                    $cListItem->SetWidth($width);
+                    $cListItem->SetHeight($height);
+                    $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
+                    for($i=0; $i < count($listRows);$i++)
                     {
-                        array_push($arrayDetil, $item);
+                        $arrayItem = $listRows[$i];
+                        $arrayDetil = array();
+                        foreach($arrayItem as $item)
+                        {
+                            array_push($arrayDetil, $item);
+                        }
+                        array_push($arrayResult, $arrayDetil);
                     }
-                    array_push($arrayResult, $arrayDetil);
                 }
                 
                 $this->db->where(array('TemplateID' => $templateId));
@@ -410,7 +413,7 @@ class Invoice extends CI_Controller {
         $cListItem->SetHeight($height);
         $listRows = $cListItem->GetListItemByPosition($possitionListInvoice, $templateListCol);
         $arrayResult = array();
-        for($i = 1; $i < count($listRows); $i++)
+        for($i = 0; $i < count($listRows); $i++)
         {
             $arrayItem = $listRows[$i];
             $arrayDetil = array();
@@ -458,7 +461,7 @@ class Invoice extends CI_Controller {
             $cListItem->SetHeight($height);
             $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
             $arrayResult = array();
-            for($i=1; $i < count($listRows);$i++)
+            for($i=0; $i < count($listRows);$i++)
             {
                 $arrayItem = $listRows[$i];
                 $arrayDetil = array();
