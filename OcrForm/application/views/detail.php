@@ -52,39 +52,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <div class="modal-body from col-sm-6">
                 <div class="form-group">
-                    <label>Vendor Name: </label><label id="vendor-name"></label>
+                    <label>Vendor Name: </label><label class="label-invoice-detail" id="vendor-name"></label>
                 </div>
                 <div class="form-group">
-                    <label>Invoice Number: </label><label id="invoice-number"></label>
+                    <label>Invoice Number: </label><label class="label-invoice-detail" id="invoice-number"></label>
                 </div>
                 <div class="form-group">
-                    <label>PO Number: </label><label id="po-number"></label>
+                    <label>PO Number: </label><label class="label-invoice-detail" id="po-number"></label>
                 </div>
                 <div class="form-group">
-                    <label>Other: </label><label id="other"></label>
+                    <label>Other: </label><label class="label-invoice-detail" id="other"></label>
                 </div>
                 <div class="form-group">
-                    <label>Invoice Total: </label><label id="invoice-total"></label>
+                    <label>Invoice Total: </label><label class="label-invoice-detail" id="invoice-total"></label>
                 </div>
                 <div class="form-group">
-                    <label>Global Disc: </label><label id="global-disc"></label>
+                    <label>Global Disc: </label><label class="label-invoice-detail" id="global-disc"></label>
                 </div>
             </div>
             <div class="modal-body from col-sm-6">
                 <div class="form-group">
-                   <label>Vendor Number: </label><label id="vendor-number"></label>
+                   <label>Vendor Number: </label><label class="label-invoice-detail" id="vendor-number"></label>
                 </div>
                 <div class="form-group">
-                    <label>Invoice Date: </label><label id="invoice-date"></label>
+                    <label>Invoice Date: </label><label class="label-invoice-detail" id="invoice-date"></label>
                 </div>
                 <div class="form-group">
-                    <label>Tax: </label><label id="tax"></label>
+                    <label>Tax: </label><label class="label-invoice-detail" id="tax"></label>
                 </div>
                 <div class="form-group">
-                    <label>Shipping: </label><label id="shipping"></label>
+                    <label>Shipping: </label><label class="label-invoice-detail" id="shipping"></label>
                 </div>
                 <div class="form-group">
-                    <label>Teams: </label><label id="teams"></label>
+                    <label>Teams: </label><label class="label-invoice-detail" id="teams"></label>
                 </div>
             </div>
             <div class="modal-body from col-sm-12">

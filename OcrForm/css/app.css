@@ -1,3 +1,9 @@
 .active-binding-data{
     border-color: #3c763d !important;
 }
+
+.label-invoice-detail{
+    font-weight:100;
+    font-size: 12px;
+    margin-left: 10px;
+}
