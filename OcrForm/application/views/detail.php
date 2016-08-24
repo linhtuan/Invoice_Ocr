@@ -43,7 +43,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </script>
     
 <div id="invoice-detail-popup" class="modal fade" role="dialog" style="width: 1500px">
-    <div class="modal-dialog" style="width: 800px">
+    <div class="modal-dialog" style="width: 900px">
       <!-- Modal content-->
       <div class="modal-content">
             <div class="modal-header">
