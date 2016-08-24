@@ -240,3 +240,16 @@ function GetNewPoint($ip1,$anglePopular,$width)
     
     return $newPoint;
 }
+
+function ptdt($angle,$p)
+{
+    $a = $angle;
+    $b=-1;
+    $c = $p->Y-$a*$p->X;
+    
+    $pt = array();
+    $pt[]=$a;
+    $pt[]=$b;
+    $pt[]=$c;
+    return $pt;
+}

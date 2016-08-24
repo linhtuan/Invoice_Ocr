@@ -45,6 +45,7 @@ class ItemDetail{
 }
 class ListItemDetail {
     public static $OCRArray = array(); // Check if the point sits exactly on one of the vertices?
+    public static $OriOCRArray = array();
     public $keyArray = array();
     public static $anglePopular;
     public static $width=0;
@@ -53,6 +54,10 @@ class ListItemDetail {
     function SetOcrArray($inOcrArray)
     {
         self::$OCRArray = $inOcrArray;
+    }
+     function SetOriOcrArray($inOcrArray)
+    {
+        self::$OriOCRArray = $inOcrArray;
     }
     function SetAnglePopular($inAnglePopular)
     {
@@ -412,7 +417,7 @@ class ListItemDetail {
         $listOCRValue = GetListOCRValueByPolygon($listPoint, self::$OCRArray);
         //$listOCRValue = GetListOCRValueInRectange($p1->X,$p1->Y,$p2->X,$p2->Y,$p3->X,$p3->Y,$p4->X,$p4->Y,self::$OCRArray);   
         $TitleItem->ListOCRValue =  $this->ReSortOCRValueInItem($listOCRValue);
-      //   echo "Thien Anh".$str;
+        // echo "Thien Anh".$str;
        return $TitleItem;
     }
    function GetListItemByKey($key,$colNumber)
@@ -421,6 +426,7 @@ class ListItemDetail {
        $firstItem = $this->GetFirstItemByKey($key,true);
      
        $listItem = $this->GetListItem($firstItem);
+       
        $listRows = array();
         foreach($listItem as $item)
             {
@@ -471,6 +477,7 @@ class ListItemDetail {
         $OCRTitlelList=$titleItem->ListOCRValue;
         $rowsTitle = self::ClusterringListItem($OCRTitlelList);
         $listRows[] =$rowsTitle;
+      
        }
        //Label
         foreach($listItem as $item)
@@ -497,6 +504,42 @@ class ListItemDetail {
 
             return false;
    }
+   
+   function ListPositionOfStartCol($listItem,$AnglePopular)
+   {
+       $startPoint= array();
+       $totalItem = count($listItem);
+       $hsg = tan((90-$AnglePopular)/3.14);
+       for($w=0; $w<self::$width; $w+=5)
+       {
+         $point = new Point();
+         $point->X = $w;
+         $point->y = 0;
+         $pt = ptdt($hsg,$point);
+         $iCount = 0;
+         foreach ($listItem as $item)
+         {
+             $listOCRArray = $item->listOCRValue;
+             foreach ($listOCRArray as $ocrValue)
+             {
+                 $p1 = new Point();
+                 $p1->X = $ocrValue->X1;
+                 $p1->Y = $ocrValue->Y1;
+                 if(DistanceFromPoint2Line($pt[0], $pt[1], $pt[2], $ocrValue->$p1)<5)
+                 {
+                     $iCount++;
+                     break;
+                 }
+             }
+         }
+         
+         if($iCount>=$totalItem)
+         {
+             
+         }
+       }
+   }
+   
    function ClusterringListItem($listItem)
    {
        if(count($listItem)==0) return;
