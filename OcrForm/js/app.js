@@ -200,7 +200,11 @@ $(document).on('click', '#update-invoice-detail', function (event) {
         FileInfoID: $('#physical-file-id').val(),
         ListInvoices: null
     };
-    ocrCtrl.updateInvoiceDetail(model);
+    var data = ocrCtrl.updateInvoiceDetail(model);
+    $.when(data).then(function(result){
+        var dataResult = JSON.parse(result);
+        $('#invoice-info-id').val(dataResult.invoiceInfoId)
+    });
 });
 
 $(document).on('click', '#update-list-item', function (event) {
@@ -220,7 +224,11 @@ $(document).on('click', '#update-list-item', function (event) {
         FileInfoID: $('#physical-file-id').val(),
         ListInvoices: JSON.stringify(listInvoice)
     };
-    ocrCtrl.updateInvoiceDetail(model);
+    var data = ocrCtrl.updateInvoiceDetail(model);
+    $.when(data).then(function(result){
+        var dataResult = JSON.parse(result);
+        $('#invoice-info-id').val(dataResult.invoiceInfoId)
+    });
 });
 
 $(document).on('click', '#process-list-item', function (event) {
