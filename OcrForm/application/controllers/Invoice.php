@@ -72,7 +72,6 @@ class Invoice extends CI_Controller {
             $templateId = $this->input->post('templateId');
             if($templateId > 0)
             {
-                
                 $this->db->where(array('TemplateID' => $templateId));
                 $templateList = $this->db->get('tbTemplateList')->first_row();
                 $arrayResult = array();

@@ -422,10 +422,6 @@ function createTemplate(){
         type: invoiceDetail.InvoiceID.type,
         vertycal: invoiceDetail.InvoiceID.vertycal, 
         index: invoiceDetail.InvoiceID.index});
-    templateDetails.push({label: invoiceDetail.InvoiceDate.label, 
-        type: invoiceDetail.InvoiceDate.type,
-        vertycal: invoiceDetail.InvoiceDate.vertycal, 
-        index: invoiceDetail.InvoiceDate.index});
     templateDetails.push({label: invoiceDetail.PONumber.label, 
         type: invoiceDetail.PONumber.type,
         vertycal: invoiceDetail.PONumber.vertycal, 
