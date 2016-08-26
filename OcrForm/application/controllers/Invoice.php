@@ -145,7 +145,12 @@ class Invoice extends CI_Controller {
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
         $anglePopular = AnglePopular($OCRArray);
         $str = GetTextByPolygon($listPoint,$OCRArray);
-        echo trim($str);;
+        $rowNumber = GetListOCRValueByPolygon($listPoint,$OCRArray);
+        $result = array(
+            'Text' => trim($str),
+            'TotalOCR' => count($rowNumber),
+        );
+        echo json_encode($result);
     }
     
     public function upload_file()
@@ -376,10 +381,9 @@ class Invoice extends CI_Controller {
         $this->db->insert_batch('tbtemplatedetail', $data);
         
         //Insert Template List
-        $templateListKey = $this->input->post('templateListKey');
         $templateListCol = $this->input->post('templateListCol');
         //echo $templateList;
-        if($templateListKey != '' && $templateListKey != NULL)
+        if($templateListCol != '' && $templateListCol != NULL && $templateListCol > 0)
         {
             $arrayTemplateList = array(
                 'TemplateID' => $templateId,
@@ -388,6 +392,22 @@ class Invoice extends CI_Controller {
             );
             $this->db->set($arrayTemplateList);
             $this->db->insert('tbTemplateList');
+            $templateListId = $this->db->insert_id();
+            
+            $templateKeyPostion = json_decode(stripslashes($this->input->post('templateKeyPostion')));
+            $data_template_lists = array();
+            foreach ($templateKeyPostion as $item){
+                $data_template = array(
+                    'TemplateID' => $templateId,
+                    'TemplateListID' => $templateListId,
+                    'KeyTitle' => $item->Key,
+                    'PositionTitle' => $item->PositionTitle,
+                    'PositionFirstRow' => $item->PositionFirstRow,
+                    'PositionRowNumber' => $item->PositionTotalOcr
+                );
+                array_push($data_template_lists, $data_template);
+            }
+            $this->db->insert_batch('tbtemplatelistkeyposition', $data_template_lists);
         }
         
         echo json_encode($templateId);

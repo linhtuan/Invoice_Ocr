@@ -172,15 +172,19 @@ $(document).on('click', '.binding-data', function (event) {
     $(this).addClass('active-binding-data');
 });
 
-$(document).on('keydown', '.data-binding', function (event) {
+$(document).on('keydown', '#column-number', function (event) {
     if (event.which == 13) {
-        
-    }
-});
-
-$(document).on('keydown', '.data-binding', function (event) {
-    if (event.which == 13) {
-        
+        var colNumber = $(this).val();
+        var htmlTitle = '';
+        var htmlListItems = '';
+        for(var i = 0; i < colNumber; i ++){
+            htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB"></th>';
+            htmlListItems += '<td><input data-position="" class="form-control first-row binding-data"></td>';
+        }
+        $('#list-invoice-title').html('');    
+        $('#list-invoice-title').html(htmlTitle);
+        $('#list-invoices-data').html('');
+        $('#list-invoices-data').html(htmlListItems);
     }
 });
 
@@ -330,8 +334,6 @@ function BindingDataInvoiceJson(data){
     $('#teams-text').val(data.InvoiceInfo.Terms.label);
     $('#invoice-total-text').val(data.InvoiceInfo.Total.label);
     $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
-
-    
 }
 
 function BindingListInvoiceItems(array){
@@ -342,7 +344,7 @@ function BindingListInvoiceItems(array){
         var item = title[i];
         var id = item.replace(/ /g, '_');
         id = item.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-        htmlTitle += '<th><input class="form-control binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
+        htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
     }
     $('#list-invoice-title').html('');    
     $('#list-invoice-title').html(htmlTitle);
@@ -355,7 +357,8 @@ function BindingListInvoiceItems(array){
             var data = item[j];
             var id = title[j].replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-            htmlListItems += '<td><input class="form-control binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
+            htmlListItems += '<td><input data-position="" class="form-control '+ (i == 1 ? 'first-row' : '') +
+                    ' binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
         }
         htmlListItems += "</tr>";
     }
@@ -446,12 +449,37 @@ function createTemplate(){
         type: invoiceDetail.TotalTax.type,
         vertycal: invoiceDetail.TotalTax.vertycal, 
         index: invoiceDetail.TotalTax.index});
+    
+    var colNumber = $('#column-number').val();
+    if(colNumber > 0 && colNumber != '' && colNumber != undefined){
+        var titles = $('#list-invoice-title .binding-data');
+        var keyPositions = [];
+        for(var i = 0; i < titles.length; i ++){
+            var thisTitle = $(titles[i]);
+            var titleKey = $(thisTitle).val();
+            var positionTitle = $(thisTitle).attr('data-position');
+            var thisFirstRow = $('#list-invoices-data .first-row').eq(i);
+            var positionFirstRow = $(thisFirstRow).attr('data-position');
+            var totalOcr = $(thisFirstRow).attr('data-total-ocr');
+            var keypostion = {
+                Key: titleKey, 
+                PositionTitle: positionTitle, 
+                PositionFirstRow: positionFirstRow,
+                TotalOcr: totalOcr
+            };
+            keyPositions.push(keypostion);
+        }
+    }
+    else{
+        colNumber = 0;
+    }
+    
     var model = {
         physicalFileId: id,
         templateName: $('#template-name').val(),
         templateDetail: JSON.stringify(templateDetails),
-        templateListKey: $('#item-id').val(),
-        templateListCol: $('#column-number').val()
+        templateListCol: colNumber,
+        templateKeyPostion: JSON.stringify(keyPositions)
     };
     
     var data = ocrCtrl.createTemplate(model);

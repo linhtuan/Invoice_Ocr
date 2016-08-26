@@ -204,12 +204,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="row">
                         <div class="col-sm-6 from">
                             <div class="form-group">
-                                <label>Item Id</label>
-                                <input class="form-control binding-data" id="item-id">
-                            </div>
-                        </div>
-                        <div class="col-sm-6 from">
-                            <div class="form-group">
                                 <label>Column number</label>
                                 <input class="form-control binding-data" id="column-number">
                             </div>

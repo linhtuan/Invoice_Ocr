@@ -149,9 +149,12 @@ $(function() {
     
     function bindingDataInput(arrayPosition){
         possitionListInvoice = arrayPosition;
+        $('.active-binding-data').attr('data-position', JSON.stringify(arrayPosition));
         var getData = ocrCtrl.getDataInPositions(arrayPosition);
         $.when(getData).then(function(result, textStatus, jqXHR){
-            $('.active-binding-data').val(result);
+            var data = JSON.parse(result);
+            $('.active-binding-data').val(data.Text);
+            $('.active-binding-data').attr('data-total-ocr', data.TotalOCR);
         });
     }
    
