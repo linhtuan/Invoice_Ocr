@@ -253,3 +253,56 @@ function ptdt($angle,$p)
     $pt[]=$c;
     return $pt;
 }
+
+function Check2ListIsSimilar($listOCR1, $listOCR2)
+{
+    $numSimilar= 0;
+    foreach ($listOCR1 as $item1) {
+        foreach ($listOCR2 as $item2)
+        {
+            $perc=0;
+            //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            similar_text(strtolower($item1->description),strtolower($item2->description),$perc);
+            if($perc>85)
+            {
+                $numSimilar++;
+                break;
+            }
+        }
+        
+    }
+    if($numSimilar>(count($listOCR1)/1.3))
+        return TRUE;
+    
+    return FALSE;
+}
+function Check2StringIsSimilar($str1, $str2)
+{
+  
+            $perc=0;
+            //if(strcasecmp($key,str_replace(array('#', '.', ':'), '',$itemOCR->description))==0)
+            similar_text(strtolower($str1),strtolower($str2),$perc);
+            if($perc>85)
+            {
+                return TRUE;
+            }
+     
+   
+    return FALSE;
+}
+function checkStringIsNumber($new_str)
+    {
+        if(is_numeric($new_str) ) //Check string is Int
+        {
+           return TRUE;
+        }
+        else
+        {
+            if(is_numeric(str_replace(".","",$new_str)) && strpos($new_str, ".") != false) //Check string is double
+            {
+                return TRUE;
+            }
+        }
+        
+        return FALSE;
+    }
