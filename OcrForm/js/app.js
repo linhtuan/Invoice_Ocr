@@ -465,20 +465,21 @@ function createTemplate(){
         index: invoiceDetail.TotalTax.index});
     
     var colNumber = $('#column-number').val();
+    var ListOcrValueTitle = [];
+    var ListOcrValueFristRow = [];
     if(colNumber > 0 && colNumber != '' && colNumber != undefined){
         var titles = $('#list-invoice-title .binding-data');
-        var keyPositions = [];
+        
         for(var i = 0; i < titles.length; i ++){
             var thisTitle = $(titles[i]);
-            var ocrValueTitle = $(thisTitle).attr('data-ocr');
+            var ocrValueTitle = JSON.parse($(thisTitle).attr('data-ocr'));
+            ListOcrValueTitle.push(ocrValueTitle);
+
             var thisFirstRow = $('#list-invoices-data .first-row').eq(i);
-            var ocrValueFristRow = $(thisFirstRow).attr('data-ocr');
-            var keypostion = {
-                OcrValueTitle: ocrValueTitle,
-                OcrValueFristRow: ocrValueFristRow
-            };
-            keyPositions.push(keypostion);
+            var ocrValueFristRow = JSON.parse($(thisFirstRow).attr('data-ocr'));
+            ListOcrValueFristRow.push(ocrValueFristRow)
         }
+    
     }
     else{
         colNumber = 0;
@@ -489,7 +490,8 @@ function createTemplate(){
         templateName: $('#template-name').val(),
         templateDetail: JSON.stringify(templateDetails),
         templateListCol: colNumber,
-        templateKeyPostion: JSON.stringify(keyPositions).replace(/([[\]\/\\])/g, "")
+        ListOcrValueTitle: JSON.stringify(ListOcrValueTitle),
+        ListOcrValueFristRow: JSON.stringify(ListOcrValueFristRow),
     };
     
     var data = ocrCtrl.createTemplate(model);

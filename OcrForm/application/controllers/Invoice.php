@@ -421,14 +421,17 @@ class Invoice extends CI_Controller {
             $this->db->insert('tbTemplateList');
             $templateListId = $this->db->insert_id();
             
-            $templateKeyPostion = json_decode(stripslashes($this->input->post('templateKeyPostion')));
+            $listOcrValueTitle = json_decode(stripslashes($this->input->post('ListOcrValueTitle')));
+            $listOcrValueFristRow = json_decode(stripslashes($this->input->post('ListOcrValueFristRow')));
             $data_template_lists = array();
-            foreach ($templateKeyPostion as $item){
+            for($i = 0; $i < count($listOcrValueTitle); $i++){
+                $itemTitle = $listOcrValueTitle[i];
+                $itemFirstRow = $listOcrValueFristRow[i];
                 $data_template = array(
                     'TemplateID' => $templateId,
                     'TemplateListID' => $templateListId,
-                    'OcrValueTitle' => $item->OcrValueTitle,
-                    'OcrValueFristRow' => $item->OcrValueFristRow,
+                    'OcrValueTitle' => json_encode($itemTitle),
+                    'OcrValueFristRow' => json_encode($itemFirstRow),
                 );
                 array_push($data_template_lists, $data_template);
             }
@@ -451,7 +454,7 @@ class Invoice extends CI_Controller {
             array_push($arrayGroupTitle, $gTitle);
         }
         
-        $arrayGroupTFirst = array();
+        $arrayGroupFirst = array();
         foreach ($listOcrValueFristRow as $item){
             $gFirstRow = new GroupInItem();
             $gFirstRow->P1 = $item->P1;
@@ -459,10 +462,10 @@ class Invoice extends CI_Controller {
             $gFirstRow->P3 = $item->P3;
             $gFirstRow->P4 = $item->P4;
             $gFirstRow->listOCRValue = $item->listOCRValue;
-            array_push($arrayGroupTFirst, $gFirstRow);
+            array_push($arrayGroupFirst, $gFirstRow);
         }
         
-        $templateListCol = $this->input->post('templateListCol');
+        //$templateListCol = $this->input->post('templateListCol');
         $jsonFilePath = $this->input->post('jsonFilePath');
         $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
         $width=0;
@@ -475,7 +478,7 @@ class Invoice extends CI_Controller {
         $cListItem->SetAnglePopular($anglePopular);
         $cListItem->SetWidth($width);
         $cListItem->SetHeight($height);
-        $listRows = $cListItem->LoadListItemByTemplate($arrayGroupTitle, $arrayGroupTFirst,35);
+        $listRows = $cListItem->LoadListItemByTemplate($arrayGroupTitle, $arrayGroupFirst);
         $arrayResult = array();
         for($i = 0; $i < count($listRows); $i++)
         {
@@ -487,7 +490,6 @@ class Invoice extends CI_Controller {
             }
             array_push($arrayResult, $arrayDetil);
         }
-        
         echo json_encode($arrayResult);
     }
     
