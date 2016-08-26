@@ -149,12 +149,16 @@ $(function() {
     
     function bindingDataInput(arrayPosition){
         possitionListInvoice = arrayPosition;
+        var isActionFilter = $('.active-binding-data').hasClass('title-header');
+        if(!isActionFilter)
+            isActionFilter = $('.active-binding-data').hasClass('first-row');
+        
         $('.active-binding-data').attr('data-position', JSON.stringify(arrayPosition));
-        var getData = ocrCtrl.getDataInPositions(arrayPosition);
+        var getData = ocrCtrl.getDataInPositions(arrayPosition, isActionFilter);
         $.when(getData).then(function(result, textStatus, jqXHR){
             var data = JSON.parse(result);
             $('.active-binding-data').val(data.Text);
-            $('.active-binding-data').attr('data-total-ocr', data.TotalOCR);
+            $('.active-binding-data').attr('data-ocr', data.thisOcrData);
         });
     }
    

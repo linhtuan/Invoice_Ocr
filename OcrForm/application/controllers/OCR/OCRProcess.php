@@ -852,7 +852,7 @@ class TemplateKeyword{
     function GetListOCRValueByPolygon($listPoint,$OCRListArray)
     {
         $listOCRValue =array();
-       for($i=1; $i<count($OCRListArray); $i++)
+        for($i=1; $i<count($OCRListArray); $i++)
         {
             $item = $OCRListArray[$i];
             //$a =CheckPointInPolygon($item->X1,$item->Y1,$listPoint);

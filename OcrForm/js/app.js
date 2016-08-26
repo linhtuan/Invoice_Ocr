@@ -57,14 +57,15 @@ var ocrCtrl = function (){
         });
     };
     
-    var getDataInPositions = function(listPositions){
+    var getDataInPositions = function(listPositions, isActionFilter){
         var jsonData = JSON.stringify(listPositions);
         return $.ajax({
             url: '/OcrForm/index.php/invoice/getdatainpositions',
             type: 'POST',
             data: { 
                 data : jsonData,
-                jsonFilePath: $('#json-file-path').val()
+                jsonFilePath: $('#json-file-path').val(),
+                isFilter: isActionFilter
             }
         });
     };
@@ -131,8 +132,8 @@ var ocrCtrl = function (){
         getInvoiceInfo: function(id, templateId, pdfId){
             return getInvoiceInfo(id, templateId, pdfId);
         },
-        getDataInPositions: function(listPositions){
-            return getDataInPositions(listPositions);
+        getDataInPositions: function(listPositions, isActionFilter){
+            return getDataInPositions(listPositions, isActionFilter);
         },
         updateInvoiceDetail: function(model){
             return updateInvoiceDetail(model);
@@ -456,16 +457,12 @@ function createTemplate(){
         var keyPositions = [];
         for(var i = 0; i < titles.length; i ++){
             var thisTitle = $(titles[i]);
-            var titleKey = $(thisTitle).val();
-            var positionTitle = $(thisTitle).attr('data-position');
+            var ocrValueTitle = $(thisTitle).attr('data-ocr');
             var thisFirstRow = $('#list-invoices-data .first-row').eq(i);
-            var positionFirstRow = $(thisFirstRow).attr('data-position');
-            var totalOcr = $(thisFirstRow).attr('data-total-ocr');
+            var ocrValueFristRow = $(thisFirstRow).attr('data-ocr');
             var keypostion = {
-                Key: titleKey, 
-                PositionTitle: positionTitle, 
-                PositionFirstRow: positionFirstRow,
-                TotalOcr: totalOcr
+                OcrValueTitle: ocrValueTitle,
+                OcrValueFristRow: ocrValueFristRow
             };
             keyPositions.push(keypostion);
         }

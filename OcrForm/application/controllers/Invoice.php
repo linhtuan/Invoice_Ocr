@@ -145,10 +145,37 @@ class Invoice extends CI_Controller {
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
         $anglePopular = AnglePopular($OCRArray);
         $str = GetTextByPolygon($listPoint,$OCRArray);
-        $rowNumber = GetListOCRValueByPolygon($listPoint,$OCRArray);
+        $ocrData = GetListOCRValueByPolygon($listPoint,$OCRArray);
+        
+        $thisOcrData = array();
+        $isActionFilter = $this->input->post('isFilter');
+        if($isActionFilter == true){
+            $gTitle1 = new GroupInItem();
+            $gTitle1->P1 = new Point();
+            $gTitle1->P1->X = $data[0]->X;
+            $gTitle1->P1->Y = $data[0]->Y;
+            $gTitle1->P2 = new Point();
+            $gTitle1->P2->X = $data[1]->X;
+            $gTitle1->P2->Y = $data[1]->Y;
+            $gTitle1->P3 = new Point();
+            $gTitle1->P3->X = $data[2]->X;
+            $gTitle1->P3->Y = $data[2]->Y;
+            $gTitle1->P4 = new Point();
+            $gTitle1->P4->X = $data[3]->X;
+            $gTitle1->P4->Y = $data[3]->Y;
+            $listOCRValue = array();
+            foreach ($ocrData as $item){
+                $ocrValue = new OCRValue();
+                $ocrValue->description = $item->description;
+                array_push($listOCRValue, $ocrValue);
+            }
+            $gTitle1->listOCRValue = $listOCRValue;
+            $thisOcrData = $gTitle1;
+        }
+        
         $result = array(
             'Text' => trim($str),
-            'TotalOCR' => count($rowNumber),
+            'thisOcrData' => json_encode($thisOcrData),
         );
         echo json_encode($result);
     }
@@ -400,16 +427,13 @@ class Invoice extends CI_Controller {
                 $data_template = array(
                     'TemplateID' => $templateId,
                     'TemplateListID' => $templateListId,
-                    'KeyTitle' => $item->Key,
-                    'PositionTitle' => $item->PositionTitle,
-                    'PositionFirstRow' => $item->PositionFirstRow,
-                    'PositionRowNumber' => $item->PositionTotalOcr
+                    'OcrValueTitle' => $item->OcrValueTitle,
+                    'OcrValueFristRow' => $item->OcrValueFristRow,
                 );
                 array_push($data_template_lists, $data_template);
             }
             $this->db->insert_batch('tbtemplatelistkeyposition', $data_template_lists);
         }
-        
         echo json_encode($templateId);
     }
     
@@ -422,7 +446,7 @@ class Invoice extends CI_Controller {
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
-		
+        
         $anglePopular = AnglePopular($OCRArray);
         $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $cListItem = new ListItemDetail();
