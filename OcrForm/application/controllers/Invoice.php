@@ -438,15 +438,36 @@ class Invoice extends CI_Controller {
     }
     
     public function ListItemProcess(){
-        $possitionListInvoice = json_decode(stripslashes($this->input->post('possitionListInvoice')));
-        $templateListCol = $this->input->post('templateListCol');
+        $listOcrValueTitle = json_decode(stripslashes($this->input->post('ListOcrValueTitle')));
+        $listOcrValueFristRow = json_decode(stripslashes($this->input->post('ListOcrValueFristRow')));
+        $arrayGroupTitle = array();
+        foreach ($listOcrValueTitle as $item){
+            $gTitle = new GroupInItem();
+            $gTitle->P1 = $item->P1;
+            $gTitle->P2 = $item->P2;
+            $gTitle->P3 = $item->P3;
+            $gTitle->P4 = $item->P4;
+            $gTitle->listOCRValue = $item->listOCRValue;
+            array_push($arrayGroupTitle, $gTitle);
+        }
         
+        $arrayGroupTFirst = array();
+        foreach ($listOcrValueFristRow as $item){
+            $gFirstRow = new GroupInItem();
+            $gFirstRow->P1 = $item->P1;
+            $gFirstRow->P2 = $item->P2;
+            $gFirstRow->P3 = $item->P3;
+            $gFirstRow->P4 = $item->P4;
+            $gFirstRow->listOCRValue = $item->listOCRValue;
+            array_push($arrayGroupTFirst, $gFirstRow);
+        }
+        
+        $templateListCol = $this->input->post('templateListCol');
         $jsonFilePath = $this->input->post('jsonFilePath');
         $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
-        
         $anglePopular = AnglePopular($OCRArray);
         $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $cListItem = new ListItemDetail();
@@ -454,7 +475,7 @@ class Invoice extends CI_Controller {
         $cListItem->SetAnglePopular($anglePopular);
         $cListItem->SetWidth($width);
         $cListItem->SetHeight($height);
-        $listRows = $cListItem->GetListItemByPosition($possitionListInvoice, $templateListCol);
+        $listRows = $cListItem->LoadListItemByTemplate($arrayGroupTitle, $arrayGroupTFirst,35);
         $arrayResult = array();
         for($i = 0; $i < count($listRows); $i++)
         {

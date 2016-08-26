@@ -238,10 +238,23 @@ $(document).on('click', '#update-list-item', function (event) {
 
 $(document).on('click', '#process-list-item', function (event) {
     if(possitionListInvoice == undefined || possitionListInvoice == null || possitionListInvoice.length == 0) return;
+    var titles = $('#list-invoice-title .binding-data');
+    var ListOcrValueTitle = [];
+    var ListOcrValueFristRow = [];
+    for(var i = 0; i < titles.length; i ++){
+        var thisTitle = $(titles[i]);
+        var ocrValueTitle = JSON.parse($(thisTitle).attr('data-ocr'));
+        ListOcrValueTitle.push(ocrValueTitle);
+        
+        var thisFirstRow = $('#list-invoices-data .first-row').eq(i);
+        var ocrValueFristRow = JSON.parse($(thisFirstRow).attr('data-ocr'));
+        ListOcrValueFristRow.push(ocrValueFristRow)
+    }
     var model = {
-        possitionListInvoice: JSON.stringify(possitionListInvoice),
         templateListCol: $('#column-number').val(),
-        jsonFilePath: $('#json-file-path').val()
+        jsonFilePath: $('#json-file-path').val(),
+        ListOcrValueTitle: JSON.stringify(ListOcrValueTitle),
+        ListOcrValueFristRow: JSON.stringify(ListOcrValueFristRow),
     };
     
     var data = ocrCtrl.listInvoiceProcess(model);
@@ -476,7 +489,7 @@ function createTemplate(){
         templateName: $('#template-name').val(),
         templateDetail: JSON.stringify(templateDetails),
         templateListCol: colNumber,
-        templateKeyPostion: JSON.stringify(keyPositions)
+        templateKeyPostion: JSON.stringify(keyPositions).replace(/([[\]\/\\])/g, "")
     };
     
     var data = ocrCtrl.createTemplate(model);
