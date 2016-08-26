@@ -693,7 +693,7 @@ class ListItemDetail {
            
             $listNextOCR = GetListOCRValueByPolygon($listPointNext, self::$OCRArray);
             $OCRNextindex = new OCRValue();
-            echo "<br>";
+           // echo "<br>";
             if(count($listNextOCR)>0)
             {
                // echo "Found ".$listNextOCR[0]->description .": " ;
@@ -731,10 +731,10 @@ class ListItemDetail {
                 $listCurrOCRColl = GetListOCRValueByPolygon($rec, self::$OCRArray);
                
 		//if(count($listCurrOCRColl)==0) echo "Loi P1: ".$r1->X. ":".$r1->Y." P2: ".$r2->X. ":".$r2->Y." P3: ".$r3->X. ":".$r3->Y." P4: ".$r4->X. ":".$r4->Y;
-	//	foreach($listCurrOCRColl as $test)
-	//			{
-	//				echo $test->description." ";
-	//			}
+		//foreach($listCurrOCRColl as $test)
+		//		{
+		//			echo $test->description." ";
+		//		}
 				
                 $currGroupInCollIndex->listOCRValue = $listCurrOCRColl;
                 $currGroupInCollIndex->P1 = $r1;
@@ -742,13 +742,32 @@ class ListItemDetail {
                 $currGroupInCollIndex->P3 = $r3;
                 $currGroupInCollIndex->P4 = $r4;
                 $row->listGroupInItem[] = $currGroupInCollIndex;
-                $ListRowItemResult[] = $row;
+               
             }
-            
+             $ListRowItemResult[] = $row;
             $currentItem = $OCRNextindex;
         }
        
-        return $ListRowItemResult;
+        //Convert to old template
+       $arrayListRow = array();
+       foreach ($ListRowItemResult as $itemRow)
+       {
+           $arrayCol = array();
+           foreach ($itemRow->listGroupInItem as $col)
+           {
+               $str ="";
+               foreach ($col->listOCRValue as $colOCR)
+               {
+                   $str = $str." ".$colOCR->description;
+               }
+               $arrayCol[] = $str;
+           }
+           
+           $arrayListRow[] = $arrayCol;
+       }
+       
+      //  return $ListRowItemResult;
+       return $arrayListRow;
    }
    function ClusterringListItem($listItem)
    {
