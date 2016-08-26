@@ -121,22 +121,7 @@ class TemplateKeyword{
             return $OCRArray;
     }
     
-    function checkStringIsNumber($new_str)
-    {
-        if(is_numeric($new_str) ) //Check string is Int
-        {
-           return TRUE;
-        }
-        else
-        {
-            if(is_numeric(str_replace(".","",$new_str)) && strpos($new_str, ".") != false) //Check string is double
-            {
-                return TRUE;
-            }
-        }
-        
-        return FALSE;
-    }
+    
 
    function Check2BillIsLine($b1,$b2,$vertycal,$anglePopular,$isMerger)
     {      
@@ -264,7 +249,7 @@ class TemplateKeyword{
                     
                 }
             }
-            
+            $result->value ="";
             return $result;
    }
    function GetValueOfPriceByKey($key,$OCRArray,$anglePopular)
@@ -386,7 +371,11 @@ class TemplateKeyword{
         }
         
         if (count($labelItems) == 0)
-                    return $result;
+        {
+             $result->value =="";
+             return $result;
+        }
+      
          for ($n = 0; $n < count($labelItems); $n++)
             {
                 $labelItem = $labelItems[$n];
@@ -446,6 +435,7 @@ class TemplateKeyword{
                 if (!empty($ret->value))
                 {
                   $result = $ret;
+                  $result->vertycal =FALSE;
                   $result->label=$key;
                   return $result;
                 }
@@ -680,6 +670,48 @@ class TemplateKeyword{
     function GetInvoiceInforByTemplate($OCRArray,$anglePopular,$ListKeyWordTemplate)
     {       
         $invoiceInfo = new InvoiceInfo();
+        //Set defaul value
+         $result = new  KeyValue();
+         $result->index = 100;
+         $result->type=0;
+         $invoiceInfo->VendorNumber =$result;
+          $result = new  KeyValue();
+         $result->index = 200;
+         $result->type=0;
+         $invoiceInfo->InvoiceID =$result;
+          $result = new  KeyValue();
+         $result->index = 300;
+         $result->type=1;
+         $invoiceInfo->InvoiceDate =$result;
+          $result = new  KeyValue();
+         $result->index = 400;
+         $result->type=0;
+         $invoiceInfo->PONumber =$result;
+          $result = new  KeyValue();
+         $result->index = 500;
+         $result->type=0;
+         $invoiceInfo->Terms =$result;
+          $result = new  KeyValue();
+         $result->index = 600;
+         $result->type=2;
+         $invoiceInfo->SubTotal =$result;
+          $result = new  KeyValue();
+         $result->index = 700;
+         $result->type=2;
+         $invoiceInfo->TotalTax =$result;
+          $result = new  KeyValue();
+         $result->index = 800;
+         $result->type=2;
+         $invoiceInfo->Shipping =$result;
+          $result = new  KeyValue();
+           $result->index = 900;
+         $result->type=2;
+         $invoiceInfo->Discount =$result;
+         $result = new  KeyValue();
+         $result->index = 1000;
+         $result->type=2;
+         $invoiceInfo->Total =$result;
+        ////////////////////////////
         foreach ($ListKeyWordTemplate as $KeyWordTemplate)
         {
             $keyword = $KeyWordTemplate->Keyword;
@@ -705,20 +737,11 @@ class TemplateKeyword{
             }
                 
             switch ($index) {
-                case 0:
-                    {
-                        $vendorName = GetVendorName($OCRArray);
-                        $objVendorName = new KeyValue();
-                        $objVendorName->value = $vendorName;
-                        $objVendorName->index = 0;
-                         $objVendorName->type=0;
-                        $invoiceInfo->VendorName =$objVendorName;
-                    }
-                     break;
+                
                  case 100:
                     {
                         $result->index = 100;
-                         $result->type=0;
+                        $result->type=0;
                         $invoiceInfo->VendorNumber =$result;
                     }
                      break;
@@ -786,11 +809,46 @@ class TemplateKeyword{
                      }
                     break;
                  default:
+                    {
+                        
+                        
+                    }
+                   
                     break;
             }
             
           //  echo "<br>".$result->label.": ".$result->value;
         }
+        
+        //Load vendor namer
+         $billInforKey= array();
+        //Load Keyword 
+        $totalKey =  LoadDefaultTemplate('./template/totalKey.json');
+        $POKey =  LoadDefaultTemplate('./template/POKey.json');
+        $invoiceIDKey = LoadDefaultTemplate('./template/invoiceIDKey.json');
+        $ShippingKey =  LoadDefaultTemplate('./template/ShippingKey.json');
+        $DiscountKey = LoadDefaultTemplate('./template/DiscountKey.json');
+        $taxKey=LoadDefaultTemplate('./template/taxKey.json');
+        $subTotalKey =LoadDefaultTemplate('./template/subTotalKey.json');
+        $vendorNumKey =LoadDefaultTemplate('./template/vendorNumberKey.json');
+        $InvoiceDateKey =LoadDefaultTemplate('./template/invoiceDateKey.json');
+         $TermsKey =LoadDefaultTemplate('./template/TermsKey.json');
+        $billInforKey[] =$totalKey;
+        $billInforKey[]  =$POKey;
+        $billInforKey[] =$invoiceIDKey;
+        $billInforKey[] =$ShippingKey;
+        $billInforKey[] =$DiscountKey;
+        $billInforKey[] =$taxKey;
+        $billInforKey[] =$InvoiceDateKey;
+        $billInforKey[] =$invoiceIDKey;
+         $vendorName = GetVendorName($OCRArray,$billInforKey);
+         
+        $objVendorName = new KeyValue();
+         $objVendorName->value = $vendorName;
+         $objVendorName->index = 0;
+         $objVendorName->type=0;
+         $invoiceInfo->VendorName =$objVendorName;
+                  //      echo "Thien Anh";
         return $invoiceInfo;
     }
     

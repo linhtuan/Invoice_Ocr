@@ -14,6 +14,9 @@ class GroupInItem{
     public $P3;
     public $P4;
 }
+class RowItem{
+    public $listGroupInItem;
+}
 class ColItem{
     public $key;
     public $isNumber;
@@ -540,6 +543,213 @@ class ListItemDetail {
        }
    }
    
+   ////////////////////
+   //$arrayGroupFirstItem array of GroupInItem
+   //$arrayGroupTitle array of GroupInItem
+   /////////////////////
+   function LoadListItemByTemplate($arrayGroupTitle, $arrayGroupFirstItem)
+   {
+       $ListRowItemResult = array();
+       $iNumOfCol = count($arrayGroupTitle);
+       //Get polygon of title
+       $minTitleX=4000;
+       $maxTitleX=0;
+       $minTitleY=4000;
+       $maxTitleY=0;
+	$keyForsearch1 = $arrayGroupTitle[0]->listOCRValue[0]->description;
+        $keyForsearch2 = $arrayGroupTitle[1]->listOCRValue[0]->description;
+       
+        //Search by $keyForsearch1 and $keyForsearch2
+        $ListKeyFound1 = array();
+        $ListKeyFound2 = array();
+        for($i=1; $i<count(self::$OCRArray); $i++)
+        {
+            $item = self::$OCRArray[$i];
+            if(Check2StringIsSimilar($keyForsearch1,$item->description))
+            {
+                $ListKeyFound1[] = $item;
+            }
+            if(Check2StringIsSimilar($keyForsearch2,$item->description))
+            {
+                $ListKeyFound2[] = $item;
+            }
+        }
+        $keyFound1 = new OCRValue();
+        $found=FALSE;
+        foreach ($ListKeyFound1 as $item1) {
+            
+            foreach ($ListKeyFound2 as $item2)
+            {
+                if(abs($item1->Y1 - $item2->Y1)<50)
+                {
+                    $keyFound1 =$item1;
+                   
+                    $found=TRUE;
+                    break;
+                }
+            }
+            if($found) break;
+        }
+        
+        if($found==FALSE) return NULL;
+        
+       //clusting $arrayOCRInPolygon 
+       $listTitle = array();
+       //Calculate first row
+       //estimate 
+       //--> Tinh toan dc topleft and topright cua first item
+       //-->Update first posision
+       $Y1 = $keyFound1->Y4 +($arrayGroupTitle[0]->P4->Y - $arrayGroupTitle[0]->P1->Y); //Topleft
+       $Y2 = $Y1; //Topright (Tinhs lai cai nay khi anglepopular>0
+       
+	//   echo $Y1 . ": ".$Y2."<br>";
+       //Find col have only 1 OCRValue in row of first item
+    //   $OCRindex =new OCRValue();
+       $colIndex = 0;
+       for($i=count($arrayGroupFirstItem)-1; $i>=0; $i--)
+       {
+          $col = $arrayGroupFirstItem[$i];
+          if(count($col->listOCRValue)==1)
+          {
+              $OCRobj = $col->listOCRValue[0];
+              if(checkStringIsNumber($OCRobj->description))
+              {             
+                  $colIndex =$i;
+                  break;
+              }
+          }
+       }
+       
+      
+       //Calculate col position
+       $colX = array();
+       for($i=0; $i<count($arrayGroupFirstItem); $i++)
+       {
+           $titleItem = $arrayGroupTitle[$i];
+           $firstItem = $arrayGroupFirstItem[$i];
+           $x1= min($titleItem->P1->X, $firstItem->P1->X);
+           $x2= max($titleItem->P2->X, $firstItem->P2->X);
+           $colX[]=$x1;
+           $colX[]=$x2;
+       }
+       //Tim OCRIndex
+       $listPoint  = array();
+       $fp1 = new Point();
+       $fp1->X = $colX[2*$colIndex];
+       $fp1->Y = $Y1;
+       $listPoint[]=$fp1;
+       $fp2 = new Point();
+       $fp2->X = $colX[2*$colIndex+1];
+       $fp2->Y = $Y2;
+       $listPoint[]=$fp2;
+       $fp3 = new Point();
+       $fp3->X = $colX[2*$colIndex+1];
+       $fp3->Y = $Y2 + 100;
+       $listPoint[]=$fp3;
+       $fp4 = new Point();
+       $fp4->X = $colX[2*$colIndex];
+       $fp4->Y = $Y1 + 100;
+       $listPoint[]=$fp4;
+         
+       $listOCR = GetListOCRValueByPolygon($listPoint, self::$OCRArray);
+	$OCRindex= new OCRValue();
+       if(count($listOCR)>0)
+       {
+           $OCRindex = $listOCR[0];
+           $Y1 =$OCRindex->Y1 +20;
+           $Y2 =$OCRindex->Y2 +20;
+       }
+	//echo "Loi P1: ".$fp1->X. ":".$fp1->Y." P2: ".$fp2->X. ":".$fp2->Y." P3: ".$fp3->X. ":".$fp3->Y." P4: ".$fp4->X. ":".$fp4->Y;
+	  
+       //Tinh toan 
+        $bNotStopCheck=TRUE;
+       $currentItem = $OCRindex;
+       
+        while($bNotStopCheck)
+        {
+            $row = new RowItem();
+            $row->listGroupInItem = array();
+            $arrayRows = array();
+            //Xet col at colIndex
+         
+           //Tim next index
+            $listPointNext  = array();
+            $np1 = new Point();
+            $np1->X = $colX[2*$colIndex];
+            $np1->Y =$Y1 +5;
+            $listPointNext[]=$np1;
+            $np2 = new Point();
+            $np2->X = $colX[2*$colIndex+1];
+            $np2->Y =  $Y2 +5;;
+            $listPointNext[]=$np2;
+            $np3 = new Point();
+            $np3->X = $colX[2*$colIndex+1];
+            $np3->Y =  $Y2 +200;
+            $listPointNext[]=$np3;
+            $np4 = new Point();
+            $np4->X = $colX[2*$colIndex];
+            $np4->Y =  $Y1 +200;
+            $listPointNext[]=$np4;
+           
+            $listNextOCR = GetListOCRValueByPolygon($listPointNext, self::$OCRArray);
+            $OCRNextindex = new OCRValue();
+            echo "<br>";
+            if(count($listNextOCR)>0)
+            {
+               // echo "Found ".$listNextOCR[0]->description .": " ;
+                $OCRNextindex = $listNextOCR[0];
+                $Y1 =$OCRNextindex->Y1 +20;
+                $Y2 =$OCRNextindex->Y2 +20;
+            }
+            else {
+              // 	echo "Loi P1: ".$np1->X. ":".$np1->Y." P2: ".$np2->X. ":".$np2->Y." P3: ".$np3->X. ":".$np3->Y." P4: ".$np4->X. ":".$np4->Y;
+                $OCRNextindex->Y1 = $Y1 +100;
+                $OCRNextindex->Y2 = $Y2 +100;
+                $bNotStopCheck=FALSE;
+            }
+             
+            for($c=0;$c<$iNumOfCol; $c++)
+            {
+                $currGroupInCollIndex = new GroupInItem();
+                $rec =  array();
+                $r1 = new Point();
+                $r1->X = $colX[2*$c];
+                $r1->Y = $currentItem->Y1 -20;
+                $rec[]=$r1;
+                $r2 = new Point();
+                $r2->X = $colX[2*$c+1];
+                $r2->Y =  $currentItem->Y2 -20;
+                $rec[]=$r2;
+                $r3 = new Point();
+                $r3->X = $colX[2*$c+1];
+                $r3->Y =  $OCRNextindex->Y1 -10;
+                $rec[]=$r3;
+                $r4= new Point();
+                $r4->X = $colX[2*$c];
+                $r4->Y =  $OCRNextindex->Y2 -10;
+                $rec[]=$r4;
+                $listCurrOCRColl = GetListOCRValueByPolygon($rec, self::$OCRArray);
+               
+		//if(count($listCurrOCRColl)==0) echo "Loi P1: ".$r1->X. ":".$r1->Y." P2: ".$r2->X. ":".$r2->Y." P3: ".$r3->X. ":".$r3->Y." P4: ".$r4->X. ":".$r4->Y;
+	//	foreach($listCurrOCRColl as $test)
+	//			{
+	//				echo $test->description." ";
+	//			}
+				
+                $currGroupInCollIndex->listOCRValue = $listCurrOCRColl;
+                $currGroupInCollIndex->P1 = $r1;
+                $currGroupInCollIndex->P2 = $r2;
+                $currGroupInCollIndex->P3 = $r3;
+                $currGroupInCollIndex->P4 = $r4;
+                $row->listGroupInItem[] = $currGroupInCollIndex;
+                $ListRowItemResult[] = $row;
+            }
+            
+            $currentItem = $OCRNextindex;
+        }
+       
+        return $ListRowItemResult;
+   }
    function ClusterringListItem($listItem)
    {
        if(count($listItem)==0) return;
