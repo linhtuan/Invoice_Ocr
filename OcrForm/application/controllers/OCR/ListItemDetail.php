@@ -750,6 +750,18 @@ class ListItemDetail {
        
         //Convert to old template
        $arrayListRow = array();
+       //add title
+        $arrayCol = array();
+       foreach ($arrayGroupTitle->listGroupInItem as $col)
+       {
+           $str ="";
+               foreach ($col->listOCRValue as $colOCR)
+               {
+                   $str = $str." ".$colOCR->description;
+               }
+               $arrayCol[] = $str;
+       }
+       $arrayListRow[] = $arrayCol;
        foreach ($ListRowItemResult as $itemRow)
        {
            $arrayCol = array();
