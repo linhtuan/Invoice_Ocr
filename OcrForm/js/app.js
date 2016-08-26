@@ -353,15 +353,15 @@ function BindingDataInvoiceJson(data){
 function BindingListInvoiceItems(array){
     listInvoiceItem = array;
     var title = array[0];
-    var htmlTitle = '';
-    for(var i = 0; i < title.length; i ++){
-        var item = title[i];
-        var id = item.replace(/ /g, '_');
-        id = item.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-        htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
-    }
-    $('#list-invoice-title').html('');    
-    $('#list-invoice-title').html(htmlTitle);
+//    var htmlTitle = '';
+//    for(var i = 0; i < title.length; i ++){
+//        var item = title[i];
+//        var id = item.replace(/ /g, '_');
+//        id = item.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+//        htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
+//    }
+//    $('#list-invoice-title').html('');    
+//    $('#list-invoice-title').html(htmlTitle);
     
     var htmlListItems = '';
     for(var i = 1; i < array.length; i++){
@@ -371,8 +371,13 @@ function BindingListInvoiceItems(array){
             var data = item[j];
             var id = title[j].replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-            htmlListItems += '<td><input data-position="" class="form-control '+ (i == 1 ? 'first-row' : '') +
+            if(i == 1){
+                var firstCtrl = $('#list-invoices-data .first-row').eq(j);
+                $(firstCtrl).attr('id', id +'-'+ i +'-'+ j);
+            }else{
+                htmlListItems += '<td><input data-position="" class="form-control '+ (i == 1 ? 'first-row' : '') +
                     ' binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
+            }
         }
         htmlListItems += "</tr>";
     }
@@ -479,7 +484,6 @@ function createTemplate(){
             var ocrValueFristRow = JSON.parse($(thisFirstRow).attr('data-ocr'));
             ListOcrValueFristRow.push(ocrValueFristRow)
         }
-    
     }
     else{
         colNumber = 0;
