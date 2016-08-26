@@ -74,16 +74,39 @@ class Invoice extends CI_Controller {
             {
                 $this->db->where(array('TemplateID' => $templateId));
                 $templateList = $this->db->get('tbTemplateList')->first_row();
+                $templateListCol = $templateList->ColumnNumber;
                 $arrayResult = array();
                 if($templateList != NULL){
-                    $templateListKey = $templateList->Key;
-                    $templateListCol = $templateList->ColumnNumber;
+                    $this->db->where(array('TemplateID' => $templateId, 'TemplateListID' => $templateList->ID));
+                    $tbtemplatelistkeypositions = $this->db->get('tbtemplatelistkeyposition')->result();
+                    $arrayGroupTitle = array();
+                    $arrayGroupFirst = array();
+                    foreach ($tbtemplatelistkeypositions as $item){
+                        $titleData = json_decode($item->OcrValueTitle);
+                        $gTitle = new GroupInItem();
+                        $gTitle->P1 = $titleData->P1;
+                        $gTitle->P2 = $titleData->P2;
+                        $gTitle->P3 = $titleData->P3;
+                        $gTitle->P4 = $titleData->P4;
+                        $gTitle->listOCRValue = $titleData->listOCRValue;
+                        array_push($arrayGroupTitle, $gTitle);
+                        
+                        $firstRow = json_decode($item->OcrValueFristRow);
+                        $gFirstRow = new GroupInItem();
+                        $gFirstRow->P1 = $firstRow->P1;
+                        $gFirstRow->P2 = $firstRow->P2;
+                        $gFirstRow->P3 = $firstRow->P3;
+                        $gFirstRow->P4 = $firstRow->P4;
+                        $gFirstRow->listOCRValue = $firstRow->listOCRValue;
+                        array_push($arrayGroupFirst, $gFirstRow);
+                    }
+                    
                     $cListItem = new ListItemDetail();
                     $cListItem->SetOcrArray($OCRArray);
                     $cListItem->SetAnglePopular($anglePopular);
                     $cListItem->SetWidth($width);
                     $cListItem->SetHeight($height);
-                    $listRows = $cListItem->GetListItemByKey($templateListKey, $templateListCol);
+                    $listRows = $cListItem->LoadListItemByTemplate($arrayGroupTitle, $arrayGroupFirst);
                     for($i=0; $i < count($listRows);$i++)
                     {
                         $arrayItem = $listRows[$i];
@@ -103,15 +126,16 @@ class Invoice extends CI_Controller {
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => $arrayResult,
                     'FileInfos' => $arrayFileInfos,
+                    'TemplateListCol' => $templateListCol
                 );
                 echo json_encode($data);
             }else{
-                
                 $invoiceInfo = GetInvoiceInfor($OCRArray,$anglePopular);
                 $data = array(
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => [],
                     'FileInfos' => $arrayFileInfos,
+                    'TemplateListCol' => ''
                 );
                 echo json_encode($data);
             }
@@ -144,6 +168,7 @@ class Invoice extends CI_Controller {
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
         $anglePopular = AnglePopular($OCRArray);
+        $OCRArray = MergerAllWordToLine($OCRArray,$anglePopular);
         $str = GetTextByPolygon($listPoint,$OCRArray);
         $ocrData = GetListOCRValueByPolygon($listPoint,$OCRArray);
         
