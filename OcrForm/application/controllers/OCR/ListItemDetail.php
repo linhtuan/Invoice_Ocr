@@ -547,7 +547,7 @@ class ListItemDetail {
    //$arrayGroupFirstItem array of GroupInItem
    //$arrayGroupTitle array of GroupInItem
    /////////////////////
-   function LoadListItemByTemplate($arrayGroupTitle, $arrayGroupFirstItem,$nextStep)
+   function LoadListItemByTemplate($arrayGroupTitle, $arrayGroupFirstItem)
    {
        $ListRowItemResult = array();
        $iNumOfCol = count($arrayGroupTitle);
