@@ -617,7 +617,7 @@ class ListItemDetail {
           if(count($col->listOCRValue)==1)
           {
               $OCRobj = $col->listOCRValue[0];
-              if(checkStringIsNumber($OCRobj->description))
+              if(checkStringIsNumber(str_replace(array('$', 'USD'), '',$OCRobj->description)))
               {             
                   $colIndex =$i;
                   break;
