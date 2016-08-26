@@ -558,7 +558,8 @@ class ListItemDetail {
        $maxTitleY=0;
 	$keyForsearch1 = $arrayGroupTitle[0]->listOCRValue[0]->description;
         $keyForsearch2 = $arrayGroupTitle[1]->listOCRValue[0]->description;
-       
+     //  echo $keyForsearch1;
+    //   echo $keyForsearch2;
         //Search by $keyForsearch1 and $keyForsearch2
         $ListKeyFound1 = array();
         $ListKeyFound2 = array();
@@ -580,6 +581,7 @@ class ListItemDetail {
             
             foreach ($ListKeyFound2 as $item2)
             {
+                
                 if(abs($item1->Y1 - $item2->Y1)<50)
                 {
                     $keyFound1 =$item1;
@@ -591,8 +593,11 @@ class ListItemDetail {
             if($found) break;
         }
         
-        if($found==FALSE) return NULL;
-        
+        if($found==FALSE)
+        {
+        //    echo "Ko tim thay";
+            return NULL;
+        }
        //clusting $arrayOCRInPolygon 
        $listTitle = array();
        //Calculate first row
@@ -752,7 +757,7 @@ class ListItemDetail {
        $arrayListRow = array();
        //add title
         $arrayCol = array();
-       foreach ($arrayGroupTitle->listGroupInItem as $col)
+       foreach ($arrayGroupTitle as $col)
        {
            $str ="";
                foreach ($col->listOCRValue as $colOCR)
