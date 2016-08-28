@@ -355,9 +355,7 @@ function BindingDataInvoiceJson(data){
 function BindingListInvoiceItems(array){
     listInvoiceItem = array;
     var title = array[0];
-    
     var htmlListItems = '';
-
     for(var i = 1; i < array.length; i++){
         var item = array[i];
         htmlListItems += "<tr>";
