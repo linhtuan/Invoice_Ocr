@@ -27,6 +27,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </nav>
     <div class="row">
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
+            <div class="ds-demo-left">
+                <button class="btn btn-primary hidden" id="DW_btnRemoveCurrentImage" onclick="btnRemoveCurrentImage_onclick()">Remove Selected Images</button>
+                <button class="btn btn-primary" id="DW_btnRemoveAllImages" onclick="btnRemoveAllImages_onclick()">Remove All Images</button>
+                <br>
+            </div>
+        </div>
+        <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
             <select size="1" id="source" class="hidden" style="position: relative; width: 220px;"></select>
             <div id="divLeft" class="ds-demo-left ds-demo-inline-block ds-demo-border-light-grey" style="width: 508px; height: 650px;">
                 <div id="dwtcontrolContainer"></div>
@@ -268,6 +275,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type = 'text/javascript' src = "/OcrForm/js/app.js"></script>
 <script type = 'text/javascript' src = "/OcrForm/js/draw-rectangle.js"></script>
 <script type = 'text/javascript' src = "/OcrForm/js/scanTwainImage.js"></script>
+<script type = 'text/javascript' src = "/OcrForm/js/twain-initpage.js"></script>
 <script type = 'text/javascript'>
 
 $(document).ready(function() {

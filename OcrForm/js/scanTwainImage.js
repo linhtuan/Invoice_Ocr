@@ -90,3 +90,10 @@ function UploadImage() {
         }
     }
 }
+
+function btnRemoveAllImages_onclick() {
+    if (!checkIfImagesInBuffer()) {
+        return;
+    }
+    DWObject.RemoveAllImages();
+}
