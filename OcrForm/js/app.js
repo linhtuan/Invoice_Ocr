@@ -178,10 +178,12 @@ $(document).on('keydown', '#column-number', function (event) {
         var colNumber = $(this).val();
         var htmlTitle = '';
         var htmlListItems = '';
+        htmlListItems += "<tr>"
         for(var i = 0; i < colNumber; i ++){
-            htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB"></th>';
-            htmlListItems += '<td><input data-position="" class="form-control first-row binding-data"></td>';
+            htmlTitle += '<td><div class="wrapper"><div class="wysiwyg"><textarea data-position="" class="title-header binding-data" style="background-color: #87CEEB;"></textarea></div></div></td>';
+            htmlListItems += '<td><div class="wrapper"><div class="wysiwyg"><textarea data-position="" class="first-row binding-data" style="resize:both;overflow:auto;"></textarea></div></div></td>';
         }
+        htmlListItems += "</tr>"
         $('#list-invoice-title').html('');    
         $('#list-invoice-title').html(htmlTitle);
         $('#list-invoices-data').html('');

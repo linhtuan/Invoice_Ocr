@@ -30,7 +30,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="ds-demo-left">
                 <button class="btn btn-primary hidden" id="DW_btnRemoveCurrentImage" onclick="btnRemoveCurrentImage_onclick()">Remove Selected Images</button>
                 <button class="btn btn-primary" id="DW_btnRemoveAllImages" onclick="btnRemoveAllImages_onclick()">Remove All Images</button>
-                <br>
             </div>
         </div>
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
@@ -195,46 +194,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
         </div>
-        <div class="col-sm-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-sm-2"><h5>List Item</h5></div>
-                        <div class="col-sm-10 text-right">
-                            <button type="button" class="btn btn-primary" id="process-list-item">Process List Items</button>
-                            <button type="button" class="btn btn-primary" id="update-list-item">Save List Item</button>
-                            <button type="button" class="btn btn-primary clear-active">Clear Active</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-sm-6 from">
-                            <div class="form-group">
-                                <label>Column number</label>
-                                <input class="form-control binding-data" id="column-number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" style="width: 1200px" id="list-invoice">
-                            <thead>
-                                <tr id="list-invoice-title">
-                                </tr>
-                            </thead>
-                            <tbody id="list-invoices-data">
-
-                            </tbody>
-                        </table>
+        
+    </div>
+    <div class="col-sm-6 panel" >
+        <div class="col-sm-12" id="invoiceImage" style="overflow:auto; max-height: 800px; max-width: 600px">
+            <img id="images" src="" class="hidden">
+            <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-2"><h5>List Item</h5></div>
+                    <div class="col-sm-10 text-right">
+                        <button type="button" class="btn btn-primary" id="process-list-item">Process List Items</button>
+                        <button type="button" class="btn btn-primary" id="update-list-item">Save List Item</button>
+                        <button type="button" class="btn btn-primary clear-active">Clear Active</button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-sm-6 panel" >
-        <div class="col-sm-12" id="invoiceImage">
-            <img id="images" src="" class="hidden">
-            <canvas id="canvas" style="border: 1px solid black; cursor: pointer;"></canvas>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-2 from">
+                        <div class="form-group">
+                            <label>Column number</label>
+                            <input class="form-control binding-data" id="column-number">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="list-invoice">
+                        <thead>
+                            <tr id="list-invoice-title">
+                            </tr>
+                        </thead>
+                        <tbody id="list-invoices-data">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <input type="hidden" id="pdf-file-id" value="0"/>
