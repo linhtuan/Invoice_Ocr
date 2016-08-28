@@ -92,8 +92,8 @@ function UploadImage() {
 }
 
 function btnRemoveAllImages_onclick() {
-    if (!checkIfImagesInBuffer()) {
-        return;
-    }
+//    if (!checkIfImagesInBuffer()) {
+//        return;
+//    }
     DWObject.RemoveAllImages();
 }

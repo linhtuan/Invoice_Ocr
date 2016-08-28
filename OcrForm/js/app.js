@@ -468,7 +468,6 @@ function createTemplate(){
     var ListOcrValueFristRow = [];
     if(colNumber > 0 && colNumber != '' && colNumber != undefined){
         var titles = $('#list-invoice-title .binding-data');
-        
         for(var i = 0; i < titles.length; i ++){
             var thisTitle = $(titles[i]);
             var ocrValueTitle = JSON.parse($(thisTitle).attr('data-ocr'));

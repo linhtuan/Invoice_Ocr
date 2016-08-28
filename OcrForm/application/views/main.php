@@ -26,10 +26,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
     </nav>
     <div class="row">
-        <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
+        <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center hidden">
             <div class="ds-demo-left">
                 <button class="btn btn-primary hidden" id="DW_btnRemoveCurrentImage" onclick="btnRemoveCurrentImage_onclick()">Remove Selected Images</button>
-                <button class="btn btn-primary" id="DW_btnRemoveAllImages" onclick="btnRemoveAllImages_onclick()">Remove All Images</button>
+                <button class="btn btn-primary hidden" id="DW_btnRemoveAllImages" onclick="btnRemoveAllImages_onclick()">Remove All Images</button>
             </div>
         </div>
         <div class="ds-demo-container ds-demo-padding-top-large ds-demo-center">
@@ -39,7 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <div class="ds-demo-left ds-demo-bright-grey ds-demo-inline-block ds-demo-padding-large ds-demo-center ds-demo-border-light-grey" style="width: 470px; height: 650px;">
                 <input type="button" value="Scan" onclick="AcquireImage();" class="ds-demo-btn ds-demo-width-92 ds-demo-margin-left-large" />
-                <input type="button" value="Open a local file" onclick="LoadImages();" class="ds-demo-btn ds-demo-width-168 ds-demo-margin-left-large" />
+                <input type="button" value="Open a local file" onclick="btnRemoveAllImages_onclick(); LoadImages();" class="ds-demo-btn ds-demo-width-168 ds-demo-margin-left-large" />
                 <div class="ds-demo-margin" id="div-extra-fields" style="display:none; max-height:140px;">
                     <div class="div-fields-item ds-demo-margin-bottom">
                         <input type="text" class="ds-demo-txt ds-demo-margin-zero" style="width: 127px;" placeholder="Field Name" /> : 
