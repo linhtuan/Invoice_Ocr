@@ -366,10 +366,12 @@ function BindingListInvoiceItems(array){
             if(i == 1){
                 var firstCtrl = $('#list-invoices-data .first-row').eq(j);
                 $(firstCtrl).attr('id', id +'-'+ i +'-'+ j);
-                htmlListItems += $($($('#list-invoices-data .first-row').eq(0)).parent()).html();
+                htmlListItems += '<td><div class="wrapper"><div class="wysiwyg">';
+                htmlListItems += $($($('#list-invoices-data .first-row').eq(j)).parent()).html();
+                htmlListItems += '</div></div></td>';
             }else{
-                htmlListItems += '<td><input data-position="" class="form-control '+ (i == 1 ? 'first-row' : '') +
-                    ' binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
+                htmlListItems += '<td><div class="wrapper"><div class="wysiwyg"><textarea data-position="" binding-data" value="'
+                        + data +'" id="'+ id +'-'+ i +'-'+ j +'"></textarea></div></div></td>';
             }
         }
         htmlListItems += "</tr>";
