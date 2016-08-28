@@ -355,17 +355,9 @@ function BindingDataInvoiceJson(data){
 function BindingListInvoiceItems(array){
     listInvoiceItem = array;
     var title = array[0];
-//    var htmlTitle = '';
-//    for(var i = 0; i < title.length; i ++){
-//        var item = title[i];
-//        var id = item.replace(/ /g, '_');
-//        id = item.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-//        htmlTitle += '<th><input data-position="" class="form-control title-header binding-data" style="background-color: #87CEEB" value="'+ item +'" id="'+ id +'"></th>'
-//    }
-//    $('#list-invoice-title').html('');    
-//    $('#list-invoice-title').html(htmlTitle);
     
     var htmlListItems = '';
+
     for(var i = 1; i < array.length; i++){
         var item = array[i];
         htmlListItems += "<tr>";
@@ -376,6 +368,7 @@ function BindingListInvoiceItems(array){
             if(i == 1){
                 var firstCtrl = $('#list-invoices-data .first-row').eq(j);
                 $(firstCtrl).attr('id', id +'-'+ i +'-'+ j);
+                htmlListItems += $($($('#list-invoices-data .first-row').eq(0)).parent()).html();
             }else{
                 htmlListItems += '<td><input data-position="" class="form-control '+ (i == 1 ? 'first-row' : '') +
                     ' binding-data" value="'+ data +'" id="'+ id +'-'+ i +'-'+ j +'"></td>';
@@ -383,8 +376,7 @@ function BindingListInvoiceItems(array){
         }
         htmlListItems += "</tr>";
     }
-    $('#list-invoices-data').html('');
-    $('#list-invoices-data').html(htmlListItems);
+    $('#list-invoices-data').append(htmlListItems);
 }
 
 function getListInvoiceItem(){
