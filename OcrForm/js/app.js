@@ -360,8 +360,8 @@ function BindingListInvoiceItems(array){
         var item = array[i];
         htmlListItems += "<tr>";
         for(var j = 0; j < item.length; j++){
-            var data = item[j];
-            var id = title[j].replace(/ /g, '_');
+            var data = item[j].trim();
+            var id = title[j].trim().replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
             if(i == 1){
                 var firstCtrl = $('#list-invoices-data .first-row').eq(j);
@@ -371,7 +371,7 @@ function BindingListInvoiceItems(array){
                 htmlListItems += '</div></div></td>';
             }else{
                 htmlListItems += '<td><div class="wrapper"><div class="wysiwyg"><textarea data-position="" binding-data" value="'
-                        + data +'" id="'+ id +'-'+ i +'-'+ j +'"></textarea></div></div></td>';
+                        + data +'" id="'+ id +'-'+ i +'-'+ j +'">' + data + '</textarea></div></div></td>';
             }
         }
         htmlListItems += "</tr>";
