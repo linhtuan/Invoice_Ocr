@@ -356,6 +356,7 @@ function BindingListInvoiceItems(array){
     listInvoiceItem = array;
     var title = array[0];
     var htmlListItems = '';
+    
     for(var i = 1; i < array.length; i++){
         var item = array[i];
         htmlListItems += "<tr>";
@@ -376,6 +377,7 @@ function BindingListInvoiceItems(array){
         }
         htmlListItems += "</tr>";
     }
+    $('#list-invoices-data').html('');
     $('#list-invoices-data').append(htmlListItems);
 }
 
@@ -384,9 +386,9 @@ function getListInvoiceItem(){
     var dataResult = [];
     for(var i = 1; i < listInvoiceItem.length; i++){
         var item = listInvoiceItem[i];
-        var dataIndex = {ItemId: i, ListKey:[]}
+        var dataIndex = {ItemId: i, ListKey:[]};
         for(var j = 0; j < item.length; j++){
-            var id = title[j].replace(/ /g, '_');
+            var id = title[j].trim().replace(/ /g, '_');
             id = id.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
             var dataCtrl = $("#" + id + "-" + i + "-" + j ).val();
             dataIndex.ListKey.push({Key: title[j], Value: dataCtrl});

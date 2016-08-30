@@ -439,7 +439,6 @@ class Invoice extends CI_Controller {
         {
             $arrayTemplateList = array(
                 'TemplateID' => $templateId,
-                'Key' => $templateListKey,
                 'ColumnNumber' => $templateListCol
             );
             $this->db->set($arrayTemplateList);

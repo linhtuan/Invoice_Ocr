@@ -157,6 +157,7 @@ $(function() {
         var getData = ocrCtrl.getDataInPositions(arrayPosition, isActionFilter);
         $.when(getData).then(function(result, textStatus, jqXHR){
             var data = JSON.parse(result);
+            $('.active-binding-data').html(data.Text);
             $('.active-binding-data').val(data.Text);
             $('.active-binding-data').attr('data-ocr', data.thisOcrData);
         });
