@@ -511,4 +511,5 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
-$config['GGKey']='AIzaSyCjSfSw-aVfyFe5MfADCgFs6rUxDIo67Z0';
+$config['GGKey']='AIzaSyA45Lsa-rV6WdUI9FQMbHUT4eIZKzfWm6E';
+$config['Magick']='Magick';

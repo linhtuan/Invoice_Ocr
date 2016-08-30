@@ -2,10 +2,10 @@
 
 include_once 'creds.php'; // Get $api_key
  
-
- function CallGGAPIForImage($pathFile)
+//include_once './config/config.php';
+ function CallGGAPIForImage($pathFile,$api_key)
  {
-     $api_key = 'AIzaSyA45Lsa-rV6WdUI9FQMbHUT4eIZKzfWm6E';
+   //  $api_key = $this->config->item('GGKey');// 'AIzaSyA45Lsa-rV6WdUI9FQMbHUT4eIZKzfWm6E';
      $cvurl = 'https://vision.googleapis.com/v1/images:annotate?key=' . $api_key;
      $type = 'TEXT_DETECTION';
       $data = file_get_contents($pathFile);
