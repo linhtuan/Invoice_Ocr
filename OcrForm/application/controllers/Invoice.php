@@ -5,6 +5,7 @@ include_once 'OCR/OCRProcess.php';
 include_once 'OCR/Point.php';
 include_once 'OCR/GGApi.php';
 include_once 'OCR/ListItemDetail.php';
+//include_once '../config/config.php';
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -74,14 +75,20 @@ class Invoice extends CI_Controller {
             {
                 $this->db->where(array('TemplateID' => $templateId));
                 $templateList = $this->db->get('tbTemplateList')->first_row();
-                $templateListCol = $templateList->ColumnNumber;
                 $arrayResult = array();
-                if($templateList != NULL){
+                if(is_null($templateList)){
+                    $templateListCol = '';
+                    $arrayResult = array();
+                }else{
+                    $templateListCol = $templateList->ColumnNumber;
                     $this->db->where(array('TemplateID' => $templateId, 'TemplateListID' => $templateList->ID));
                     $tbtemplatelistkeypositions = $this->db->get('tbtemplatelistkeyposition')->result();
                     $arrayGroupTitle = array();
                     $arrayGroupFirst = array();
+                    $titleDataArray = array();
+                    $firstRowArray = array();
                     foreach ($tbtemplatelistkeypositions as $item){
+                        array_push($titleDataArray, $item->OcrValueTitle);
                         $titleData = json_decode($item->OcrValueTitle);
                         $gTitle = new GroupInItem();
                         $gTitle->P1 = $titleData->P1;
@@ -91,6 +98,7 @@ class Invoice extends CI_Controller {
                         $gTitle->listOCRValue = $titleData->listOCRValue;
                         array_push($arrayGroupTitle, $gTitle);
                         
+                        array_push($firstRowArray, $item->OcrValueFristRow);
                         $firstRow = json_decode($item->OcrValueFristRow);
                         $gFirstRow = new GroupInItem();
                         $gFirstRow->P1 = $firstRow->P1;
@@ -126,7 +134,9 @@ class Invoice extends CI_Controller {
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => $arrayResult,
                     'FileInfos' => $arrayFileInfos,
-                    'TemplateListCol' => $templateListCol
+                    'TemplateListCol' => $templateListCol,
+                    'TitleData' => $titleDataArray,
+                    'FirstRowData' => $firstRowArray
                 );
                 echo json_encode($data);
             }else{
@@ -135,7 +145,9 @@ class Invoice extends CI_Controller {
                     'InvoiceInfo' => $invoiceInfo,
                     'InvoiceListItem' => [],
                     'FileInfos' => $arrayFileInfos,
-                    'TemplateListCol' => ''
+                    'TemplateListCol' => '',
+                    'TitleData' => [],
+                    'FirstRowData' => []
                 );
                 echo json_encode($data);
             }
@@ -235,7 +247,8 @@ class Invoice extends CI_Controller {
             $fileBaseName = $info->getBasename('.' . $info->getExtension());
             $folderUpload = "UploadPDF\\".$fileBaseName;
             $ret = mkdir($folderUpload); 
-            $string = "Magick\convert.exe -density 96 \"".$fileName."\" -resize 1700x2000 -quality 85 \"".$folderUpload."\\".$fileBaseName.".jpg\"";
+            $magickPath = $this->config->item('Magick');
+            $string = $magickPath."\convert.exe -density 96 \"".$fileName."\" -resize 1700x2000 -quality 85 \"".$folderUpload."\\".$fileBaseName.".jpg\"";
             $str = exec($string);
             $files = scandir($folderUpload);
             $fileIndex = 1;
@@ -249,7 +262,9 @@ class Invoice extends CI_Controller {
                             $ret = mkdir("JsonFile\\".$fileBaseName); 
                         }
                         $jsonPath = "JsonFile\\".$fileBaseName."\\".$jsonName;
-                        $json = CallGGAPIForImage($fileNamePath);
+                        $api_key = $this->config->item('GGKey');
+                        echo $api_key;
+                        $json = CallGGAPIForImage($fileNamePath,$api_key);
                         file_put_contents($jsonPath, $json);
                         $array = array(
                             'PathName' => "UploadPDF/".$fileBaseName."/".$file,
@@ -270,7 +285,8 @@ class Invoice extends CI_Controller {
             //create file json of image
             $jsonName = str_replace(".","_",$_FILES['RemoteFile']['name']).".json";
             $jsonPath = "JsonFile\\".$jsonName;
-            $json = CallGGAPIForImage($fileName);
+             $api_key = $this->config->item('GGKey');
+            $json = CallGGAPIForImage($fileName,$api_key);
             file_put_contents($jsonPath, $json);
             $array = array(
                 'PathName' => "UploadImage/".$_FILES['RemoteFile']['name'],
@@ -449,8 +465,8 @@ class Invoice extends CI_Controller {
             $listOcrValueFristRow = json_decode(stripslashes($this->input->post('ListOcrValueFristRow')));
             $data_template_lists = array();
             for($i = 0; $i < count($listOcrValueTitle); $i++){
-                $itemTitle = $listOcrValueTitle[i];
-                $itemFirstRow = $listOcrValueFristRow[i];
+                $itemTitle = $listOcrValueTitle[$i];
+                $itemFirstRow = $listOcrValueFristRow[$i];
                 $data_template = array(
                     'TemplateID' => $templateId,
                     'TemplateListID' => $templateListId,
@@ -514,7 +530,17 @@ class Invoice extends CI_Controller {
             }
             array_push($arrayResult, $arrayDetil);
         }
-        echo json_encode($arrayResult);
+        
+        $data = array(
+            'InvoiceInfo' => '',
+            'InvoiceListItem' => $arrayResult,
+            'FileInfos' => '',
+            'TemplateListCol' => '',
+            'TitleData' => [],
+            'FirstRowData' => []
+        );
+        
+        echo json_encode($data);
     }
     
     public function BindingDataByTemplateId(){

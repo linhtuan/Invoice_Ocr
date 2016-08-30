@@ -285,7 +285,7 @@ $("#page-size").change(function() {
         BindingDataInvoiceJson(data);
         $('#images').removeAttr("src").attr('src', "/OcrForm/" + data.FilePath);
         if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
-            BindingListInvoiceItems(data.InvoiceListItem);
+            BindingListInvoiceItems(data);
         }
         BindingCanvas();
     });
@@ -321,7 +321,7 @@ function bindingInvoiceInfo(){
             $('#page-size').html(html);
         }
         if(data.InvoiceListItem != null && data.InvoiceListItem.length > 0){
-            BindingListInvoiceItems(data.InvoiceListItem);
+            BindingListInvoiceItems(data);
         }
         BindingCanvas();
     });
@@ -352,9 +352,53 @@ function BindingDataInvoiceJson(data){
     $('#tax-1-text').val(data.InvoiceInfo.TotalTax.label);
 }
 
-function BindingListInvoiceItems(array){
+function BindingListInvoiceItems(data){
+    var array = data.InvoiceListItem;
     listInvoiceItem = array;
     var title = array[0];
+    if($('.title-header').length <= 0|| $('.title-header').eq(0).val() == undefined || $('.title-header').eq(0).val() == '' ){
+        var htmlTitle = '';
+        var htmlListItems = '';
+        htmlListItems += '<tr>';
+        var firstRow = array[1];
+        for(var i = 0; i < title.length; i ++){
+            var titleText = title[i].trim();
+            var firstRowText = firstRow[i];
+            htmlTitle += "<td><div class='wrapper'><div class='wysiwyg'><textarea data-ocr='' data-position='' class='title-header binding-data' style='background-color: #87CEEB;'>" + titleText + "</textarea></div></div></td>";
+            htmlListItems += "<td><div class='wrapper'><div class='wysiwyg'><textarea data-ocr='' data-position='' class='first-row binding-data' style='resize:both;overflow:auto;'>" + firstRowText + "</textarea></div></div></td>";
+        }
+        htmlListItems += '</tr>';
+        $('#list-invoice-title').html('');    
+        $('#list-invoice-title').html(htmlTitle);
+        $('#list-invoices-data').html('');
+        $('#list-invoices-data').html(htmlListItems);
+        
+        var titleData = data.TitleData;
+        var firstRowDatas = data.FirstRowData;
+        for(var i = 0; i < title.length; i ++){
+            var titleOcr = titleData[i];
+            var titleJson = JSON.parse(titleOcr);
+            var positionTitle = [];
+            positionTitle.push(titleJson.P1);
+            positionTitle.push(titleJson.P2);
+            positionTitle.push(titleJson.P3);
+            positionTitle.push(titleJson.P4);
+            
+            var firstRowOcr = firstRowDatas[i];
+            var firstJson = JSON.parse(firstRowOcr);
+            var positionFisrt = [];
+            positionFisrt.push(firstJson.P1);
+            positionFisrt.push(firstJson.P2);
+            positionFisrt.push(firstJson.P3);
+            positionFisrt.push(firstJson.P4);
+            
+            $('.title-header').eq(i).attr('data-ocr', JSON.stringify(titleJson));
+            $('.title-header').eq(i).attr('data-position', JSON.stringify(positionTitle));
+            
+            $('.first-row').eq(i).attr('data-ocr', JSON.stringify(firstJson));
+            $('.first-row').eq(i).attr('data-position', JSON.stringify(positionFisrt));
+        }
+    }
     var htmlListItems = '';
     
     for(var i = 1; i < array.length; i++){
