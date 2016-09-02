@@ -11,7 +11,7 @@
  *
  * @author linh tuan
  */
-class invoices_model extends CI_Model {
+class Invoices_model extends CI_Model {
     //put your code here
     public $InvoiceInfo;
     public $InvoiceListItem;
