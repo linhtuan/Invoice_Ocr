@@ -513,3 +513,4 @@ $config['rewrite_short_tags'] = FALSE;
 $config['proxy_ips'] = '';
 $config['GGKey']='AIzaSyA45Lsa-rV6WdUI9FQMbHUT4eIZKzfWm6E';
 $config['Magick']='Magick';
+$config['ApplicationFrom']='OcrForm';

@@ -63,7 +63,7 @@ class Invoice extends CI_Controller {
         }
         if (count($arrayFileInfos) > 0)
         {
-            $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$fistJson);
+            $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/'.$this->config->item('ApplicationFrom').'/'.$fistJson);
             $width=0;
             $height =0;
             $OCRArray = ParserJson2Object($s_Data, $width, $height);
@@ -175,7 +175,7 @@ class Invoice extends CI_Controller {
         $listPoint[] = $p4;
         
         $jsonFilePath = $this->input->post('jsonFilePath');
-        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/'.$this->config->item('ApplicationFrom').'/'.$jsonFilePath);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
@@ -507,7 +507,7 @@ class Invoice extends CI_Controller {
         
         //$templateListCol = $this->input->post('templateListCol');
         $jsonFilePath = $this->input->post('jsonFilePath');
-        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFilePath);
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/'.$this->config->item('ApplicationFrom').'/'.$jsonFilePath);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data,$width,$height);
@@ -556,7 +556,7 @@ class Invoice extends CI_Controller {
     public function BindingInvoiceByPageIndex(){
         $filePath = $this->input->post('filePath');
         $jsonFile = $this->input->post('jsonFile');
-        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/OcrForm/'.$jsonFile);
+        $s_Data = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/'.$this->config->item('ApplicationFrom').'/'.$jsonFile);
         $width=0;
         $height =0;
         $OCRArray = ParserJson2Object($s_Data, $width, $height);

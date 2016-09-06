@@ -7,9 +7,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<meta charset="utf-8">
 	<title>Welcome to Invoice Auto mapping</title>
         
-        <link rel="stylesheet" type = "text/css"  href="/OcrForm/css/ds.demo.css">
-	<link rel = "stylesheet" type = "text/css" href = "/OcrForm/css/bootstrap.min.css">
-        <link rel="stylesheet" type = "text/css"  href="/OcrForm/css/app.css">
+        <link rel="stylesheet" type = "text/css"  href="/<?php echo $this->config->item('ApplicationFrom')?>/css/ds.demo.css">
+	<link rel = "stylesheet" type = "text/css" href = "/<?php echo $this->config->item('ApplicationFrom')?>/css/bootstrap.min.css">
+        <link rel="stylesheet" type = "text/css"  href="/<?php echo $this->config->item('ApplicationFrom')?>/css/app.css">
 </head>
 <body  class="ds-demo-main">
 <div id="container" class="navbar navbar-default navbar-static-top">
@@ -18,8 +18,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav in" id="side-menu">
                     <li>
-                        <a href="/OcrForm/" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice</a>
-                        <a href="/OcrForm/index.php/InvoiceDetail" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice Detail</a>
+                        <a href="/<?php echo $this->config->item('ApplicationFrom')?>/" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice</a>
+                        <a href="/<?php echo $this->config->item('ApplicationFrom')?>/index.php/InvoiceDetail" class="active" style="display: inline-block"><i class="fa fa-dashboard fa-fw"></i> Invoice Detail</a>
                     </li>
                 </ul>
             </div>
@@ -265,17 +265,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
 </div>
 
-<script type = 'text/javascript' src = "/OcrForm/js/jquery-2.1.4.min.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/bootstrap.min.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/jquery.tmpl.js"></script>
-<script src="/OcrForm/Resources/dynamsoft.webtwain.config.js"></script>
-<script src="/OcrForm/Resources/dynamsoft.webtwain.initiate.js"></script>
-<script src="/OcrForm/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/jquery-2.1.4.min.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/bootstrap.min.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/jquery.tmpl.js"></script>
+<script src="/<?php echo $this->config->item('ApplicationFrom')?>/Resources/dynamsoft.webtwain.config.js"></script>
+<script src="/<?php echo $this->config->item('ApplicationFrom')?>/Resources/dynamsoft.webtwain.initiate.js"></script>
+<script src="/<?php echo $this->config->item('ApplicationFrom')?>/Resources/addon/dynamsoft.webtwain.addon.pdf.js"></script>
 
-<script type = 'text/javascript' src = "/OcrForm/js/app.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/draw-rectangle.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/scanTwainImage.js"></script>
-<script type = 'text/javascript' src = "/OcrForm/js/twain-initpage.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/app.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/draw-rectangle.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/scanTwainImage.js"></script>
+<script type = 'text/javascript' src = "/<?php echo $this->config->item('ApplicationFrom')?>/js/twain-initpage.js"></script>
 <script type = 'text/javascript'>
 
 $(document).ready(function() {
